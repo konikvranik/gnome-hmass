@@ -1,4 +1,6 @@
 #!/usr/bin/env gjs
+// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-FileCopyrightText: 2026 pvranik
 /*
  * Testy logiky prefs (checklist přehrávačů s deduplikací, preferencí MA).
  * Samostatný proces - UI harness načítá přes St Gtk 3.0, zde potřebujeme 4.0.

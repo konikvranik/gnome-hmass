@@ -1,4 +1,6 @@
 #!/usr/bin/env gjs
+// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-FileCopyrightText: 2026 pvranik
 /*
  * Test připojení k Home Assistant z terminálu:
  *   gjs tools/test-ha.js http://ha:8123 TOKEN

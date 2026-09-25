@@ -1,4 +1,6 @@
 #!/usr/bin/env gjs
+// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-FileCopyrightText: 2026 pvranik
 /*
  * Test připojení k Music Assistant z terminálu:
  *   gjs tools/test-ma.js http://mass:8095 [API_KLIC]

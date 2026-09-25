@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-FileCopyrightText: 2026 pvranik
 /*
  * Stub imports.misc.extensionUtils pro běh knihoven mimo GNOME Shell.
  * Knihovny v lib/ používají Me.imports.lib.xxx - tenhle stub je namapuje
