@@ -492,11 +492,9 @@ const HMassIndicator = GObject.registerClass({
         }
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-        // stavové řádky bez ikon - spouštěče HA/MA jsou v hlavičkách sekcí
-        this._haStatus = UI.statusRow('Home Assistant');
-        this.menu.addMenuItem(this._haStatus.row);
-        this._maStatus = UI.statusRow('Music Assistant');
-        this.menu.addMenuItem(this._maStatus.row);
+        // stav připojení signalizují tečky v panelu - žádné stavové řádky v menu
+        this._haStatus = null;
+        this._maStatus = null;
 
         const reloadItem = new PopupMenu.PopupMenuItem('Připojit znovu');
         reloadItem.connect('activate', () => {
