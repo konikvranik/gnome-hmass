@@ -1,4 +1,6 @@
 #!/usr/bin/env gjs
+// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-FileCopyrightText: 2026 pvranik
 /*
  * E2E test knihoven rozšíření proti mock serverům:
  *   python3 tools/tests/mock_server.py ha 8721 /tmp/mock-ha.log &

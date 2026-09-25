@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-FileCopyrightText: 2026 pvranik
 /*
  * Stub imports.ui.main - zaznamenává registraci indikátoru do panelu.
  */

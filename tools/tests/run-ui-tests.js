@@ -1,4 +1,6 @@
 #!/usr/bin/env gjs
+// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-FileCopyrightText: 2026 pvranik
 /*
  * UI testy rozšíření mimo GNOME Shell: logika panelu, menu, HA řádků,
  * SliderRow, MPRIS manageru v Indicatoru a logika prefs (checklist).
