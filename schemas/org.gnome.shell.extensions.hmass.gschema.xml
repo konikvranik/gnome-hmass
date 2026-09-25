@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.hmass" path="/org/gnome/shell/extensions/hmass/">
+    <!-- Home Assistant -->
+    <key type="s" name="ha-url">
+      <default>''</default>
+      <summary>URL Home Assistant</summary>
+      <description>Např. http://homeassistant.local:8123</description>
+    </key>
+    <key type="s" name="ha-token">
+      <default>''</default>
+      <summary>Long-lived access token Home Assistant</summary>
+      <description>Vytvoří se v profilu uživatele v HA (Dlouhodobé přístupové tokeny).</description>
+    </key>
+    <key type="as" name="ha-panel-entities">
+      <default>[]</default>
+      <summary>Entity zobrazené v horní liště</summary>
+      <description>Seznam entity_id (většinou sensory), jejichž hodnota se zobrazí v panelu.</description>
+    </key>
+    <key type="i" name="value-decimals">
+      <default>-1</default>
+      <summary>Počet desetinných míst číselných hodnot</summary>
+      <description>-1 = automaticky (podle atributu suggested_display_precision entity), 0-4 = pevný počet desetinných míst.</description>
+    </key>
+    <key type="as" name="ha-menu-entities">
+      <default>[]</default>
+      <summary>Entity zobrazené v menu</summary>
+      <description>Seznam entity_id; ovládací prvek se vybere automaticky podle domény.</description>
+    </key>
+
+    <!-- Music Assistant -->
+    <key type="b" name="ma-enabled">
+      <default>true</default>
+      <summary>Integrace Music Assistant zapnuta</summary>
+    </key>
+    <key type="s" name="ma-url">
+      <default>''</default>
+      <summary>URL Music Assistant serveru</summary>
+      <description>Např. http://music-assistant:8095</description>
+    </key>
+    <key type="s" name="ma-token">
+      <default>''</default>
+      <summary>API klíč Music Assistant</summary>
+      <description>Vytvoří se v nastavení MA (Users/API keys). Prázdné, pokud MA nemá zapnuté přihlášení.</description>
+    </key>
+    <key type="s" name="ma-default-player">
+      <default>''</default>
+      <summary>Výchozí přehrávač Music Assistant</summary>
+      <description>player_id přehrávače. Prázdné = automaticky (první hrající).</description>
+    </key>
+    <key type="b" name="ma-mpris">
+      <default>true</default>
+      <summary>Zapnout MPRIS most</summary>
+      <description>Vybraní přehrávači budou ovladatelní multimediálními klávesami a nativním GNOME ovládáním médií.</description>
+    </key>
+    <key type="as" name="mpris-players">
+      <default>[]</default>
+      <summary>Přehrávače v MPRIS</summary>
+      <description>Vybraní přehrávači ("ma:&lt;player_id&gt;" nebo "ha:&lt;entity_id&gt;"). Prázdné = aktivní přehrávač MA.</description>
+    </key>
+    <key type="b" name="ma-show-player-selector">
+      <default>true</default>
+      <summary>Zobrazit výběr přehrávače</summary>
+    </key>
+    <key type="b" name="ma-show-transport">
+      <default>true</default>
+      <summary>Zobrazit tlačítka přehrávání</summary>
+      <description>Předchozí / přehraj-pauza / další / stop.</description>
+    </key>
+    <key type="b" name="ma-show-seek">
+      <default>true</default>
+      <summary>Zobrazit posuvník pozice skladby</summary>
+    </key>
+    <key type="b" name="ma-show-volume">
+      <default>true</default>
+      <summary>Zobrazit posuvník hlasitosti</summary>
+    </key>
+    <key type="b" name="ma-show-shuffle-repeat">
+      <default>false</default>
+      <summary>Zobrazit shuffle a repeat</summary>
+    </key>
+    <key type="b" name="ma-show-dj-selector">
+      <default>true</default>
+      <summary>Zobrazit AI DJ selector</summary>
+      <description>Submenu pro výběr AI Radio DJ hosta nebo jeho vypnutí v Music Assistant.</description>
+    </key>
+
+    <!-- Panel -->
+    <key type="b" name="panel-show-icon">
+      <default>true</default>
+      <summary>Zobrazit ikonu v liště</summary>
+    </key>
+    <key type="b" name="panel-show-status">
+      <default>true</default>
+      <summary>Zobrazit stav připojení (tečky) v liště</summary>
+    </key>
+    <key type="b" name="allow-insecure-tls">
+      <default>false</default>
+      <summary>Povolit neověřené TLS certifikáty</summary>
+      <description>Pro servery s vlastními podpsanými certifikáty (vyžaduje libsoup 3.2+).</description>
+    </key>
+  </schema>
+</schemalist>
