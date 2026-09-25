@@ -1,0 +1,254 @@
+/* Panel */
+.hmass-panel-box {
+    spacing: 6px;
+    padding: 0 4px;
+}
+
+.hmass-panel-value {
+    font-feature-settings: "tnum";
+}
+
+/* Interaktivní prvky entit v liště */
+.hmass-panel-btn {
+    padding: 0 2px;
+    border-radius: 4px;
+}
+
+.hmass-panel-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.hmass-panel-slider {
+    spacing: 3px;
+    padding: 0 2px;
+}
+
+.hmass-panel-select {
+    spacing: 3px;
+}
+
+.hmass-panel-entry {
+    font-size: 0.95em;
+    min-width: 70px;
+    border-radius: 4px;
+    padding: 1px 6px;
+}
+
+.hmass-tooltip {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.95em;
+}
+
+.hmass-dots-area {
+    margin: 0 3px;
+}
+
+.hmass-dots-box {
+    spacing: 3px;
+    margin: 0 3px;
+}
+
+.hmass-dot {
+    width: 6px;
+    height: 6px;
+    min-width: 6px;
+    min-height: 6px;
+    max-width: 6px;
+    max-height: 6px;
+    border-radius: 3px;
+    margin: 0;
+}
+
+.hmass-dot-ok {
+    background-color: #33d17a;
+}
+
+.hmass-dot-warn {
+    background-color: #f6d32d;
+}
+
+.hmass-dot-err {
+    background-color: #e01b24;
+}
+
+.hmass-dot-off {
+    background-color: transparent;
+}
+
+/* Track info */
+.hmass-track-title {
+    font-weight: bold;
+}
+
+.hmass-track-sub {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.hmass-track-row {
+    padding: 4px 12px;
+}
+
+/* Control buttons */
+.hmass-ctrl-btn {
+    border-radius: 99px;
+    padding: 8px;
+}
+
+.hmass-ctrl-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.hmass-ctrl-btn-inactive {
+    opacity: 0.4;
+}
+
+.hmass-ctrl-btn-play {
+    padding: 10px;
+}
+
+/* Slider rows */
+.hmass-slider-row {
+    spacing: 8px;
+    padding: 2px 12px;
+}
+
+.hmass-slider-value {
+    min-width: 42px;
+    text-align: right;
+    font-feature-settings: "tnum";
+}
+
+/* Progress / Seek row */
+.hmass-progress-row {
+    spacing: 8px;
+    padding: 2px 12px;
+}
+
+/* Kombinovaný řádek: tlačítka + průběh vedle sebe */
+.hmass-ctrl-box {
+    spacing: 2px;
+}
+
+.hmass-progress-combined .hmass-ctrl-btn {
+    padding: 4px;
+}
+
+.hmass-progress-combined .hmass-ctrl-btn-play {
+    padding: 6px;
+}
+
+.hmass-progress-bar {
+    -barlevel-height: 2px;
+    -barlevel-background-color: rgba(255, 255, 255, 0.15);
+    -barlevel-active-background-color: rgba(255, 255, 255, 0.65);
+    border-radius: 1px;
+}
+
+.hmass-time-label {
+    font-feature-settings: "tnum";
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* HA rows */
+.hmass-ha-row {
+    spacing: 8px;
+}
+
+.hmass-ha-name {
+    /* let the value float to the right */
+}
+
+.hmass-ha-value {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.hmass-entry {
+    min-width: 140px;
+    border-radius: 6px;
+    padding: 2px 8px;
+}
+
+/* Status footer */
+.hmass-status-row {
+    spacing: 8px;
+    padding: 2px 12px;
+}
+
+.hmass-status-text {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.95em;
+}
+
+/* Section Header */
+.hmass-section-header {
+    padding: 4px 12px;
+}
+
+/* Launch buttons */
+.hmass-launch-btn {
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.hmass-launch-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Assist Chat */
+.hmass-assist-row {
+    padding: 4px 12px;
+}
+
+.hmass-assist-box {
+    spacing: 6px;
+}
+
+.hmass-assist-history {
+    spacing: 4px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+.hmass-assist-msg-user {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: bold;
+}
+
+.hmass-assist-msg-reply {
+    font-size: 0.95em;
+    color: #18bcf2;
+}
+
+.hmass-assist-thinking {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.hmass-assist-error {
+    color: #e01b24;
+}
+
+.hmass-assist-input-row {
+    spacing: 6px;
+}
+
+.hmass-assist-entry {
+    font-size: 0.95em;
+}
+
+.hmass-assist-send-btn {
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+
+.hmass-assist-clear-btn {
+    padding: 6px 8px;
+    border-radius: 6px;
+    opacity: 0.6;
+}
+

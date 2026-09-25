@@ -1,0 +1,8 @@
+{
+    "uuid": "hmass@pvranik",
+    "name": "Home Assistant & Music Assistant",
+    "description": "Home Assistant: hodnoty entit v horní liště a ovládání v menu (přepínače, posuvníky, tlačítka, senzory, výběry, texty - automaticky podle domény entity).\nMusic Assistant: ovládání přehrávání v menu (přehrávač, pozice skladby, hlasitost, volitelně shuffle/repeat) a MPRIS most pro multimediální klávesy a nativní GNOME ovládání médií.",
+    "shell-version": ["42", "43", "44"],
+    "settings-schema": "org.gnome.shell.extensions.hmass",
+    "url": "https://github.com/konikvranik/gnome-hmass"
+}
