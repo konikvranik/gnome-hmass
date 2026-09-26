@@ -301,10 +301,9 @@ const HMassIndicator = GObject.registerClass({
         if (s.get_boolean('panel-show-icon')) {
             this._panelIcon = new St.Icon({
                 gicon: this._haFileIcon,
-                style_class: 'system-status-icon',
+                style_class: 'system-status-icon hmass-panel-icon',
                 icon_size: 16,
             });
-            this._panelBox.add_child(this._panelIcon);
         } else {
             this._panelIcon = null;
         }
@@ -312,7 +311,7 @@ const HMassIndicator = GObject.registerClass({
         if (s.get_boolean('panel-show-status')) {
             this._dotsArea = new St.DrawingArea({
                 style_class: 'hmass-dots-area',
-                width: 8,
+                width: 6,
                 height: 18,
                 y_align: Clutter.ActorAlign.CENTER,
             });
@@ -345,9 +344,22 @@ const HMassIndicator = GObject.registerClass({
 
                 cr.$dispose();
             });
-            this._panelBox.add_child(this._dotsArea);
         } else {
             this._dotsArea = null;
+        }
+
+        // ikona a tečky patří k sobě - společný box bez theme mezer,
+        // aby stavové tečky přiléhaly těsně k ikoně Home Assistant
+        if (this._panelIcon && this._dotsArea) {
+            const iconBox = new St.BoxLayout({style_class: 'hmass-icon-box'});
+            iconBox.add_child(this._panelIcon);
+            iconBox.add_child(this._dotsArea);
+            this._panelBox.add_child(iconBox);
+        } else {
+            if (this._panelIcon)
+                this._panelBox.add_child(this._panelIcon);
+            if (this._dotsArea)
+                this._panelBox.add_child(this._dotsArea);
         }
 
         const decimals = s.get_int('value-decimals');
@@ -713,6 +725,18 @@ const HMassIndicator = GObject.registerClass({
     }
 
     destroy() {
+        // nejdřív odpojit obsluhy klientů - po disable nesmí žádná
+        // (např. z naplánovaného reconnektu) sahat na už zničené UI
+        this._ha.onstate = null;
+        this._ha.onstates = null;
+        this._ha.onentity = null;
+        this._ma.onstate = null;
+        this._ma.onplayers = null;
+        this._ma.onactive = null;
+        this._ma.onqueue = null;
+        this._ma.onqueues = null;
+        this._ma.ondjinfo = null;
+        this._ma.onelapsed = null;
         if (this._tickId) {
             GLib.source_remove(this._tickId);
             this._tickId = 0;
