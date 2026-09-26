@@ -56,7 +56,8 @@ gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
 | `lib/ha.js` | klient HA (auth, get_states, subscribe_events, conversation/process s agentem z preferované Assist pipeline) |
 | `lib/ma.js` | klient MA (players/queues, příkazy, AI Radio DJ přes `ai_radio/queue_dj`) |
 | `lib/mpris.js` | MPRIS D-Bus most (org.mpris.MediaPlayer2.hmass.*) |
-| `lib/ui.js` | widgety: MaSection (menu MA), createHaRows/createPanelEntity (ovládání podle domény HA), tooltipy |
+| `lib/ui.js` | widgety: MaSection (menu MA), createHaRows/createPanelEntity (ovládání podle domény HA), mergeEntityConfig (per-entity nastavení), tooltipy |
+| `lib/icons.js` | resolver `mdi:…` → `Gio.FileIcon` ze sady `icons/mdi/` (~500 SVG, Apache-2.0, regenerace `tools/fetch-mdi.py`) |
 | `prefs.js` | GTK4 + libadwaita nastavení |
 | `schemas/` | GSettings schéma (kompiluje make) |
 | `tools/tests/` | testy + harness (`harness/` stubuje shell API, `mock_server.py` simuluje HA/MA) |
@@ -110,6 +111,10 @@ journalctl --user -f /usr/bin/gnome-shell | grep -i hmass   # logy rozšíření
 DISPLAY=:1 import -window root /tmp/shot.png                # screenshot
 ```
 
+- **Shell cachuje modul rozšíření** — `make install` + Disable/Enable přes
+  D-Bus NEREIMPORTUJE `extension.js`/`lib/*.js`; nový kód se načte až po
+  restartu shellu (Alt+F2 → `r` na X11). Ověřovat verzi kódu pixelově
+  (screenshot), ne důvěřovat „reloadu".
 - Změny nastavení se projeví do ~1 s (connection klíče po ~0,8 s).
 - Nepřehánějte živé testy, které mění stav domácnosti (scény, přehrávání) —
   ověřovat čtením, kde to jde.

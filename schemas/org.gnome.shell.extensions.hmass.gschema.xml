@@ -22,6 +22,16 @@
       <summary>Počet desetinných míst číselných hodnot</summary>
       <description>-1 = automaticky (podle atributu suggested_display_precision entity), 0-4 = pevný počet desetinných míst.</description>
     </key>
+    <key type="s" name="entity-icon">
+      <default>'ha'</default>
+      <summary>Zdroj ikon entit</summary>
+      <description>ha = ikona z Home Assistant (mdi:… z atributů entity, součástí rozšíření je sada MDI ikon), type = ikona podle domény entity, text = bez ikon.</description>
+    </key>
+    <key type="a{ss}" name="entity-configs">
+      <default>{}</default>
+      <summary>Přepisy nastavení jednotlivých entit</summary>
+      <description>Mapa entity_id na JSON s přepisy: {"decimals":0-4, "icon":"ha"|"type"|"text", "display":"auto"|"icon"|"icon-value"|"value", "name":"vlastní název", "min":číslo, "max":číslo}. Chybějící klíče dědí globální nastavení.</description>
+    </key>
     <key type="as" name="hotkey-open-menu">
       <default>['&lt;Primary&gt;&lt;Super&gt;h']</default>
       <summary>Zkratka pro otevření menu a fokusu Assist chatu</summary>

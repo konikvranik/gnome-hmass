@@ -349,7 +349,7 @@ function testPanelEntities() {
     let p = UI.createPanelEntity('sensor.teplota', {
         entity_id: 'sensor.teplota', state: '21.432',
         attributes: {friendly_name: 'Teplota', unit_of_measurement: '°C'},
-    }, ha, 1);
+    }, ha, UI.mergeEntityConfig({decimals: 1}, -1, 'ha'));
     check('Panel: sensor text 1 desetinné', p.actor.text === '21.4 °C', p.actor.text);
     p.update({entity_id: 'sensor.teplota', state: '21.436',
         attributes: {friendly_name: 'Teplota', unit_of_measurement: '°C'}});
@@ -361,13 +361,13 @@ function testPanelEntities() {
     p = UI.createPanelEntity('sensor.vlhkost', {
         entity_id: 'sensor.vlhkost', state: '52.3456',
         attributes: {friendly_name: 'Vlhkost', suggested_display_precision: 2},
-    }, ha, -1);
+    }, ha);
     check('Panel: auto suggested_display_precision', p.actor.text === '52.35', p.actor.text);
 
     // switch = tlačítko přepínající entitu
     p = UI.createPanelEntity('switch.kotel', {
         entity_id: 'switch.kotel', state: 'off', attributes: {friendly_name: 'Kotel'},
-    }, ha, -1);
+    }, ha);
     check('Panel: switch je tlačítko', p.actor.constructor === St.Button);
     check('Panel: switch vypnuto = ztlumená ikona', p.actor.child.opacity === 110,
         String(p.actor.child.opacity));
@@ -382,7 +382,7 @@ function testPanelEntities() {
     // script = tlačítko spuštění
     p = UI.createPanelEntity('script.dobre_rano', {
         entity_id: 'script.dobre_rano', state: 'off', attributes: {friendly_name: 'Dobré ráno'},
-    }, ha, -1);
+    }, ha);
     p.actor.click();
     const run = ha.calls.find(c => c.service === 'turn_on' && c.domain === 'script');
     check('Panel: klik spustí script', !!run);
@@ -391,7 +391,7 @@ function testPanelEntities() {
     p = UI.createPanelEntity('input_number.jas', {
         entity_id: 'input_number.jas', state: '42',
         attributes: {friendly_name: 'Jas', min: 0, max: 100, step: 1},
-    }, ha, -1);
+    }, ha);
     p.actor.emit('scroll-event', {get_scroll_direction: () => Clutter.ScrollDirection.UP});
     let sv = ha.calls.find(c => c.service === 'set_value');
     check('Panel: scroll nahoru +1', sv && sv.data.value === 43, JSON.stringify(sv && sv.data));
@@ -409,8 +409,8 @@ function testPanelEntities() {
     p = UI.createPanelEntity('input_select.mod', {
         entity_id: 'input_select.mod', state: 'auto',
         attributes: {friendly_name: 'Mód', options: ['auto', 'eco', 'boost']},
-    }, ha, -1);
-    check('Panel: select ukazuje volbu', p.actor.child.children[1].text === 'auto');
+    }, ha);
+    check('Panel: select ukazuje volbu', p.actor.child.children[0].text === 'auto');
     p.actor.click();
     let so = ha.calls.find(c => c.service === 'select_option');
     check('Panel: klik přepne na eco', so && so.data.option === 'eco');
@@ -425,12 +425,32 @@ function testPanelEntities() {
     p = UI.createPanelEntity('input_text.poznamka', {
         entity_id: 'input_text.poznamka', state: 'ahoj',
         attributes: {friendly_name: 'Poznámka'},
-    }, ha, -1);
+    }, ha);
     check('Panel: input_text předvyplněný', p.actor.text === 'ahoj');
     p.actor.text = 'nazdar';
     p.actor.clutter_text.emit('activate');
     const it = ha.calls.find(c => c.service === 'set_value' && c.domain === 'input_text');
     check('Panel: enter odešle text', it && it.data.value === 'nazdar');
+
+    // práh = zvýraznění hodnoty, vlastní název
+    p = UI.createPanelEntity('sensor.tlak', {
+        entity_id: 'sensor.tlak', state: '2.9',
+        attributes: {friendly_name: 'Tlak', unit_of_measurement: 'bar'},
+    }, ha, UI.mergeEntityConfig({min: 3, max: 4, name: 'Tlak vody'}, -1, 'ha'));
+    check('Panel: práh pod minimum = zvýraznění',
+        p.actor.style_class.indexOf('hmass-value-alert') >= 0, p.actor.style_class);
+    p.update({entity_id: 'sensor.tlak', state: '3.5',
+        attributes: {friendly_name: 'Tlak', unit_of_measurement: 'bar'}});
+    check('Panel: v rozsahu bez zvýraznění',
+        p.actor.style_class.indexOf('hmass-value-alert') < 0, p.actor.style_class);
+
+    // přepínač v textovém režimu
+    p = UI.createPanelEntity('switch.kotel2', {
+        entity_id: 'switch.kotel2', state: 'off', attributes: {friendly_name: 'Kotel 2'},
+    }, ha, UI.mergeEntityConfig({display: 'value'}, -1, 'ha'));
+    check('Panel: toggle text režim = stav slovem',
+        p.actor.child && p.actor.child.text === 'vypnuto',
+        p.actor.child && String(p.actor.child.text));
 }
 
 // ---- MaSection: kombinovaný řádek tlačítek + průběhu ----
@@ -654,12 +674,60 @@ async function testIndicatorOffline() {
     settings.set_boolean('ma-mpris', true);
 }
 
+// ---- mergeEntityConfig / thresholdAlert / entityIconDef ----
+
+function testEntityConfig() {
+    const c1 = UI.mergeEntityConfig(null, -1, 'ha');
+    check('Cfg: defaulty', c1.decimals === -1 && c1.icon === 'ha' &&
+        c1.display === 'auto' && c1.name === '' &&
+        c1.min === null && c1.max === null);
+
+    const c2 = UI.mergeEntityConfig({
+        decimals: 2, icon: 'type', display: 'icon-value',
+        name: ' Teplota ', min: 10, max: 30,
+    }, -1, 'ha');
+    check('Cfg: přepisy platí', c2.decimals === 2 && c2.icon === 'type' &&
+        c2.display === 'icon-value' && c2.name === 'Teplota' &&
+        c2.min === 10 && c2.max === 30);
+
+    const c3 = UI.mergeEntityConfig({decimals: 9, icon: 'bflm', display: 'x'}, -1, 'ha');
+    check('Cfg: neplatné hodnoty ignorovány',
+        c3.decimals === -1 && c3.icon === 'ha' && c3.display === 'auto');
+
+    check('Cfg: práh min', UI.thresholdAlert(9.9, c2) && !UI.thresholdAlert(15, c2));
+    check('Cfg: práh max', UI.thresholdAlert(30.1, c2) && !UI.thresholdAlert(29.9, c2));
+    check('Cfg: práhy jen pro čísla', !UI.thresholdAlert(NaN, c2));
+
+    // icons.js mimo GNOME Shell nemá sadu MDI → entityIconDef spadne
+    // na symbolic ikonu theme
+    const Icons = imports.lib.icons;
+    check('Cfg: mdi mimo shell = null', Icons.mdiIcon('mdi:lightbulb') === null);
+    const def = UI.entityIconDef('light', {attributes: {icon: 'mdi:lightbulb'}}, 'ha');
+    check('Cfg: fallback na doménovou symbolic', !!def && !!def.iconName,
+        JSON.stringify(def));
+    check('Cfg: text režim bez ikony',
+        UI.entityIconDef('light', null, 'text') === null);
+    const defType = UI.entityIconDef('fan', null, 'type');
+    check('Cfg: type režim = symbolic domény',
+        defType && defType.iconName === 'weather-windy-symbolic');
+
+    // vlastní název se uplatní i v řádku menu
+    const ha = recorderHa();
+    const r = UI.createHaRows('sensor.teplota', {
+        entity_id: 'sensor.teplota', state: '21.5',
+        attributes: {friendly_name: 'Teplota', unit_of_measurement: '°C'},
+    }, ha, UI.mergeEntityConfig({name: 'Teplota ložnice'}, -1, 'ha'));
+    const nameLbl = r.rows[0].children.find(c => c.x_expand === true);
+    check('Cfg: vlastní název v menu', nameLbl && nameLbl.text === 'Teplota ložnice',
+        nameLbl && nameLbl.text);
+}
+
 // ---- běh ----
 
 async function main() {
     testUnits();
     for (const [name, fn] of [['Rows', testHaRows], ['Panel', testPanelEntities],
-        ['Ma', testMaSection], ['Slider', testSliderRow]]) {
+        ['Ma', testMaSection], ['Slider', testSliderRow], ['Cfg', testEntityConfig]]) {
         try {
             fn();
         } catch (e) {
