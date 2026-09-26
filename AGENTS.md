@@ -112,9 +112,17 @@ DISPLAY=:1 import -window root /tmp/shot.png                # screenshot
 ```
 
 - **Shell cachuje modul rozšíření** — `make install` + Disable/Enable přes
-  D-Bus NEREIMPORTUJE `extension.js`/`lib/*.js`; nový kód se načte až po
-  restartu shellu (Alt+F2 → `r` na X11). Ověřovat verzi kódu pixelově
-  (screenshot), ne důvěřovat „reloadu".
+  D-Bus NEREIMPORTUJE `extension.js`/`lib/*.js` (`ReloadExtension` na 42
+  nefunguje); nový kód se načte až po restartu shellu. Ověřovat verzi kódu
+  pixelově (screenshot), ne důvěřovat „reloadu".
+- **Restart shellu**: Alt+F2 → `r` na Ubuntu 22.04 NEFUNGUJE (chybí
+  `/usr/libexec/mutter-restart-helper`). Spolehlivě: `kill -QUIT $(pgrep -n
+  gnome-shell)` — systemd (`org.gnome.Shell@x11.service`) shell do ~3 s
+  obnoví, session i okna přežijí. Panel musí být jinak prázdný ~5 s.
+- **St.Icon + gicon**: gicon/icon_name přiřazovat AŽ PO konstrukci
+  (`icon.gicon = …`), ne v params konstruktoru — GJS 1.72 je v params u
+  St.Icon tiše zahodí a ikona má 0×0 (ověřeno bolestivě). SVG pro
+  FileIcon musí mít `width`/`height` atributy (jen viewBox nestačí).
 - Změny nastavení se projeví do ~1 s (connection klíče po ~0,8 s).
 - Nepřehánějte živé testy, které mění stav domácnosti (scény, přehrávání) —
   ověřovat čtením, kde to jde.

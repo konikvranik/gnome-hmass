@@ -371,7 +371,7 @@ function testPanelEntities() {
         entity_id: 'switch.kotel', state: 'off', attributes: {friendly_name: 'Kotel'},
     }, ha);
     check('Panel: switch je tlačítko', p.actor.constructor === St.Button);
-    check('Panel: switch vypnuto = ztlumená ikona', p.actor.child.children[0].opacity === 190,
+    check('Panel: switch vypnuto = ztlumená ikona', p.actor.child.children[0].opacity === 115,
         String(p.actor.child.children[0].opacity));
     p.actor.click();
     check('Panel: klik přepne switch',
@@ -731,6 +731,29 @@ function testEntityConfig() {
     const nameLbl = r.rows[0].children.find(c => c.x_expand === true);
     check('Cfg: vlastní název v menu', nameLbl && nameLbl.text === 'Teplota ložnice',
         nameLbl && nameLbl.text);
+
+    // barva ikony světla podle stavu (rgb/hs/color_temp, vypnuto = bílá)
+    const lc = UI.lightIconColor;
+    check('Světlo: vypnuto = null', lc({state: 'off', attributes: {}}) === null);
+    check('Světlo: zapnuto bez barev = null',
+        lc({state: 'on', attributes: {}}) === null);
+    check('Světlo: rgb_color', lc({state: 'on',
+        attributes: {rgb_color: [255, 128, 0]}}) === '#ff8000');
+    check('Světlo: hs_color červená', lc({state: 'on',
+        attributes: {hs_color: [0, 100]}}) === '#ff0000');
+    check('Světlo: hs_color saturace 0 = bílá', lc({state: 'on',
+        attributes: {hs_color: [240, 0]}}) === '#ffffff');
+    const ch = (hex, i) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16);
+    const warm = lc({state: 'on', attributes: {color_temp_kelvin: 2700}});
+    check('Světlo: kelvin teplá má převahu R', warm &&
+        ch(warm, 0) > ch(warm, 1) && ch(warm, 1) > ch(warm, 2), warm);
+    const mired = lc({state: 'on', attributes: {color_temp: 370}});
+    check('Světlo: mired ≈ kelvin', mired && warm &&
+        [0, 1, 2].every(i => Math.abs(ch(mired, i) - ch(warm, i)) <= 2),
+        `${mired} vs ${warm}`);
+    const cold = lc({state: 'on', attributes: {color_temp_kelvin: 10000}});
+    check('Světlo: kelvin studená má převahu B', cold &&
+        ch(cold, 2) > ch(cold, 0), cold);
 }
 
 // ---- běh ----
