@@ -258,8 +258,10 @@ function _entityConfigDialog(settings, entityId, root) {
     const maxEntry = entryRow('Práh maximum', 'neomezeno',
         typeof ov.max === 'number' ? String(ov.max) : '');
     const hint = new Gtk.Label({
-        label: 'Hodnota mimo prahy se v liště zvýrazní červeně.\n' +
-               'Nastavení platí pro lištu i menu.',
+        label: 'Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n' +
+               'desetinná místa a prahy platí pro lištu i menu; režim\n' +
+               'zobrazení jen pro lištu (v menu u přepínače je hodnotou\n' +
+               'sám přepínač).',
         halign: Gtk.Align.START,
         wrap: true,
     });

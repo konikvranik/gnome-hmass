@@ -371,15 +371,15 @@ function testPanelEntities() {
         entity_id: 'switch.kotel', state: 'off', attributes: {friendly_name: 'Kotel'},
     }, ha);
     check('Panel: switch je tlačítko', p.actor.constructor === St.Button);
-    check('Panel: switch vypnuto = ztlumená ikona', p.actor.child.opacity === 190,
-        String(p.actor.child.opacity));
+    check('Panel: switch vypnuto = ztlumená ikona', p.actor.child.children[0].opacity === 190,
+        String(p.actor.child.children[0].opacity));
     p.actor.click();
     check('Panel: klik přepne switch',
         ha.calls.length === 1 && ha.calls[0].service === 'toggle' &&
         ha.calls[0].data.entity_id === 'switch.kotel');
     p.update({entity_id: 'switch.kotel', state: 'on', attributes: {friendly_name: 'Kotel'}});
-    check('Panel: switch zapnuto = plná ikona', p.actor.child.opacity === 255,
-        String(p.actor.child.opacity));
+    check('Panel: switch zapnuto = plná ikona', p.actor.child.children[0].opacity === 255,
+        String(p.actor.child.children[0].opacity));
 
     // script = tlačítko spuštění
     p = UI.createPanelEntity('script.dobre_rano', {
@@ -453,6 +453,15 @@ function testPanelEntities() {
     check('Panel: toggle text režim = stav slovem',
         p.actor.child && p.actor.child.text === 'vypnuto',
         p.actor.child && String(p.actor.child.text));
+
+    // přepínač ikona + hodnota
+    p = UI.createPanelEntity('switch.kotel3', {
+        entity_id: 'switch.kotel3', state: 'on', attributes: {friendly_name: 'Kotel 3'},
+    }, ha, UI.mergeEntityConfig({display: 'icon-value'}, -1, 'ha'));
+    check('Panel: toggle ikona+hodnota = box se 2 dětmi',
+        p.actor.child && p.actor.child.children.length === 2 &&
+        p.actor.child.children[1].text === 'zapnuto',
+        JSON.stringify(p.actor.child && p.actor.child.children.map(c => c.text)));
 }
 
 // ---- MaSection: kombinovaný řádek tlačítek + průběhu ----
