@@ -7,3 +7,6 @@ schemas/gschemas.compiled
 
 # python testovací harness
 __pycache__/
+
+# build překladů (msgfmt, cíle make all/install)
+locale/
