@@ -174,6 +174,21 @@ Music Assistant server 2.5–2.10 (WebSocket `/ws`, se fallbackem na starší
 make uninstall
 ```
 
+## Vývoj s AI asistenty (agentic coding)
+
+Repozitář je připravený pro AI asistenty a agentní nástroje. **Jediný zdroj
+pravidel je [`AGENTS.md`](AGENTS.md)** — konvence, příkazy, tvrdá pravidla
+(včetně pádových pastí jako mmap `gschemas.compiled`), známá selhání testů
+i ladění naživo.
+
+| Nástroj | Soubor, který čte |
+|---|---|
+| opencode, ZCode, Codex, Cursor, Junie / IntelliJ AI Assistant | `AGENTS.md` přímo |
+| Claude Code | `CLAUDE.md` (importuje `AGENTS.md`) |
+| Gemini CLI / Antigravity | `GEMINI.md` (importuje `AGENTS.md`; umí i přímo `AGENTS.md`) |
+
+Pravidla se tedy drží právě jednou — upravujte jen `AGENTS.md`.
+
 ## Publikování na extensions.gnome.org
 
 1. Vytvořte balíček: `make zip` → `hmass@pvranik.zip` (obsahuje jen potřebné
