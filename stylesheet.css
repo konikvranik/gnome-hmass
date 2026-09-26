@@ -4,6 +4,22 @@
     padding: 0 4px;
 }
 
+/* Ikona + stavové tečky těsně u sebe (bez theme mezer) */
+.hmass-icon-box {
+    spacing: 0;
+}
+
+/* theme dává .system-status-icon padding 5px a margin 0 4px;
+   u nás tečky přiléhají k ikoně, pravý padding a margin rušíme */
+#panel .panel-button .system-status-icon.hmass-panel-icon {
+    padding: 5px 0 5px 5px;
+    margin: 0;
+}
+
+.hmass-dots-area {
+    margin: 0 2px 0 1px;
+}
+
 .hmass-panel-value {
     font-feature-settings: "tnum";
 }
@@ -40,10 +56,6 @@
     border-radius: 6px;
     padding: 4px 10px;
     font-size: 0.95em;
-}
-
-.hmass-dots-area {
-    margin: 0 3px 0 0;
 }
 
 .hmass-dot {
