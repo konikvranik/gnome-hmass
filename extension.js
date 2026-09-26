@@ -318,9 +318,9 @@ const HMassIndicator = GObject.registerClass({
             });
             this._dotsArea.connect('repaint', (area) => {
                 const cr = area.get_context();
-                const [w, h] = area.get_surface_size();
+                const [, h] = area.get_surface_size();
                 const r = 2.5;
-                const cx = w / 2;
+                const cx = r + 0.5;
 
                 const hasMa = this._settings.get_boolean('ma-enabled');
                 const haColor = STATUS_COLORS[this._haStatusValue] || null;
