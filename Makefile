@@ -9,15 +9,18 @@ ZIPFILES = metadata.json extension.js prefs.js stylesheet.css LICENSE lib schema
 
 .PHONY: all build-legacy check test install install-46 install-42 zip clean uninstall update-po
 
-all: schemas/gschemas.compiled locale/cs/LC_MESSAGES/hmass.mo
+LANGUAGES = cs nl
+MOFILES = $(LANGUAGES:%=locale/%/LC_MESSAGES/hmass.mo)
+
+all: schemas/gschemas.compiled $(MOFILES)
 
 schemas/gschemas.compiled: schemas/org.gnome.shell.extensions.hmass.gschema.xml
 	glib-compile-schemas schemas/
 
 # překlady: msgid v kódu jsou anglicky, cs.po nese českou lokalizaci
-locale/cs/LC_MESSAGES/hmass.mo: po/cs.po
-	mkdir -p locale/cs/LC_MESSAGES
-	msgfmt po/cs.po -o $@
+locale/%/LC_MESSAGES/hmass.mo: po/%.po
+	mkdir -p $(dir $@)
+	msgfmt $< -o $@
 
 po/hmass.pot: po/POTFILES.in extension.js prefs.js lib/*.js
 	xgettext --from-code=UTF-8 -L JavaScript --keyword=_ -kformat \
@@ -27,7 +30,9 @@ po/hmass.pot: po/POTFILES.in extension.js prefs.js lib/*.js
 
 # aktualizace cs.po po změně msgid (uchová přeložené)
 update-po: po/hmass.pot
-	msgmerge -U --backup=none po/cs.po po/hmass.pot
+	@for po in $(LANGUAGES:%=po/%.po); do \
+		msgmerge -U --backup=none $$po po/hmass.pot; \
+	done
 
 build-legacy: all
 	python3 tools/build-legacy.py --src . --out build/v42
