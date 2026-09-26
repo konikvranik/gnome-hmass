@@ -16,9 +16,12 @@ přítomní v issue a diskuzích zdvořile a vstřícně.
   nastavit počet desetinných míst (automaticky podle entity, nebo pevně 0–4).
 - **Ikony entit z Home Assistant** – přepínače, tlačítka a ostatní entity
   zobrazují svou ikonu z HA (`mdi:…` z atributů entity). Rozšíření obsahuje
-  vestavěnou sadu ~500 MDI ikon (Apache-2.0), takže funguje i offline; když
-  ikona v sadě chybí, použije se ikona podle typu entity. Zdroj ikon jde přepnout
-  globálně i pro jednotlivé entity.
+  vestavěnou kompletní sadu MDI ikon (~7,4 tis., Apache-2.0, stejný zdroj
+  jako HA), takže funguje i offline a žádná MDI ikona nechybí; když entita
+  ikonu nemá, použije se ikona podle typu entity. Zdroj ikon jde přepnout
+  globálně i pro jednotlivé entity. Stav světla je vidět barevně: zapnuté
+  světlo má ikonu v aktuální barvě světla (`rgb_color`/`hs_color`/barevná
+  teplota), vypnuté je výrazně tlumené.
 - **Individuální nastavení entity** – tlačítko vedle entity v nastavení otevře
   dialog s přepisy jen pro danou entitu: vlastní název, zdroj ikony, režim
   zobrazení v liště (jen ikona / ikona+hodnota / jen hodnota), počet desetinných
