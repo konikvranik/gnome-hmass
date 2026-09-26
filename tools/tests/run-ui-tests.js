@@ -232,6 +232,8 @@ function testHaRows() {
     check('Rows: switch = přepínač', r.rows.length === 1 &&
         r.rows[0] instanceof imports.ui.popupMenu.PopupSwitchMenuItem &&
         r.rows[0].label.text === 'Kotel' && r.rows[0].state === false);
+    check('Rows: switch má ikonu entity', r.rows[0].children[0].icon_name !== undefined,
+        JSON.stringify(r.rows[0].children[0]));
     r.rows[0].activateItem();
     check('Rows: switch toggle → callService', ha.calls.length === 1 &&
         ha.calls[0].domain === 'switch' && ha.calls[0].service === 'toggle' &&
@@ -369,7 +371,7 @@ function testPanelEntities() {
         entity_id: 'switch.kotel', state: 'off', attributes: {friendly_name: 'Kotel'},
     }, ha);
     check('Panel: switch je tlačítko', p.actor.constructor === St.Button);
-    check('Panel: switch vypnuto = ztlumená ikona', p.actor.child.opacity === 110,
+    check('Panel: switch vypnuto = ztlumená ikona', p.actor.child.opacity === 190,
         String(p.actor.child.opacity));
     p.actor.click();
     check('Panel: klik přepne switch',
