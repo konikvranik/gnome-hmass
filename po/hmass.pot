@@ -1,0 +1,636 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: https://github.com/konikvranik/gnome-hmass/issues\n"
+"POT-Creation-Date: 2026-09-26 18:44+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: extension.js:188 extension.js:196 extension.js:690 extension.js:716
+msgid "not configured"
+msgstr ""
+
+#: extension.js:199
+msgid "disabled in settings"
+msgstr ""
+
+#: extension.js:534
+msgid "Open Music Assistant"
+msgstr ""
+
+#: extension.js:549
+msgid "Open Home Assistant"
+msgstr ""
+
+#: extension.js:566
+msgid "Reconnect"
+msgstr ""
+
+#: extension.js:574
+msgid "Settings"
+msgstr ""
+
+#: extension.js:681
+msgid "Home Assistant: connected"
+msgstr ""
+
+#: extension.js:684
+msgid "Home Assistant: connecting…"
+msgstr ""
+
+#: extension.js:687
+msgid "Home Assistant: invalid token"
+msgstr ""
+
+#: extension.js:694 extension.js:720 lib/ha.js:40 lib/ha.js:43 lib/ma.js:142
+#: lib/ma.js:146 lib/ma.js:226
+msgid "no connection"
+msgstr ""
+
+#: extension.js:707
+msgid "Music Assistant: connected"
+msgstr ""
+
+#: extension.js:710
+msgid "Music Assistant: connecting…"
+msgstr ""
+
+#: extension.js:713
+msgid "Music Assistant: access denied (API key?)"
+msgstr ""
+
+#: lib/ha.js:85
+msgid "destroyed"
+msgstr ""
+
+#: lib/ha.js:117
+msgid "invalid token"
+msgstr ""
+
+#: lib/ha.js:237
+msgid "Home Assistant is not connected"
+msgstr ""
+
+#: lib/ma.js:286
+msgid "denied - check the API key"
+msgstr ""
+
+#: lib/mpris.js:188 lib/ui.js:1296
+msgid "Nothing playing"
+msgstr ""
+
+#: lib/mpris.js:302
+#, javascript-format
+msgid "Unknown property %s on %s"
+msgstr ""
+
+#: lib/mpris.js:363
+#, javascript-format
+msgid "Unknown method %s"
+msgstr ""
+
+#: lib/ui.js:273
+msgid "on"
+msgstr ""
+
+#: lib/ui.js:274
+msgid "off"
+msgstr ""
+
+#: lib/ui.js:275 lib/ui.js:291 lib/ui.js:548
+msgid "unavailable"
+msgstr ""
+
+#: lib/ui.js:276
+msgid "unknown"
+msgstr ""
+
+#: lib/ui.js:277
+msgid "idle"
+msgstr ""
+
+#: lib/ui.js:278
+msgid "playing"
+msgstr ""
+
+#: lib/ui.js:279
+msgid "paused"
+msgstr ""
+
+#: lib/ui.js:280
+msgid "standby"
+msgstr ""
+
+#: lib/ui.js:281
+msgid "open"
+msgstr ""
+
+#: lib/ui.js:282
+msgid "opening"
+msgstr ""
+
+#: lib/ui.js:283
+msgid "closed"
+msgstr ""
+
+#: lib/ui.js:284
+msgid "closing"
+msgstr ""
+
+#: lib/ui.js:285
+msgid "home"
+msgstr ""
+
+#: lib/ui.js:286
+msgid "away"
+msgstr ""
+
+#: lib/ui.js:688
+msgid "text…"
+msgstr ""
+
+#: lib/ui.js:718
+msgid "Brightness"
+msgstr ""
+
+#: lib/ui.js:734
+msgid "Volume"
+msgstr ""
+
+#: lib/ui.js:750
+msgid "Position"
+msgstr ""
+
+#: lib/ui.js:974
+msgid "click to toggle"
+msgstr ""
+
+#: lib/ui.js:988
+msgid "click to run"
+msgstr ""
+
+#: lib/ui.js:1033
+msgid "scroll to change"
+msgstr ""
+
+#: lib/ui.js:1059
+msgid "click to cycle"
+msgstr ""
+
+#: lib/ui.js:1148
+msgid "Player"
+msgstr ""
+
+#: lib/ui.js:1240
+msgid "No player"
+msgstr ""
+
+#: lib/ui.js:1277
+msgid "Off"
+msgstr ""
+
+#: lib/ui.js:1416
+msgid "Ask the Assistant..."
+msgstr ""
+
+#: lib/ui.js:1455
+msgid "You"
+msgstr ""
+
+#: lib/ui.js:1456
+msgid "Thinking..."
+msgstr ""
+
+#: lib/ui.js:1465
+msgid "Done."
+msgstr ""
+
+#: lib/ui.js:1469
+msgid "Error"
+msgstr ""
+
+#: lib/ws.js:223
+#, javascript-format
+msgid "connection did not open within %s s"
+msgstr ""
+
+#: lib/ws.js:232
+#, javascript-format
+msgid "invalid URL (cannot create message): %s"
+msgstr ""
+
+#: lib/ws.js:251 lib/ws.js:268
+#, javascript-format
+msgid "connection failed: %s"
+msgstr ""
+
+#: lib/ws.js:325
+msgid "connection closed by server"
+msgstr ""
+
+#: prefs.js:530
+msgid "Entity settings"
+msgstr ""
+
+#: prefs.js:536
+msgid "Cancel"
+msgstr ""
+
+#: prefs.js:537
+msgid "Clear"
+msgstr ""
+
+#: prefs.js:538
+msgid "Save"
+msgstr ""
+
+#: prefs.js:583
+msgid "Custom name"
+msgstr ""
+
+#: prefs.js:583
+msgid "from Home Assistant"
+msgstr ""
+
+#: prefs.js:584
+msgid "Icon"
+msgstr ""
+
+#: prefs.js:585 prefs.js:597
+msgid "Global setting"
+msgstr ""
+
+#: prefs.js:586 prefs.js:1404
+msgid "From Home Assistant (MDI)"
+msgstr ""
+
+#: prefs.js:587 prefs.js:1405
+msgid "By entity type"
+msgstr ""
+
+#: prefs.js:588
+msgid "No icon"
+msgstr ""
+
+#: prefs.js:590
+msgid "Panel display"
+msgstr ""
+
+#: prefs.js:591 prefs.js:1388
+msgid "Automatic"
+msgstr ""
+
+#: prefs.js:592
+msgid "Icon only"
+msgstr ""
+
+#: prefs.js:593
+msgid "Icon + value"
+msgstr ""
+
+#: prefs.js:594
+msgid "Value / text only"
+msgstr ""
+
+#: prefs.js:596
+msgid "Decimal places"
+msgstr ""
+
+#: prefs.js:598 prefs.js:1389
+msgid "0 (integers)"
+msgstr ""
+
+#: prefs.js:604
+msgid "Minimum threshold"
+msgstr ""
+
+#: prefs.js:604 prefs.js:606
+msgid "unlimited"
+msgstr ""
+
+#: prefs.js:606
+msgid "Maximum threshold"
+msgstr ""
+
+#: prefs.js:609
+msgid ""
+"Values outside thresholds are highlighted red. Icon, name,\n"
+"decimal places and thresholds apply to both the panel and the\n"
+"menu; the display mode applies to the panel only (in the menu\n"
+"the toggle is the value itself)."
+msgstr ""
+
+#: prefs.js:670
+msgid "Not set"
+msgstr ""
+
+#: prefs.js:733
+msgid "Add entity…"
+msgstr ""
+
+#: prefs.js:747 prefs.js:1380
+msgid "e.g. sensor.temperature_livingroom"
+msgstr ""
+
+#: prefs.js:760
+msgid "Per-entity settings (icon, decimal places, thresholds…)"
+msgstr ""
+
+#: prefs.js:801
+msgid "Drag to reorder"
+msgstr ""
+
+#: prefs.js:970
+msgid "Authentication failed (401/403) — check the long-lived token."
+msgstr ""
+
+#: prefs.js:974
+msgid "Server returned 404 Not Found — verify the URL."
+msgstr ""
+
+#: prefs.js:978
+#, javascript-format
+msgid "Server returned code %s."
+msgstr ""
+
+#: prefs.js:985
+#, javascript-format
+msgid "Invalid JSON response: %s"
+msgstr ""
+
+#: prefs.js:989
+msgid "Server returned no entities."
+msgstr ""
+
+#: prefs.js:1007
+#, javascript-format
+msgid "Connected — %d entities found."
+msgstr ""
+
+#: prefs.js:1154 prefs.js:1164
+#, javascript-format
+msgid "Connection error: %s"
+msgstr ""
+
+#: prefs.js:1173
+msgid "Enter the Music Assistant URL."
+msgstr ""
+
+#: prefs.js:1192
+msgid "Connection timed out (10 s)."
+msgstr ""
+
+#: prefs.js:1200
+#, javascript-format
+msgid "Connected — %d players: %s"
+msgstr ""
+
+#: prefs.js:1206
+msgid "Access denied — check the API key."
+msgstr ""
+
+#: prefs.js:1258
+msgid "also found in HA"
+msgstr ""
+
+#: prefs.js:1270
+msgid "No players — they load after testing the connection above."
+msgstr ""
+
+#: prefs.js:1339 prefs.js:1479
+msgid "Connection"
+msgstr ""
+
+#: prefs.js:1340
+msgid "Home Assistant server connection settings"
+msgstr ""
+
+#: prefs.js:1343 prefs.js:1489
+msgid "Server URL"
+msgstr ""
+
+#: prefs.js:1343
+msgid "e.g. http://homeassistant.local:8123"
+msgstr ""
+
+#: prefs.js:1346
+msgid "Access token"
+msgstr ""
+
+#: prefs.js:1347
+msgid "Long-lived token from your Home Assistant user profile"
+msgstr ""
+
+#: prefs.js:1353
+msgid "For servers with custom or self-signed certificates (libsoup 3.2+)"
+msgstr ""
+
+#: prefs.js:1359 prefs.js:1499
+msgid "Test connection"
+msgstr ""
+
+#: prefs.js:1360
+msgid "Checks the server and loads the entity list"
+msgstr ""
+
+#: prefs.js:1376
+msgid "Panel entities"
+msgstr ""
+
+#: prefs.js:1377
+msgid ""
+"Entity values (e.g. a temperature sensor) shown directly in the GNOME top "
+"bar. Switches, buttons and other controls can be operated right in the bar; "
+"the entity name appears on hover."
+msgstr ""
+
+#: prefs.js:1383
+msgid "Decimal places for numeric values"
+msgstr ""
+
+#: prefs.js:1384
+msgid "Automatic per entity, or a fixed number of decimal places"
+msgstr ""
+
+#: prefs.js:1397
+msgid "Entity icons"
+msgstr ""
+
+#: prefs.js:1398
+msgid ""
+"Icon source for the panel and menu. \"From Home Assistant (MDI)\" uses the "
+"entity's own icon (mdi:…) from the MDI set bundled with the extension"
+msgstr ""
+
+#: prefs.js:1406
+msgid "No icons"
+msgstr ""
+
+#: prefs.js:1414
+msgid "Extension global keyboard shortcuts"
+msgstr ""
+
+#: prefs.js:1417
+msgid "Open menu and assistant chat"
+msgstr ""
+
+#: prefs.js:1418
+msgid "Opens the extension menu and focuses the conversation entry"
+msgstr ""
+
+#: prefs.js:1428
+msgid "Menu entities"
+msgstr ""
+
+#: prefs.js:1429
+msgid ""
+"Controls in the popup menu. The control type adapts automatically by domain: "
+"switch (switch, light, fan), slider (light brightness, volume, covers), "
+"button (script, scene), dropdown (input_select), text or sensor."
+msgstr ""
+
+#: prefs.js:1433
+msgid "e.g. light.livingroom or switch.coffee"
+msgstr ""
+
+#: prefs.js:1445 prefs.js:1543
+msgid "Testing connection…"
+msgstr ""
+
+#: prefs.js:1480
+msgid "Music Assistant server connection settings"
+msgstr ""
+
+#: prefs.js:1485
+msgid "Shows the player section in the menu and enables MPRIS control"
+msgstr ""
+
+#: prefs.js:1489
+msgid "e.g. http://music-assistant:8095"
+msgstr ""
+
+#: prefs.js:1492
+msgid "API key"
+msgstr ""
+
+#: prefs.js:1493
+msgid "Optional — only if MA requires authentication"
+msgstr ""
+
+#: prefs.js:1500
+msgid "Checks the server and loads the players"
+msgstr ""
+
+#: prefs.js:1514 prefs.js:1518
+msgid "Default player"
+msgstr ""
+
+#: prefs.js:1515
+msgid "Which player gets selected in the menu at startup"
+msgstr ""
+
+#: prefs.js:1519
+msgid "Player shown in the menu when opened"
+msgstr ""
+
+#: prefs.js:1524
+msgid "Automatic (first playing)"
+msgstr ""
+
+#: prefs.js:1572
+msgid "MPRIS and media keys"
+msgstr ""
+
+#: prefs.js:1573
+msgid "Integration with the GNOME system media controls"
+msgstr ""
+
+#: prefs.js:1576
+msgid "MPRIS bridge (media keys)"
+msgstr ""
+
+#: prefs.js:1577
+msgid ""
+"Lets you control players with hardware keys and the GNOME media controls"
+msgstr ""
+
+#: prefs.js:1583
+msgid "Players in MPRIS"
+msgstr ""
+
+#: prefs.js:1584
+msgid ""
+"Check the players from Music Assistant and Home Assistant. On name clash "
+"Music Assistant wins."
+msgstr ""
+
+#: prefs.js:1598
+msgid "Menu controls"
+msgstr ""
+
+#: prefs.js:1599
+msgid "Choose the player widgets shown in the popup menu"
+msgstr ""
+
+#: prefs.js:1601
+msgid "Player selector in menu"
+msgstr ""
+
+#: prefs.js:1602
+msgid "Play/Pause, previous, next"
+msgstr ""
+
+#: prefs.js:1602
+msgid "Playback buttons"
+msgstr ""
+
+#: prefs.js:1603
+msgid "Track position slider"
+msgstr ""
+
+#: prefs.js:1604
+msgid "Volume slider"
+msgstr ""
+
+#: prefs.js:1605
+msgid "Shuffle and repeat"
+msgstr ""
+
+#: prefs.js:1613 prefs.js:1707
+msgid "Top bar"
+msgstr ""
+
+#: prefs.js:1617
+msgid "Panel indicator"
+msgstr ""
+
+#: prefs.js:1618
+msgid "Icon and status customization in the GNOME top bar"
+msgstr ""
+
+#: prefs.js:1620
+msgid "House / note / offline status icon"
+msgstr ""
+
+#: prefs.js:1620
+msgid "Show icon"
+msgstr ""
+
+#: prefs.js:1621
+msgid "Color indicator of Home Assistant and Music Assistant status"
+msgstr ""
+
+#: prefs.js:1621
+msgid "Show connection status (dots)"
+msgstr ""

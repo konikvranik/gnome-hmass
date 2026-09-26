@@ -11,8 +11,19 @@ const Gio = imports.gi.Gio;
 let _testSettings = null;
 
 function getCurrentExtension() {
-    return {imports: {lib: imports.lib}};
+    // metadata + dir nutné pro import extension.js (gettext doména) i ikony
+    if (!_ext) {
+        _ext = {
+            uuid: 'hmass@pvranik',
+            dir: Gio.File.new_for_path('/home/pvranik/priv/git/gnome-hmass'),
+            metadata: {name: 'hmass', 'gettext-domain': 'hmass',
+                'settings-schema': 'org.gnome.shell.extensions.hmass'},
+            imports: {lib: imports.lib},
+        };
+    }
+    return _ext;
 }
+let _ext = null;
 
 function getSettings() {
     if (!_testSettings) {

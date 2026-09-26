@@ -199,7 +199,7 @@ const HMassIndicator = GObject.registerClass({
         if (haUrl)
             this._ha.connect();
         else
-            this._updateHaStatus('disabled', 'není nastaveno');
+            this._updateHaStatus('disabled', _('not configured'));
 
         if (s.get_boolean('ma-enabled')) {
             const maUrl = s.get_string('ma-url');
@@ -207,10 +207,10 @@ const HMassIndicator = GObject.registerClass({
             if (maUrl)
                 this._ma.connect();
             else
-                this._updateMaStatus('disabled', 'není nastaveno');
+                this._updateMaStatus('disabled', _('not configured'));
         } else {
             this._ma.disconnect();
-            this._updateMaStatus('disabled', 'vypnuto v nastavení');
+            this._updateMaStatus('disabled', _('disabled in settings'));
         }
 
         this._setupMpris();
@@ -545,7 +545,7 @@ const HMassIndicator = GObject.registerClass({
 
         let maShown = false;
         if (s.get_boolean('ma-enabled')) {
-            this.menu.addMenuItem(UI.sectionHeader('Music Assistant', () => this._launchMa(), this._maFileIcon, 'Otevřít Music Assistant'));
+            this.menu.addMenuItem(UI.sectionHeader('Music Assistant', () => this._launchMa(), this._maFileIcon, _('Open Music Assistant')));
             this._maSection = new UI.MaSection(this._ma, s);
             this._maSection.onPlayerPicked = playerId => {
                 this._settings.set_string('ma-default-player', playerId);
@@ -560,7 +560,7 @@ const HMassIndicator = GObject.registerClass({
         if (haUrl || menuEntities.length > 0) {
             if (maShown)
                 this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-            this.menu.addMenuItem(UI.sectionHeader('Home Assistant', () => this._launchHa(), this._haFileIcon, 'Otevřít Home Assistant'));
+            this.menu.addMenuItem(UI.sectionHeader('Home Assistant', () => this._launchHa(), this._haFileIcon, _('Open Home Assistant')));
 
             // Assist Chat
             this._haAssist = new UI.HaAssistChat(this._ha);
@@ -577,7 +577,7 @@ const HMassIndicator = GObject.registerClass({
         this._haStatus = null;
         this._maStatus = null;
 
-        const reloadItem = new PopupMenu.PopupMenuItem('Připojit znovu');
+        const reloadItem = new PopupMenu.PopupMenuItem(_('Reconnect'));
         reloadItem.add_style_class_name('hmass-menu-secondary');
         reloadItem.connect('activate', () => {
             this._ha.reconnect();
@@ -585,7 +585,7 @@ const HMassIndicator = GObject.registerClass({
         });
         this.menu.addMenuItem(reloadItem);
 
-        const prefsItem = new PopupMenu.PopupMenuItem('Nastavení');
+        const prefsItem = new PopupMenu.PopupMenuItem(_('Settings'));
         prefsItem.add_style_class_name('hmass-menu-secondary');
         prefsItem.connect('activate', () => {
             try {
@@ -699,20 +699,20 @@ const HMassIndicator = GObject.registerClass({
             return;
         switch (status) {
             case 'ok':
-                this._haStatus.set(STATUS_DOT[status], `Home Assistant: připojeno${detail ? ' (' + detail + ')' : ''}`);
+                this._haStatus.set(STATUS_DOT[status], _('Home Assistant: connected') + (detail ? ` (${detail})` : ''));
                 break;
             case 'connecting':
-                this._haStatus.set(STATUS_DOT[status], 'Home Assistant: připojuji…');
+                this._haStatus.set(STATUS_DOT[status], _('Home Assistant: connecting…'));
                 break;
             case 'auth-error':
-                this._haStatus.set(STATUS_DOT[status], 'Home Assistant: neplatný token');
+                this._haStatus.set(STATUS_DOT[status], _('Home Assistant: invalid token'));
                 break;
             case 'disabled':
-                this._haStatus.set(STATUS_DOT[status], `Home Assistant: ${detail || 'není nastaveno'}`);
+                this._haStatus.set(STATUS_DOT[status], `Home Assistant: ${detail || _('not configured')}`);
                 break;
             default:
                 this._haStatus.set(STATUS_DOT[status] || 'hmass-dot-err',
-                    `Home Assistant: ${detail || 'bez spojení'}`);
+                    `Home Assistant: ${detail || _('no connection')}`);
         }
     }
 
@@ -725,20 +725,20 @@ const HMassIndicator = GObject.registerClass({
             return;
         switch (status) {
             case 'ok':
-                this._maStatus.set(STATUS_DOT[status], `Music Assistant: připojeno${detail ? ' (' + detail + ')' : ''}`);
+                this._maStatus.set(STATUS_DOT[status], _('Music Assistant: connected') + (detail ? ` (${detail})` : ''));
                 break;
             case 'connecting':
-                this._maStatus.set(STATUS_DOT[status], 'Music Assistant: připojuji…');
+                this._maStatus.set(STATUS_DOT[status], _('Music Assistant: connecting…'));
                 break;
             case 'auth-error':
-                this._maStatus.set(STATUS_DOT[status], 'Music Assistant: přístup odepřen (API klíč?)');
+                this._maStatus.set(STATUS_DOT[status], _('Music Assistant: access denied (API key?)'));
                 break;
             case 'disabled':
-                this._maStatus.set(STATUS_DOT[status], `Music Assistant: ${detail || 'není nastaveno'}`);
+                this._maStatus.set(STATUS_DOT[status], `Music Assistant: ${detail || _('not configured')}`);
                 break;
             default:
                 this._maStatus.set(STATUS_DOT[status] || 'hmass-dot-err',
-                    `Music Assistant: ${detail || 'bez spojení'}`);
+                    `Music Assistant: ${detail || _('no connection')}`);
         }
     }
 

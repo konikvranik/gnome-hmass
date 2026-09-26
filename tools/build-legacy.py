@@ -155,6 +155,7 @@ def transform_js(content: str, rel_path: str) -> str:
             out_lines.append("let _indicator = null;")
             out_lines.append("")
             out_lines.append("function init() {")
+            out_lines.append("    ExtensionUtils.initTranslations();")
             out_lines.append("}")
             out_lines.append("")
             out_lines.append("function enable() {")
@@ -178,6 +179,7 @@ def transform_js(content: str, rel_path: str) -> str:
         # export default class HMassPreferences extends ExtensionPreferences {
         if is_prefs_js and line.strip().startswith('export default class HMassPreferences extends ExtensionPreferences'):
             out_lines.append("function init() {")
+            out_lines.append("    ExtensionUtils.initTranslations();")
             out_lines.append("}")
             i += 1
             continue
@@ -213,8 +215,8 @@ def build_legacy(src_dir: str, out_dir: str):
     os.makedirs(out_dir, exist_ok=True)
     os.makedirs(os.path.join(out_dir, 'lib'), exist_ok=True)
 
-    # 1. Zkopírovat statické assety (schemas, icons, stylesheet.css, LICENSE, README)
-    for asset in ['schemas', 'icons']:
+    # 1. Zkopírovat statické assety (schemas, icons, locale, stylesheet.css, LICENSE, README)
+    for asset in ['schemas', 'icons', 'locale']:
         src_path = os.path.join(src_dir, asset)
         dst_path = os.path.join(out_dir, asset)
         if os.path.exists(src_path):

@@ -4,15 +4,30 @@ EXTDIR := $(HOME)/.local/share/gnome-shell/extensions/$(UUID)
 SHELL_MAJOR := $(shell gnome-shell --version 2>/dev/null | sed -E 's/[^0-9]*([0-9]+).*/\1/')
 IS_V45_PLUS := $(shell test "$$(echo $(SHELL_MAJOR) | cut -d. -f1)" -ge 45 2>/dev/null && echo 1 || echo 0)
 
-FILES = metadata.json extension.js prefs.js stylesheet.css LICENSE lib schemas icons README.md
-ZIPFILES = metadata.json extension.js prefs.js stylesheet.css LICENSE lib schemas icons
+FILES = metadata.json extension.js prefs.js stylesheet.css LICENSE lib schemas icons locale README.md
+ZIPFILES = metadata.json extension.js prefs.js stylesheet.css LICENSE lib schemas icons locale
 
-.PHONY: all build-legacy check test install install-46 install-42 zip clean uninstall
+.PHONY: all build-legacy check test install install-46 install-42 zip clean uninstall update-po
 
-all: schemas/gschemas.compiled
+all: schemas/gschemas.compiled locale/cs/LC_MESSAGES/hmass.mo
 
 schemas/gschemas.compiled: schemas/org.gnome.shell.extensions.hmass.gschema.xml
 	glib-compile-schemas schemas/
+
+# překlady: msgid v kódu jsou anglicky, cs.po nese českou lokalizaci
+locale/cs/LC_MESSAGES/hmass.mo: po/cs.po
+	mkdir -p locale/cs/LC_MESSAGES
+	msgfmt po/cs.po -o $@
+
+po/hmass.pot: po/POTFILES.in extension.js prefs.js lib/*.js
+	xgettext --from-code=UTF-8 -L JavaScript --keyword=_ -kformat \
+		--package-version=$(shell grep -oP '"version": "\K[^"]*' metadata.json 2>/dev/null || echo 1.0) \
+		--msgid-bugs-address=https://github.com/konikvranik/gnome-hmass/issues \
+		-F -o $@ $$(cat po/POTFILES.in)
+
+# aktualizace cs.po po změně msgid (uchová přeložené)
+update-po: po/hmass.pot
+	msgmerge -U --backup=none po/cs.po po/hmass.pot
 
 build-legacy: all
 	python3 tools/build-legacy.py --src . --out build/v42

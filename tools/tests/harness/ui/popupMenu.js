@@ -85,6 +85,9 @@ var PopupBaseMenuItem = GObject.registerClass({
         const classes = new Set((this.style_class || '').split(/\s+/).filter(Boolean));
         return classes.has(name);
     }
+    add_style_pseudo_class() {}
+    remove_style_pseudo_class() {}
+    set_style() {}
     setOrnament(ornament) {
         this._ornament = ornament;
         this._ornamentLabel.visible = ornament !== Ornament.HIDDEN;

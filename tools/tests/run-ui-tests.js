@@ -57,12 +57,19 @@ function fakeSignalMixin() {
     };
 }
 
+// no-op viditelnost (historyBox.show/hide, clearBtn.hide…) - fakes jsou
+// vždy "viditelné", jen nesmí chybět metody
+const fakeVisibility = () => ({
+    show() {},
+    hide() {},
+});
+
 class FakeClutterText {
     constructor() {
         this.ellipsize = 0;
         this.has_key_focus = false;
         this._handlers = {};
-        Object.assign(this, fakeSignalMixin());
+        Object.assign(this, fakeSignalMixin(), fakeVisibility());
     }
 }
 
@@ -75,7 +82,7 @@ class FakeLabel {
         this.y_align = params.y_align || null;
         this.clutter_text = new FakeClutterText();
         this._handlers = {};
-        Object.assign(this, fakeSignalMixin());
+        Object.assign(this, fakeSignalMixin(), fakeVisibility());
         this.destroyed = false;
     }
     destroy() {
@@ -93,7 +100,7 @@ class FakeBoxLayout {
         this.x_expand = params.x_expand || false;
         this.children = [];
         this._handlers = {};
-        Object.assign(this, fakeSignalMixin());
+        Object.assign(this, fakeSignalMixin(), fakeVisibility());
         this.destroyed = false;
     }
     add_child(c) {
@@ -155,7 +162,7 @@ class FakeButton {
         this.style_class = params.style_class || '';
         this.child = null;
         this._handlers = {};
-        Object.assign(this, fakeSignalMixin());
+        Object.assign(this, fakeSignalMixin(), fakeVisibility());
         this.destroyed = false;
     }
     set_child(c) {
@@ -179,7 +186,7 @@ class FakeEntry {
         this.style_class = params.style_class || '';
         this.clutter_text = new FakeClutterText();
         this._handlers = {};
-        Object.assign(this, fakeSignalMixin());
+        Object.assign(this, fakeSignalMixin(), fakeVisibility());
         this.destroyed = false;
     }
     destroy() {
@@ -207,9 +214,9 @@ const Util = imports.misc.util;
 function testUnits() {
     check('UI: formatTime', UI.formatTime(0) === '0:00' && UI.formatTime(65) === '1:05' &&
         UI.formatTime(3671) === '1:01:11');
-    check('UI: humanState', UI.humanState('on') === 'zapnuto' &&
-        UI.humanState('off') === 'vypnuto' && UI.humanState('unavailable') === 'nedostupné' &&
-        UI.humanState('21.4') === '21.4' && UI.humanState(null) === 'nedostupné');
+    check('UI: humanState', UI.humanState('on') === 'on' &&
+        UI.humanState('off') === 'off' && UI.humanState('unavailable') === 'unavailable' &&
+        UI.humanState('21.4') === '21.4' && UI.humanState(null) === 'unavailable');
     check('UI: panelValueText', UI.panelValueText({
         state: '21.4', attributes: {unit_of_measurement: '°C'},
     }) === '21.4 °C' && UI.panelValueText({state: 'off', attributes: {}}) === 'off' &&
@@ -467,7 +474,7 @@ function testPanelEntities() {
         entity_id: 'switch.kotel2', state: 'off', attributes: {friendly_name: 'Kotel 2'},
     }, ha, UI.mergeEntityConfig({display: 'value'}, -1, 'ha'));
     check('Panel: toggle text režim = stav slovem',
-        p.actor.child && p.actor.child.text === 'vypnuto',
+        p.actor.child && p.actor.child.text === 'off',
         p.actor.child && String(p.actor.child.text));
 
     // přepínač ikona + hodnota
@@ -476,7 +483,7 @@ function testPanelEntities() {
     }, ha, UI.mergeEntityConfig({display: 'icon-value'}, -1, 'ha'));
     check('Panel: toggle ikona+hodnota = box se 2 dětmi',
         p.actor.child && p.actor.child.children.length === 2 &&
-        p.actor.child.children[1].text === 'zapnuto',
+        p.actor.child.children[1].text === 'on',
         JSON.stringify(p.actor.child && p.actor.child.children.map(c => c.text)));
 }
 
@@ -618,7 +625,7 @@ async function testIndicator() {
         maSection && maSection.titleLabel.text);
 
     // volání prefs z menu
-    const prefsItem = menuItems.find(it => it.label && it.label.text === 'Nastavení');
+    const prefsItem = menuItems.find(it => it.label && it.label.text === 'Settings');
     check('Ind: položka Nastavení', !!prefsItem);
     prefsItem.activateItem();
     check('Ind: Nastavení spustí prefs', Util.spawned.length === 1 &&
@@ -679,11 +686,12 @@ async function testIndicatorOffline() {
     check('OfflineUI: ikona přepnuta na offline',
         ind._panelIcon && ind._panelIcon.icon_name === 'network-offline-symbolic',
         ind._panelIcon && ind._panelIcon.icon_name);
-    check('OfflineUI: HA tečka chybová',
-        ind._haStatusValue === 'error',
+    // tečky kreslí společná St.DrawingArea (repaint čte _ha/_maStatusValue)
+    check('OfflineUI: stavové tečky existují', !!ind._dotsArea,
+        String(!!ind._dotsArea));
+    check('OfflineUI: HA tečka chybová', ind._haStatusValue === 'error',
         ind._haStatusValue);
-    check('OfflineUI: MA tečka chybová',
-        ind._maStatusValue === 'error',
+    check('OfflineUI: MA tečka chybová', ind._maStatusValue === 'error',
         ind._maStatusValue);
     check('OfflineUI: rozšíření žije, oba klienti v chybovém stavu',
         ind._ha.status === 'error' && ind._ma.status === 'error',
@@ -728,13 +736,13 @@ function testEntityConfig() {
     check('Cfg: práh max', UI.thresholdAlert(30.1, c2) && !UI.thresholdAlert(29.9, c2));
     check('Cfg: práhy jen pro čísla', !UI.thresholdAlert(NaN, c2));
 
-    // icons.js mimo GNOME Shell nemá sadu MDI → entityIconDef spadne
-    // na symbolic ikonu theme
+    // harness teď ukazuje na skutečný adresář rozšíření → MDI sada
+    // se načte reálně (gicon), ne symbolic fallback
     const Icons = imports.lib.icons;
-    check('Cfg: mdi mimo shell = null', Icons.mdiIcon('mdi:lightbulb') === null);
+    check('Cfg: mdi ze skutečné sady = gicon', !!Icons.mdiIcon('mdi:lightbulb'));
     const def = UI.entityIconDef('light', {attributes: {icon: 'mdi:lightbulb'}}, 'ha');
-    check('Cfg: fallback na doménovou symbolic', !!def && !!def.iconName,
-        JSON.stringify(def));
+    check('Cfg: ikona entity má přednost (gicon)', !!def && !!def.gicon,
+        JSON.stringify(Object.keys(def || {})));
     check('Cfg: text režim bez ikony',
         UI.entityIconDef('light', null, 'text') === null);
     const defType = UI.entityIconDef('fan', null, 'type');

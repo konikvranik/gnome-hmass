@@ -1,0 +1,667 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# Czech translation for hmass.
+# This file is distributed under the same license as the hmass package.
+# pvranik, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hmass 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/konikvranik/gnome-hmass/issues\n"
+"POT-Creation-Date: 2026-09-26 18:25+0200\n"
+"PO-Revision-Date: 2026-09-26 18:25+0200\n"
+"Last-Translator: pvranik\n"
+"Language-Team: Czech\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: extension.js:188 extension.js:196 extension.js:690 extension.js:716
+msgid "not configured"
+msgstr "není nastaveno"
+
+#: extension.js:199
+msgid "disabled in settings"
+msgstr "vypnuto v nastavení"
+
+#: extension.js:534
+msgid "Open Music Assistant"
+msgstr "Otevřít Music Assistant"
+
+#: extension.js:549
+msgid "Open Home Assistant"
+msgstr "Otevřít Home Assistant"
+
+#: extension.js:566
+msgid "Reconnect"
+msgstr "Připojit znovu"
+
+#: extension.js:574
+msgid "Settings"
+msgstr "Nastavení"
+
+#: extension.js:681
+msgid "Home Assistant: connected"
+msgstr "Home Assistant: připojeno"
+
+#: extension.js:684
+msgid "Home Assistant: connecting…"
+msgstr "Home Assistant: připojuji…"
+
+#: extension.js:687
+msgid "Home Assistant: invalid token"
+msgstr "Home Assistant: neplatný token"
+
+#: extension.js:694 extension.js:720 lib/ha.js:40 lib/ha.js:43 lib/ma.js:142
+#: lib/ma.js:146 lib/ma.js:226
+msgid "no connection"
+msgstr "bez spojení"
+
+#: extension.js:707
+msgid "Music Assistant: connected"
+msgstr "Music Assistant: připojeno"
+
+#: extension.js:710
+msgid "Music Assistant: connecting…"
+msgstr "Music Assistant: připojuji…"
+
+#: extension.js:713
+msgid "Music Assistant: access denied (API key?)"
+msgstr "Music Assistant: přístup odepřen (API klíč?)"
+
+#: lib/ha.js:85
+msgid "destroyed"
+msgstr "Zničeno"
+
+#: lib/ha.js:117
+msgid "invalid token"
+msgstr "neplatný token"
+
+#: lib/ha.js:237
+msgid "Home Assistant is not connected"
+msgstr "Home Assistant není připojen"
+
+#: lib/ma.js:286
+msgid "denied - check the API key"
+msgstr "odmítnuto - zkontroluj API klíč"
+
+#: lib/mpris.js:188 lib/ui.js:1296
+msgid "Nothing playing"
+msgstr "Nic se nepřehrává"
+
+#: lib/mpris.js:302
+#, javascript-format
+msgid "Unknown property %s on %s"
+msgstr "Neznámá vlastnost %s na %s"
+
+#: lib/mpris.js:363
+#, javascript-format
+msgid "Unknown method %s"
+msgstr "Neznámá metoda %s"
+
+#: lib/ui.js:273
+msgid "on"
+msgstr "zapnuto"
+
+#: lib/ui.js:274
+msgid "off"
+msgstr "vypnuto"
+
+#: lib/ui.js:275 lib/ui.js:291 lib/ui.js:548
+msgid "unavailable"
+msgstr "nedostupné"
+
+#: lib/ui.js:276
+msgid "unknown"
+msgstr "neznámé"
+
+#: lib/ui.js:277
+msgid "idle"
+msgstr "nečinné"
+
+#: lib/ui.js:278
+msgid "playing"
+msgstr "hraje"
+
+#: lib/ui.js:279
+msgid "paused"
+msgstr "pozastaveno"
+
+#: lib/ui.js:280
+msgid "standby"
+msgstr "pohotovost"
+
+#: lib/ui.js:281
+msgid "open"
+msgstr "otevřeno"
+
+#: lib/ui.js:282
+msgid "opening"
+msgstr "otevírá se"
+
+#: lib/ui.js:283
+msgid "closed"
+msgstr "zavřeno"
+
+#: lib/ui.js:284
+msgid "closing"
+msgstr "zavírá se"
+
+#: lib/ui.js:285
+msgid "home"
+msgstr "doma"
+
+#: lib/ui.js:286
+msgid "away"
+msgstr "pryč"
+
+#: lib/ui.js:688
+msgid "text…"
+msgstr "text…"
+
+#: lib/ui.js:718
+msgid "Brightness"
+msgstr "Jas"
+
+#: lib/ui.js:734
+msgid "Volume"
+msgstr "Hlasitost"
+
+#: lib/ui.js:750
+msgid "Position"
+msgstr "Pozice"
+
+#: lib/ui.js:974
+msgid "click to toggle"
+msgstr "klik přepne"
+
+#: lib/ui.js:988
+msgid "click to run"
+msgstr "klik spustí"
+
+#: lib/ui.js:1033
+msgid "scroll to change"
+msgstr "kolečko mění hodnotu"
+
+#: lib/ui.js:1059
+msgid "click to cycle"
+msgstr "klik přepne volbu"
+
+#: lib/ui.js:1148
+msgid "Player"
+msgstr "Přehrávač"
+
+#: lib/ui.js:1240
+msgid "No player"
+msgstr "Žádný přehrávač"
+
+#: lib/ui.js:1277
+msgid "Off"
+msgstr "Vypnout"
+
+#: lib/ui.js:1416
+msgid "Ask the Assistant..."
+msgstr "Požádej asistenta..."
+
+#: lib/ui.js:1455
+msgid "You"
+msgstr "Vy"
+
+#: lib/ui.js:1456
+msgid "Thinking..."
+msgstr "Přemýšlím..."
+
+#: lib/ui.js:1465
+msgid "Done."
+msgstr "Hotovo."
+
+#: lib/ui.js:1469
+msgid "Error"
+msgstr "Chyba"
+
+#: lib/ws.js:223
+#, javascript-format
+msgid "connection did not open within %s s"
+msgstr "připojení se nepovedlo do %s s"
+
+#: lib/ws.js:232
+#, javascript-format
+msgid "invalid URL (cannot create message): %s"
+msgstr "neplatná URL (nelze vytvořit zprávu): %s"
+
+#: lib/ws.js:251 lib/ws.js:268
+#, javascript-format
+msgid "connection failed: %s"
+msgstr "připojení selhalo: %s"
+
+#: lib/ws.js:325
+msgid "connection closed by server"
+msgstr "spojení ukončeno serverem"
+
+#: prefs.js:530
+msgid "Entity settings"
+msgstr "Nastavení entity"
+
+#: prefs.js:536
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: prefs.js:537
+msgid "Clear"
+msgstr "Vymazat"
+
+#: prefs.js:538
+msgid "Save"
+msgstr "Uložit"
+
+#: prefs.js:583
+msgid "Custom name"
+msgstr "Vlastní název"
+
+#: prefs.js:583
+msgid "from Home Assistant"
+msgstr "dle Home Assistant"
+
+#: prefs.js:584
+msgid "Icon"
+msgstr "Ikona"
+
+#: prefs.js:585 prefs.js:597
+msgid "Global setting"
+msgstr "Globální nastavení"
+
+#: prefs.js:586 prefs.js:1404
+msgid "From Home Assistant (MDI)"
+msgstr "Z Home Assistant (MDI)"
+
+#: prefs.js:587 prefs.js:1405
+msgid "By entity type"
+msgstr "Podle typu entity"
+
+#: prefs.js:588
+msgid "No icon"
+msgstr "Bez ikony"
+
+#: prefs.js:590
+msgid "Panel display"
+msgstr "Zobrazení v liště"
+
+#: prefs.js:591 prefs.js:1388
+msgid "Automatic"
+msgstr "Automaticky"
+
+#: prefs.js:592
+msgid "Icon only"
+msgstr "Jen ikona"
+
+#: prefs.js:593
+msgid "Icon + value"
+msgstr "Ikona + hodnota"
+
+#: prefs.js:594
+msgid "Value / text only"
+msgstr "Jen hodnota / text"
+
+#: prefs.js:596
+msgid "Decimal places"
+msgstr "Desetinná místa"
+
+#: prefs.js:598 prefs.js:1389
+msgid "0 (integers)"
+msgstr "0 (celá čísla)"
+
+#: prefs.js:604
+msgid "Minimum threshold"
+msgstr "Práh minimum"
+
+#: prefs.js:604 prefs.js:606
+msgid "unlimited"
+msgstr "neomezeno"
+
+#: prefs.js:606
+msgid "Maximum threshold"
+msgstr "Práh maximum"
+
+#: prefs.js:609
+msgid ""
+"Values outside thresholds are highlighted red. Icon, name,\n"
+"decimal places and thresholds apply to both the panel and the\n"
+"menu; the display mode applies to the panel only (in the menu\n"
+"the toggle is the value itself)."
+msgstr "Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n"
+"desetinná místa a prahy platí pro lištu i menu; režim\n"
+"zobrazení jen pro lištu (v menu u přepínače je hodnotou\n"
+"sám přepínač)."
+
+#: prefs.js:670
+msgid "Not set"
+msgstr "Není nastavena"
+
+#: prefs.js:733
+msgid "Add entity…"
+msgstr "Přidat entitu…"
+
+#: prefs.js:747 prefs.js:1380
+msgid "e.g. sensor.temperature_livingroom"
+msgstr "např. sensor.teplota_obyvak"
+
+#: prefs.js:760
+msgid "Per-entity settings (icon, decimal places, thresholds…)"
+msgstr "Individuální nastavení entity (ikona, desetinná místa, prahy…)"
+
+#: prefs.js:801
+msgid "Drag to reorder"
+msgstr "Přetáhnutím změníte pořadí"
+
+#: prefs.js:970
+msgid "Authentication failed (401/403) — check the long-lived token."
+msgstr "Přihlášení selhalo (401/403) — zkontrolujte dlouhodobý token."
+
+#: prefs.js:974
+msgid "Server returned 404 Not Found — verify the URL."
+msgstr "Server vrátil 404 Not Found — ověřte zadanou URL."
+
+#: prefs.js:978
+#, javascript-format
+msgid "Server returned code %s."
+msgstr "Server vrátil kód %s."
+
+#: prefs.js:985
+#, javascript-format
+msgid "Invalid JSON response: %s"
+msgstr "Neplatná JSON odpověď serveru: %s"
+
+#: prefs.js:989
+msgid "Server returned no entities."
+msgstr "Server nevrátil pole entit."
+
+#: prefs.js:1007
+#, javascript-format
+msgid "Connected — %d entities found."
+msgstr "Připojeno — nalezeno %d entit."
+
+#: prefs.js:1154 prefs.js:1164
+#, javascript-format
+msgid "Connection error: %s"
+msgstr "Chyba spojení: %s"
+
+#: prefs.js:1173
+msgid "Enter the Music Assistant URL."
+msgstr "Zadejte URL Music Assistant serveru."
+
+#: prefs.js:1192
+msgid "Connection timed out (10 s)."
+msgstr "Vypršel časový limit spojení (10 s)."
+
+#: prefs.js:1200
+#, javascript-format
+msgid "Connected — %d players: %s"
+msgstr "Připojeno — %d přehrávačů: %s"
+
+#: prefs.js:1206
+msgid "Access denied — check the API key."
+msgstr "Přístup odepřen — zkontrolujte API klíč."
+
+#: prefs.js:1258
+msgid "also found in HA"
+msgstr "nalezen i v HA"
+
+#: prefs.js:1270
+msgid "No players — they load after testing the connection above."
+msgstr "Žádní přehrávači — načtou se po otestování spojení výše."
+
+#: prefs.js:1339 prefs.js:1479
+msgid "Connection"
+msgstr "Připojení"
+
+#: prefs.js:1340
+msgid "Home Assistant server connection settings"
+msgstr "Nastavení spojení k serveru Home Assistant"
+
+#: prefs.js:1343 prefs.js:1489
+msgid "Server URL"
+msgstr "URL serveru"
+
+#: prefs.js:1343
+msgid "e.g. http://homeassistant.local:8123"
+msgstr "Např. http://homeassistant.local:8123"
+
+#: prefs.js:1346
+msgid "Access token"
+msgstr "Přístupový token"
+
+#: prefs.js:1347
+msgid "Long-lived token from your Home Assistant user profile"
+msgstr "Dlouhodobý přístupový token z profilu uživatele v Home Assistant"
+
+#: prefs.js:1353
+msgid "For servers with custom or self-signed certificates (libsoup 3.2+)"
+msgstr "Pro servery s vlastním nebo self-signed certifikátem (libsoup 3.2+)"
+
+#: prefs.js:1359 prefs.js:1499
+msgid "Test connection"
+msgstr "Test spojení"
+
+#: prefs.js:1360
+msgid "Checks the server and loads the entity list"
+msgstr "Ověří dostupnost serveru a načte seznam entit"
+
+#: prefs.js:1376
+msgid "Panel entities"
+msgstr "Entity v horní liště"
+
+#: prefs.js:1377
+msgid ""
+"Entity values (e.g. a temperature sensor) shown directly in the GNOME top "
+"bar. Switches, buttons and other controls can be operated right in the bar; "
+"the entity name appears on hover."
+msgstr ""
+"Hodnoty entit (např. senzor teploty) zobrazené přímo v horním panelu GNOME. "
+"Přepínače, tlačítka a ostatní ovládací prvky lze ovládat přímo v liště; "
+"název entity se zobrazí při najetí myší."
+
+#: prefs.js:1383
+msgid "Decimal places for numeric values"
+msgstr "Desetinná místa číselných hodnot"
+
+#: prefs.js:1384
+msgid "Automatic per entity, or a fixed number of decimal places"
+msgstr "Automaticky podle entity, nebo pevný počet desetinných míst"
+
+#: prefs.js:1397
+msgid "Entity icons"
+msgstr "Ikony entit"
+
+#: prefs.js:1398
+msgid ""
+"Icon source for the panel and menu. \"From Home Assistant (MDI)\" uses the "
+"entity's own icon (mdi:…) from the MDI set bundled with the extension"
+msgstr ""
+"Zdroj ikon v liště i menu. \"Z Home Assistant (MDI)\" používá ikonu entity "
+"(mdi:…) z MDI sady dodávané s rozšířením"
+
+#: prefs.js:1406
+msgid "No icons"
+msgstr "Bez ikon"
+
+#: prefs.js:1414
+msgid "Extension global keyboard shortcuts"
+msgstr "Globální klávesové zkratky rozšíření"
+
+#: prefs.js:1417
+msgid "Open menu and assistant chat"
+msgstr "Otevřít menu a chat s asistentem"
+
+#: prefs.js:1418
+msgid "Opens the extension menu and focuses the conversation entry"
+msgstr "Otevře menu rozšíření a nastaví kurzor do pole konverzace"
+
+#: prefs.js:1428
+msgid "Menu entities"
+msgstr "Entity v menu rozšíření"
+
+#: prefs.js:1429
+msgid ""
+"Controls in the popup menu. The control type adapts automatically by domain: "
+"switch (switch, light, fan), slider (light brightness, volume, covers), "
+"button (script, scene), dropdown (input_select), text or sensor."
+msgstr ""
+"Ovládací prvky v rozbalovacím menu. Typ prvku se přizpůsobí automaticky "
+"podle domény: přepínač (switch, light, fan), posuvník (jas světel, "
+"hlasitost, žaluzie), tlačítko (skript, scéna), rozbalovací výběr "
+"(input_select), text nebo senzor."
+
+#: prefs.js:1433
+msgid "e.g. light.livingroom or switch.coffee"
+msgstr "např. light.obyvak nebo switch.kavovar"
+
+#: prefs.js:1445 prefs.js:1543
+msgid "Testing connection…"
+msgstr "Testuji spojení…"
+
+#: prefs.js:1480
+msgid "Music Assistant server connection settings"
+msgstr "Nastavení spojení k serveru Music Assistant"
+
+#: prefs.js:1485
+msgid "Shows the player section in the menu and enables MPRIS control"
+msgstr "Zobrazí sekci přehrávače v menu a umožní MPRIS ovládání"
+
+#: prefs.js:1489
+msgid "e.g. http://music-assistant:8095"
+msgstr "Např. http://music-assistant:8095"
+
+#: prefs.js:1492
+msgid "API key"
+msgstr "API klíč"
+
+#: prefs.js:1493
+msgid "Optional — only if MA requires authentication"
+msgstr "Volitelné — pouze pokud MA vyžaduje přihlášení"
+
+#: prefs.js:1500
+msgid "Checks the server and loads the players"
+msgstr "Ověří dostupnost serveru a načte přehrávače"
+
+#: prefs.js:1514 prefs.js:1518
+msgid "Default player"
+msgstr "Výchozí přehrávač"
+
+#: prefs.js:1515
+msgid "Which player gets selected in the menu at startup"
+msgstr "Který přehrávač se má v menu vybrat při startu"
+
+#: prefs.js:1519
+msgid "Player shown in the menu when opened"
+msgstr "Přehrávač zobrazený v menu po otevření"
+
+#: prefs.js:1524
+msgid "Automatic (first playing)"
+msgstr "Automaticky (první hrající)"
+
+#: prefs.js:1572
+msgid "MPRIS and media keys"
+msgstr "MPRIS a multimediální klávesy"
+
+#: prefs.js:1573
+msgid "Integration with the GNOME system media controls"
+msgstr "Propojení se systémovým ovládáním médií v GNOME"
+
+#: prefs.js:1576
+msgid "MPRIS bridge (media keys)"
+msgstr "MPRIS most (multimediální klávesy)"
+
+#: prefs.js:1577
+msgid ""
+"Lets you control players with hardware keys and the GNOME media controls"
+msgstr ""
+"Umožní ovládat přehrávače hardwarovými klávesami a systémovým ovládáním "
+"médií v GNOME"
+
+#: prefs.js:1583
+msgid "Players in MPRIS"
+msgstr "Přehrávače v MPRIS"
+
+#: prefs.js:1584
+msgid ""
+"Check the players from Music Assistant and Home Assistant. On name clash "
+"Music Assistant wins."
+msgstr ""
+"Zaškrtněte přehrávače z Music Assistant i Home Assistant. Při shodě jmen má "
+"přednost Music Assistant."
+
+#: prefs.js:1598
+msgid "Menu controls"
+msgstr "Ovládací prvky v menu"
+
+#: prefs.js:1599
+msgid "Choose the player widgets shown in the popup menu"
+msgstr "Zvolte prvky přehrávače zobrazované v rozbalovacím menu"
+
+#: prefs.js:1601
+msgid "Player selector in menu"
+msgstr "Výběr přehrávače v menu"
+
+#: prefs.js:1602
+msgid "Play/Pause, previous, next"
+msgstr "Play/Pause, předchozí, další"
+
+#: prefs.js:1602
+msgid "Playback buttons"
+msgstr "Tlačítka přehrávání"
+
+#: prefs.js:1603
+msgid "Track position slider"
+msgstr "Posuvník pozice skladby"
+
+#: prefs.js:1604
+msgid "Volume slider"
+msgstr "Posuvník hlasitosti"
+
+#: prefs.js:1605
+msgid "Shuffle and repeat"
+msgstr "Náhodné přehrávání a opakování (Shuffle a repeat)"
+
+#: prefs.js:1613 prefs.js:1707
+msgid "Top bar"
+msgstr "Horní lišta"
+
+#: prefs.js:1617
+msgid "Panel indicator"
+msgstr "Indikátor v panelu"
+
+#: prefs.js:1618
+msgid "Icon and status customization in the GNOME top bar"
+msgstr "Přizpůsobení ikony a stavu v horní liště GNOME"
+
+#: prefs.js:1620
+msgid "House / note / offline status icon"
+msgstr "Ikona domečku / noty / stavu offline"
+
+#: prefs.js:1620
+msgid "Show icon"
+msgstr "Zobrazit ikonu"
+
+#: prefs.js:1621
+msgid "Color indicator of Home Assistant and Music Assistant status"
+msgstr "Barevná indikace stavu Home Assistant a Music Assistant"
+
+#: prefs.js:1621
+msgid "Show connection status (dots)"
+msgstr "Zobrazit stav spojení (tečky)"
+
+#~ msgid ""
+#~ "Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n"
+#~ "desetinná místa a prahy platí pro lištu i menu; režim\n"
+#~ "zobrazení jen pro lištu (v menu u přepínače je hodnotou\n"
+#~ "sám přepínač)."
+#~ msgstr ""
+#~ "Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n"
+#~ "desetinná místa a prahy platí pro lištu i menu; režim\n"
+#~ "zobrazení jen pro lištu (v menu u přepínače je hodnotou\n"
+#~ "sám přepínač)."

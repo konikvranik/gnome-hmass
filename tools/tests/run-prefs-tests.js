@@ -56,7 +56,7 @@ while (child) {
 check('Prefs: dedup - 3 řádky (Obývák jen MA)', checks.length === 3,
     checks.map(c => c.label).join(' | '));
 check('Prefs: Obývák s poznámkou (nalezen i v HA)',
-    checks.some(c => c.label.includes('Obývák') && c.label.includes('nalezen i v HA')),
+    checks.some(c => c.label.includes('Obývák') && c.label.includes('also found in HA')),
     checks.map(c => c.label).join(' | '));
 check('Prefs: HA Ložnice bez dvojníka',
     checks.some(c => c.label.includes('Ložnice') && c.label.includes('Home Assistant')),
@@ -86,7 +86,7 @@ while (child) {
 }
 check('Prefs: přeřazení zdrojů + dedup bez diakritiky', labels.length === 2 &&
     labels.some(l => l.includes('Loznice') && l.includes('Music Assistant') &&
-        l.includes('nalezen i v HA')) &&
+        l.includes('also found in HA')) &&
     labels.some(l => l.includes('Obývák') && l.includes('Home Assistant')),
     labels.join(' | '));
 
@@ -101,7 +101,7 @@ while (child) {
     child = child.get_next_sibling();
 }
 check('Prefs: prázdný seznam = nápověda', labels.length === 1 &&
-    labels[0].includes('Žádní přehrávači'), labels.join(' | '));
+    labels[0].includes('No players'), labels.join(' | '));
 
 settings.set_strv('mpris-players', []);
 

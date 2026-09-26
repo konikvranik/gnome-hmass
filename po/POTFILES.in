@@ -1,0 +1,7 @@
+extension.js
+prefs.js
+lib/ui.js
+lib/ha.js
+lib/ma.js
+lib/ws.js
+lib/mpris.js

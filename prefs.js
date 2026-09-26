@@ -16,6 +16,10 @@ import Soup from 'gi://Soup';
 import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 import {MAClient} from './lib/ma.js';
 
+// %s/%d nahrazování - String.format z GNOME Shell prostředí tady
+// není (čistý gjs / prefs proces)
+const _f = (str, ...args) => str.replace(/%[sd]/g, () => args.shift());
+
 const _decoder = new TextDecoder();
 
 // ---- čištění a normalizace URL ----
@@ -523,15 +527,15 @@ function _entityConfigDialog(settings, entityId, root) {
     const ov = _entityOverrides(settings, entityId) || {};
 
     const dlg = new Gtk.Dialog({
-        title: `Nastavení entity`,
+        title: _('Entity settings'),
         modal: true,
         use_header_bar: 1,
     });
     if (root)
         dlg.set_transient_for(root);
-    dlg.add_button('Zrušit', Gtk.ResponseType.CANCEL);
-    dlg.add_button('Vymazat', Gtk.ResponseType.REJECT);
-    dlg.add_button('Uložit', Gtk.ResponseType.OK);
+    dlg.add_button(_('Cancel'), Gtk.ResponseType.CANCEL);
+    dlg.add_button(_('Clear'), Gtk.ResponseType.REJECT);
+    dlg.add_button(_('Save'), Gtk.ResponseType.OK);
     dlg.set_default_response(Gtk.ResponseType.OK);
 
     const box = dlg.get_content_area();
@@ -576,36 +580,36 @@ function _entityConfigDialog(settings, entityId, root) {
         return entry;
     };
 
-    const nameEntry = entryRow('Vlastní název', 'dle Home Assistant', ov.name || '');
-    const iconCombo = comboRow('Ikona', [
-        {value: '', label: 'Globální nastavení'},
-        {value: 'ha', label: 'Z Home Assistant (MDI)'},
-        {value: 'type', label: 'Podle typu entity'},
-        {value: 'text', label: 'Bez ikony'},
+    const nameEntry = entryRow(_('Custom name'), _('from Home Assistant'), ov.name || '');
+    const iconCombo = comboRow(_('Icon'), [
+        {value: '', label: _('Global setting')},
+        {value: 'ha', label: _('From Home Assistant (MDI)')},
+        {value: 'type', label: _('By entity type')},
+        {value: 'text', label: _('No icon')},
     ], ov.icon || '');
-    const displayCombo = comboRow('Zobrazení v liště', [
-        {value: '', label: 'Automaticky'},
-        {value: 'icon', label: 'Jen ikona'},
-        {value: 'icon-value', label: 'Ikona + hodnota'},
-        {value: 'value', label: 'Jen hodnota / text'},
+    const displayCombo = comboRow(_('Panel display'), [
+        {value: '', label: _('Automatic')},
+        {value: 'icon', label: _('Icon only')},
+        {value: 'icon-value', label: _('Icon + value')},
+        {value: 'value', label: _('Value / text only')},
     ], ov.display || '');
-    const decimalsCombo = comboRow('Desetinná místa', [
-        {value: '', label: 'Globální nastavení'},
-        {value: 0, label: '0 (celá čísla)'},
+    const decimalsCombo = comboRow(_('Decimal places'), [
+        {value: '', label: _('Global setting')},
+        {value: 0, label: _('0 (integers)')},
         {value: 1, label: '1'},
         {value: 2, label: '2'},
         {value: 3, label: '3'},
         {value: 4, label: '4'},
     ], Number.isInteger(ov.decimals) ? ov.decimals : '');
-    const minEntry = entryRow('Práh minimum', 'neomezeno',
+    const minEntry = entryRow(_('Minimum threshold'), _('unlimited'),
         typeof ov.min === 'number' ? String(ov.min) : '');
-    const maxEntry = entryRow('Práh maximum', 'neomezeno',
+    const maxEntry = entryRow(_('Maximum threshold'), _('unlimited'),
         typeof ov.max === 'number' ? String(ov.max) : '');
     const hint = new Gtk.Label({
-        label: 'Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n' +
-               'desetinná místa a prahy platí pro lištu i menu; režim\n' +
-               'zobrazení jen pro lištu (v menu u přepínače je hodnotou\n' +
-               'sám přepínač).',
+        label: _('Values outside thresholds are highlighted red. Icon, name,\n' +
+               'decimal places and thresholds apply to both the panel and the\n' +
+               'menu; the display mode applies to the panel only (in the menu\n' +
+               'the toggle is the value itself).'),
         halign: Gtk.Align.START,
         wrap: true,
     });
@@ -663,7 +667,7 @@ function _keybindingRow(title, subtitle, settings, key) {
     const render = () => {
         const accels = settings.get_strv(key);
         if (accels.length === 0) {
-            btn.label = 'Není nastavena';
+            btn.label = _('Not set');
             return;
         }
         const [ok, keyval, mods] = Gtk.accelerator_parse(accels[0]);
@@ -726,7 +730,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
     };
 
     const addBtnRow = new Adw.ActionRow({
-        title: 'Přidat entitu…',
+        title: _('Add entity…'),
         activatable: true,
     });
     const addIcon = new Gtk.Image({
@@ -740,7 +744,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
         const entry = new Gtk.Entry({
             hexpand: true,
             valign: Gtk.Align.CENTER,
-            placeholder_text: placeholder || 'např. sensor.teplota_obyvak',
+            placeholder_text: placeholder || _('e.g. sensor.temperature_livingroom'),
             text: initialText || '',
         });
         const completion = _attachEntityCompletion(entry, () => sharedItems);
@@ -753,7 +757,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
             icon_name: 'document-edit-symbolic',
             valign: Gtk.Align.START,
             has_frame: false,
-            tooltip_text: 'Individuální nastavení entity (ikona, desetinná místa, prahy…)',
+            tooltip_text: _('Per-entity settings (icon, decimal places, thresholds…)'),
         });
         cfgBtn.add_css_class('flat');
         cfgBtn.connect('clicked', () => {
@@ -794,7 +798,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
             icon_name: 'list-drag-handle-symbolic',
             valign: Gtk.Align.START,
             margin_top: 9,          // střed 16px ikony proti ~34px poli
-            tooltip_text: 'Přetáhnutím změníte pořadí',
+            tooltip_text: _('Drag to reorder'),
         });
         handle.add_css_class('dim-label');
         const dragSource = new Gtk.DragSource({actions: Gdk.DragAction.MOVE});
@@ -963,26 +967,26 @@ function _decodeBytes(bytes) {
 
 function _handleHaStatesResponse(status, body, callback) {
     if (status === 401 || status === 403) {
-        callback(false, 'Přihlášení selhalo (401/403) — zkontrolujte dlouhodobý token.');
+        callback(false, _('Authentication failed (401/403) — check the long-lived token.'));
         return;
     }
     if (status === 404) {
-        callback(false, 'Server vrátil 404 Not Found — ověřte zadanou URL.');
+        callback(false, _('Server returned 404 Not Found — verify the URL.'));
         return;
     }
     if (status !== 200) {
-        callback(false, `Server vrátil kód ${status}.`);
+        callback(false, _f(_('Server returned code %s.'), status));
         return;
     }
     let states;
     try {
         states = JSON.parse(body);
     } catch (e) {
-        callback(false, `Neplatná JSON odpověď serveru: ${e.message}`);
+        callback(false, _f(_('Invalid JSON response: %s'), e.message));
         return;
     }
     if (!Array.isArray(states)) {
-        callback(false, 'Server nevrátil pole entit.');
+        callback(false, _('Server returned no entities.'));
         return;
     }
     const ids = states.map(s => s.entity_id).filter(id => !!id).sort();
@@ -1000,7 +1004,7 @@ function _handleHaStatesResponse(status, body, callback) {
             device: '',
         }))
         .sort((a, b) => a.id.localeCompare(b.id));
-    callback(true, `Připojeno — nalezeno ${ids.length} entit.`, ids, mediaPlayers, entities);
+    callback(true, _f(_('Connected — %d entities found.'), ids.length), ids, mediaPlayers, entities);
     return entities;
 }
 
@@ -1147,7 +1151,7 @@ function testHa(url, token, allowInsecure, callback) {
                 onStates(message.status_code,
                     (message.response_body && message.response_body.data) ? message.response_body.data : '');
             } catch (e) {
-                callback(false, `Chyba spojení: ${e.message}`);
+                callback(false, _f(_('Connection error: %s'), e.message));
             }
         });
     } else {
@@ -1157,7 +1161,7 @@ function testHa(url, token, allowInsecure, callback) {
                 const status = typeof msg.get_status === 'function' ? msg.get_status() : msg.status_code;
                 onStates(status, _decodeBytes(bytes));
             } catch (e) {
-                callback(false, `Chyba spojení: ${e.message}`);
+                callback(false, _f(_('Connection error: %s'), e.message));
             }
         });
     }
@@ -1166,7 +1170,7 @@ function testHa(url, token, allowInsecure, callback) {
 function testMa(url, token, allowInsecure, callback) {
     const base = _cleanMaUrl(url);
     if (!base) {
-        callback(false, 'Zadejte URL Music Assistant serveru.');
+        callback(false, _('Enter the Music Assistant URL.'));
         return;
     }
     let finished = false;
@@ -1185,7 +1189,7 @@ function testMa(url, token, allowInsecure, callback) {
     };
     timeoutId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 10, () => {
         timeoutId = 0;
-        finish(false, 'Vypršel časový limit spojení (10 s).');
+        finish(false, _('Connection timed out (10 s).'));
         return GLib.SOURCE_REMOVE;
     });
 
@@ -1193,13 +1197,13 @@ function testMa(url, token, allowInsecure, callback) {
     client.configure(base, (token || '').trim(), allowInsecure, '');
     client.onplayers = () => {
         const names = client.players.map(p => p.name || p.player_id);
-        finish(true, `Připojeno — ${client.players.length} přehrávačů: ${names.join(', ')}`, client.players);
+        finish(true, _f(_('Connected — %d players: %s'), client.players.length, names.join(', ')), client.players);
     };
     client.onstate = (status, detail) => {
         if (finished)
             return;
         if (status === 'auth-error') {
-            finish(false, 'Přístup odepřen — zkontrolujte API klíč.');
+            finish(false, _('Access denied — check the API key.'));
         }
     };
     client.connect();
@@ -1251,7 +1255,7 @@ function _refreshPlayerList(settings) {
             _haPlayers.some(h => _normName(h.name) === _normName(p.name));
         rows.push({
             ref: `ma:${p.player_id}`,
-            label: `${p.name || p.player_id} — Music Assistant${twin ? ' (nalezen i v HA)' : ''}`,
+            label: `${p.name || p.player_id} — Music Assistant${twin ? ' (' + _('also found in HA') + ')' : ''}`,
         });
     }
     for (const h of _haPlayers) {
@@ -1263,7 +1267,7 @@ function _refreshPlayerList(settings) {
 
     if (rows.length === 0) {
         const emptyLbl = new Gtk.Label({
-            label: 'Žádní přehrávači — načtou se po otestování spojení výše.',
+            label: _('No players — they load after testing the connection above.'),
             halign: Gtk.Align.START,
             wrap: true,
             margin_top: 8,
@@ -1332,28 +1336,28 @@ function buildHaPage(settings) {
 
     // Skupina připojení
     const connGroup = new Adw.PreferencesGroup({
-        title: 'Připojení',
-        description: 'Nastavení spojení k serveru Home Assistant',
+        title: _('Connection'),
+        description: _('Home Assistant server connection settings'),
     });
 
-    const urlField = _entryRow('URL serveru', 'Např. http://homeassistant.local:8123', settings, 'ha-url', 'http://homeassistant.local:8123');
+    const urlField = _entryRow(_('Server URL'), _('e.g. http://homeassistant.local:8123'), settings, 'ha-url', 'http://homeassistant.local:8123');
     connGroup.add(urlField.row);
 
-    const tokenField = _passwordRow('Přístupový token',
-        'Dlouhodobý přístupový token z profilu uživatele v Home Assistant',
+    const tokenField = _passwordRow(_('Access token'),
+        _('Long-lived token from your Home Assistant user profile'),
         settings, 'ha-token');
     connGroup.add(tokenField.row);
 
     const tlsRow = _switchRow(
-        'Povolit neověřené TLS certifikáty',
-        'Pro servery s vlastním nebo self-signed certifikátem (libsoup 3.2+)',
+        'Allow unverified TLS certificates',
+        _('For servers with custom or self-signed certificates (libsoup 3.2+)'),
         settings, 'allow-insecure-tls');
     connGroup.add(tlsRow);
 
     // Test spojení
     const testRow = new Adw.ActionRow({
-        title: 'Test spojení',
-        subtitle: 'Ověří dostupnost serveru a načte seznam entit',
+        title: _('Test connection'),
+        subtitle: _('Checks the server and loads the entity list'),
     });
     const testBtn = new Gtk.Button({
         label: 'Otestovat',
@@ -1369,20 +1373,20 @@ function buildHaPage(settings) {
     const panelEditor = _createEntityGroup(
         settings,
         'ha-panel-entities',
-        'Entity v horní liště',
-        'Hodnoty entit (např. senzor teploty) zobrazené přímo v horním panelu GNOME. ' +
-        'Přepínače, tlačítka a ostatní ovládací prvky lze ovládat přímo v liště; ' +
-        'název entity se zobrazí při najetí myší.',
-        'např. sensor.teplota_obyvak'
+        _('Panel entities'),
+        _('Entity values (e.g. a temperature sensor) shown directly in the GNOME ' +
+        'top bar. Switches, buttons and other controls can be operated right in ' +
+        'the bar; the entity name appears on hover.'),
+        _('e.g. sensor.temperature_livingroom')
     );
     panelEditor.group.add(_comboRow(
-        'Desetinná místa číselných hodnot',
-        'Automaticky podle entity, nebo pevný počet desetinných míst',
+        _('Decimal places for numeric values'),
+        _('Automatic per entity, or a fixed number of decimal places'),
         settings,
         'value-decimals',
         [
-            {value: -1, label: 'Automaticky'},
-            {value: 0, label: '0 (celá čísla)'},
+            {value: -1, label: _('Automatic')},
+            {value: 0, label: _('0 (integers)')},
             {value: 1, label: '1'},
             {value: 2, label: '2'},
             {value: 3, label: '3'},
@@ -1390,15 +1394,16 @@ function buildHaPage(settings) {
         ]
     ));
     panelEditor.group.add(_comboRowStr(
-        'Ikony entit',
-        'Zdroj ikon v liště i menu. "Z Home Assistant" používá ikonu entity ' +
-        '(mdi:…), které rozšíření obsahuje jako součástí dodávanou sadu MDI',
+        _('Entity icons'),
+        _('Icon source for the panel and menu. "From Home Assistant (MDI)" uses ' +
+        'the entity\'s own icon (mdi:…) from the MDI set bundled with the ' +
+        'extension'),
         settings,
         'entity-icon',
         [
-            {value: 'ha', label: 'Z Home Assistant (MDI)'},
-            {value: 'type', label: 'Podle typu entity'},
-            {value: 'text', label: 'Bez ikon'},
+            {value: 'ha', label: _('From Home Assistant (MDI)')},
+            {value: 'type', label: _('By entity type')},
+            {value: 'text', label: _('No icons')},
         ]
     ));
     page.add(panelEditor.group);
@@ -1406,11 +1411,11 @@ function buildHaPage(settings) {
     // Zkratky
     const keysGroup = new Adw.PreferencesGroup({
         title: 'Zkratky',
-        description: 'Globální klávesové zkratky rozšíření',
+        description: _('Extension global keyboard shortcuts'),
     });
     keysGroup.add(_keybindingRow(
-        'Otevřít menu a chat s asistentem',
-        'Otevře menu rozšíření a nastaví kurzor do pole konverzace',
+        _('Open menu and assistant chat'),
+        _('Opens the extension menu and focuses the conversation entry'),
         settings,
         'hotkey-open-menu'
     ));
@@ -1420,11 +1425,12 @@ function buildHaPage(settings) {
     const menuEditor = _createEntityGroup(
         settings,
         'ha-menu-entities',
-        'Entity v menu rozšíření',
-        'Ovládací prvky v rozbalovacím menu. Typ prvku se přizpůsobí automaticky podle domény: ' +
-        'přepínač (switch, light, fan), posuvník (jas světel, hlasitost, žaluzie), ' +
-        'tlačítko (skript, scéna), rozbalovací výběr (input_select), text nebo senzor.',
-        'např. light.obyvak nebo switch.kavovar'
+        _('Menu entities'),
+        _('Controls in the popup menu. The control type adapts automatically by ' +
+        'domain: switch (switch, light, fan), slider (light brightness, volume, ' +
+        'covers), button (script, scene), dropdown (input_select), text or ' +
+        'sensor.'),
+        _('e.g. light.livingroom or switch.coffee')
     );
     page.add(menuEditor.group);
 
@@ -1436,7 +1442,7 @@ function buildHaPage(settings) {
 
     testBtn.connect('clicked', () => {
         testBtn.sensitive = false;
-        testRow.subtitle = 'Testuji spojení…';
+        testRow.subtitle = _('Testing connection…');
         const url = urlField.entry.get_text().trim() || settings.get_string('ha-url').trim();
         const token = tokenField.entry.get_text().trim() || settings.get_string('ha-token').trim();
         const allowInsecure = settings.get_boolean('allow-insecure-tls');
@@ -1470,28 +1476,28 @@ function buildMaPage(settings) {
 
     // Skupina připojení
     const connGroup = new Adw.PreferencesGroup({
-        title: 'Připojení',
-        description: 'Nastavení spojení k serveru Music Assistant',
+        title: _('Connection'),
+        description: _('Music Assistant server connection settings'),
     });
 
     const enableRow = _switchRow(
         'Zapnout integraci Music Assistant',
-        'Zobrazí sekci přehrávače v menu a umožní MPRIS ovládání',
+        _('Shows the player section in the menu and enables MPRIS control'),
         settings, 'ma-enabled');
     connGroup.add(enableRow);
 
-    const urlField = _entryRow('URL serveru', 'Např. http://music-assistant:8095', settings, 'ma-url', 'http://music-assistant:8095');
+    const urlField = _entryRow(_('Server URL'), _('e.g. http://music-assistant:8095'), settings, 'ma-url', 'http://music-assistant:8095');
     connGroup.add(urlField.row);
 
-    const tokenField = _passwordRow('API klíč',
-        'Volitelné — pouze pokud MA vyžaduje přihlášení',
+    const tokenField = _passwordRow(_('API key'),
+        _('Optional — only if MA requires authentication'),
         settings, 'ma-token');
     connGroup.add(tokenField.row);
 
     // Test spojení
     const testRow = new Adw.ActionRow({
-        title: 'Test spojení',
-        subtitle: 'Ověří dostupnost serveru a načte přehrávače',
+        title: _('Test connection'),
+        subtitle: _('Checks the server and loads the players'),
     });
     const testBtn = new Gtk.Button({
         label: 'Otestovat',
@@ -1505,17 +1511,17 @@ function buildMaPage(settings) {
 
     // Výchozí přehrávač
     const playerGroup = new Adw.PreferencesGroup({
-        title: 'Výchozí přehrávač',
-        description: 'Který přehrávač se má v menu vybrat při startu',
+        title: _('Default player'),
+        description: _('Which player gets selected in the menu at startup'),
     });
     const playerRow = new Adw.ActionRow({
-        title: 'Výchozí přehrávač',
-        subtitle: 'Přehrávač zobrazený v menu po otevření',
+        title: _('Default player'),
+        subtitle: _('Player shown in the menu when opened'),
     });
     const playerCombo = new Gtk.ComboBoxText({valign: Gtk.Align.CENTER});
     const fillPlayerCombo = () => {
         playerCombo.remove_all();
-        playerCombo.append('auto', 'Automaticky (první hrající)');
+        playerCombo.append('auto', _('Automatic (first playing)'));
         for (const p of _maPlayers)
             playerCombo.append(p.player_id, p.name || p.player_id);
         const current = settings.get_string('ma-default-player') || 'auto';
@@ -1534,7 +1540,7 @@ function buildMaPage(settings) {
 
     testBtn.connect('clicked', () => {
         testBtn.sensitive = false;
-        testRow.subtitle = 'Testuji spojení…';
+        testRow.subtitle = _('Testing connection…');
 
         const url = urlField.entry.get_text().trim() || settings.get_string('ma-url').trim();
         const token = tokenField.entry.get_text().trim() || settings.get_string('ma-token').trim();
@@ -1563,19 +1569,19 @@ function buildMaPage(settings) {
 
     // MPRIS
     const mprisGroup = new Adw.PreferencesGroup({
-        title: 'MPRIS a multimediální klávesy',
-        description: 'Propojení se systémovým ovládáním médií v GNOME',
+        title: _('MPRIS and media keys'),
+        description: _('Integration with the GNOME system media controls'),
     });
     mprisGroup.add(_switchRow(
-        'MPRIS most (multimediální klávesy)',
-        'Umožní ovládat přehrávače hardwarovými klávesami a systémovým ovládáním médií v GNOME',
+        _('MPRIS bridge (media keys)'),
+        _('Lets you control players with hardware keys and the GNOME media controls'),
         settings, 'ma-mpris'));
     page.add(mprisGroup);
 
     // Přehrávače pro MPRIS
     const playersGroup = new Adw.PreferencesGroup({
-        title: 'Přehrávače v MPRIS',
-        description: 'Zaškrtněte přehrávače z Music Assistant i Home Assistant. Při shodě jmen má přednost Music Assistant.',
+        title: _('Players in MPRIS'),
+        description: _('Check the players from Music Assistant and Home Assistant. On name clash Music Assistant wins.'),
     });
     _playersBox = new Gtk.Box({
         orientation: Gtk.Orientation.VERTICAL,
@@ -1589,14 +1595,14 @@ function buildMaPage(settings) {
 
     // Prvky přehrávače v menu
     const menuGroup = new Adw.PreferencesGroup({
-        title: 'Ovládací prvky v menu',
-        description: 'Zvolte prvky přehrávače zobrazované v rozbalovacím menu',
+        title: _('Menu controls'),
+        description: _('Choose the player widgets shown in the popup menu'),
     });
-    menuGroup.add(_switchRow('Výběr přehrávače v menu', null, settings, 'ma-show-player-selector'));
-    menuGroup.add(_switchRow('Tlačítka přehrávání', 'Play/Pause, předchozí, další', settings, 'ma-show-transport'));
-    menuGroup.add(_switchRow('Posuvník pozice skladby', null, settings, 'ma-show-seek'));
-    menuGroup.add(_switchRow('Posuvník hlasitosti', null, settings, 'ma-show-volume'));
-    menuGroup.add(_switchRow('Náhodné přehrávání a opakování (Shuffle a repeat)', null, settings, 'ma-show-shuffle-repeat'));
+    menuGroup.add(_switchRow(_('Player selector in menu'), null, settings, 'ma-show-player-selector'));
+    menuGroup.add(_switchRow(_('Playback buttons'), _('Play/Pause, previous, next'), settings, 'ma-show-transport'));
+    menuGroup.add(_switchRow(_('Track position slider'), null, settings, 'ma-show-seek'));
+    menuGroup.add(_switchRow(_('Volume slider'), null, settings, 'ma-show-volume'));
+    menuGroup.add(_switchRow(_('Shuffle and repeat'), null, settings, 'ma-show-shuffle-repeat'));
     page.add(menuGroup);
 
     return page;
@@ -1604,18 +1610,19 @@ function buildMaPage(settings) {
 
 function buildPanelPage(settings) {
     const page = new Adw.PreferencesPage({
-        title: 'Horní lišta',
+        title: _('Top bar'),
         icon_name: 'preferences-system-symbolic',
     });
     const group = new Adw.PreferencesGroup({
-        title: 'Indikátor v panelu',
-        description: 'Přizpůsobení ikony a stavu v horní liště GNOME',
+        title: _('Panel indicator'),
+        description: _('Icon and status customization in the GNOME top bar'),
     });
-    group.add(_switchRow('Zobrazit ikonu', 'Ikona domečku / noty / stavu offline', settings, 'panel-show-icon'));
-    group.add(_switchRow('Zobrazit stav spojení (tečky)', 'Barevná indikace stavu Home Assistant a Music Assistant', settings, 'panel-show-status'));
+    group.add(_switchRow(_('Show icon'), _('House / note / offline status icon'), settings, 'panel-show-icon'));
+    group.add(_switchRow(_('Show connection status (dots)'), _('Color indicator of Home Assistant and Music Assistant status'), settings, 'panel-show-status'));
     page.add(group);
     return page;
 }
+
 
 /**
  * Uložení/obnova velikosti okna nastavení (GSettings prefs-width/height).
