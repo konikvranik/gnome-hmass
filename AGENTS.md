@@ -15,10 +15,14 @@ vše přes GObject introspection. Licence GPL-2.0-or-later.
 
 ## Jazykové konvence
 
-- **Komentáře, UI texty, dokumentace, commit message: česky.**
-- Identifikátory (třídy, funkce, proměnné), log zprávy, názvy v API: anglicky.
-- Rozšíření je primárně české (UI); kód čtou i ostatní — komentář vysvětluje
-  *proč*, ne *co* řádek dělá.
+- **Komentáře a commit message: česky.** Identifikátory (třídy, funkce,
+  proměnné), log zprávy, názvy v API: anglicky.
+- **UI texty: anglické msgid** přes `_('…')` + gettext doména "hmass";
+  překlady v po/cs.po, po/nl.po (více viz README → Contributing translations).
+- **Dokumentace (README, CONTRIBUTING): anglicky**, české alternativy jako
+  `README.cs.md` / `CONTRIBUTING.cs.md`; AGENTS.md zůstává česky (interní
+  pravidla pro agenty).
+- Komentář vysvětluje *proč*, ne *co* řádek dělá.
 
 ## Příkazy
 

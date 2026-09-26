@@ -1,21 +1,24 @@
-# Přispívání
+# Contributing
 
-Díky za zájem o příspěvek!
+Thanks for your interest in contributing!
 
-**Všechny pokyny pro práci s kódem — konvence, příkazy, tvrdá pravidla,
-testy, ladění i git workflow — jsou v [AGENTS.md](AGENTS.md).** Platí úplně
-stejně pro lidské přispěvatele i AI asistenty (Claude Code, opencode,
-Antigravity, ZCode, Junie…); vstupní soubory agentů (`CLAUDE.md`,
-`GEMINI.md`) ho jen importují, takže pravidla existují právě jednou.
+*Read this in: **English** | [Čeština](CONTRIBUTING.cs.md)*
 
-Stručně:
+**All coding guidelines — conventions, commands, hard rules, tests, debugging
+and the git workflow — live in [AGENTS.md](AGENTS.md) (Czech).** They apply
+exactly the same to human contributors and AI assistants (Claude Code,
+opencode, Antigravity, ZCode, Junie…); the agent entry files (`CLAUDE.md`,
+`GEMINI.md`) just import it, so the rules exist exactly once.
 
-- **čeština** pro komentáře, UI, dokumentaci a commit message; **angličtina**
-  pro identifikátory a logy
-- `make check` a `make test` musí projít (nová funkce = i nový test)
-- jedna logická změna = jeden commit, formát `oblast: co` v imperativu
-- PR popište co a proč; přiložte výstup testů
-- chovejte se zdvořile — řídíme se [Kodexem chování GNOME](https://conduct.gnome.org/)
+In short:
 
-Pokud přidáváte podporu novějšího GNOME (45+ vyžaduje ESM), držte obě
-varianty odděleně a uvádějte jen verze, které jste skutečně otestovali.
+- **Czech** for code comments; **English** for identifiers, logs, user-facing
+  strings (gettext msgids) and documentation (Czech alternatives in
+  `*.cs.md` files); **Czech** for commit messages
+- `make check` and `make test` must pass (a new feature means a new test too)
+- one logical change = one commit, format `area: what` in the imperative
+- describe the PR's what and why; attach the test output
+- be kind — we follow the [GNOME Code of Conduct](https://conduct.gnome.org/)
+
+When adding support for a newer GNOME (45+ requires ESM), keep both variants
+separate and list only versions you have actually tested.
