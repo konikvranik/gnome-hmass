@@ -86,7 +86,12 @@ gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
    uživatelem zadané servery přes libsoup.
 9. Přihlašovací údaje (tokeny, URL serverů) jsou jen v GSettings uživatele.
    **Nikdy je nezapisovat do kódu, testů, logů ani commitů.**
-10. Interaktivní prvky v panelu: hover řešit přes `track_hover` +
+10. **Nikdy neměnit uživatelova osobní systémová nastavení** (klávesové
+    zkratky, téma, dock…), ani když působí „rozbitě" - jsou záměrná
+    (OVĚŘENO BOLESTIVĚ: panel-run-dialog přepsaný na Alt+F2 zabil
+    uživatelem nastavené přepnutí na plochu 2). Cizí nastavení jen číst.
+    Vlastní klíče rozšíření měnit pouze pro test a vždy vrátit.
+11. Interaktivní prvky v panelu: hover řešit přes `track_hover` +
     `notify::hover` (nativní vzor), ne `enter-event`; pozice tooltipů
     monitor-aware (`findMonitorForActor`) — panel může být nahoře i dole
     (dash-to-panel).
