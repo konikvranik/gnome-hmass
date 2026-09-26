@@ -5,7 +5,18 @@
 #
 #, fuzzy
 msgid ""
-msgstr "Project-Id-Version: hmass 1.0\nReport-Msgid-Bugs-To: https://github.com/konikvranik/gnome-hmass/issues\nPOT-Creation-Date: 2026-09-26 18:16+0200\nPO-Revision-Date: 2026-09-26 18:55+0200\nLast-Translator: pvranik\nLanguage-Team: Dutch\nLanguage: nl\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);"
+msgstr ""
+"Project-Id-Version: hmass 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/konikvranik/gnome-hmass/issues\n"
+"POT-Creation-Date: 2026-09-26 19:17+0200\n"
+"PO-Revision-Date: 2026-09-26 18:55+0200\n"
+"Last-Translator: pvranik\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: extension.js:188 extension.js:196 extension.js:690 extension.js:716
 msgid "not configured"
@@ -43,8 +54,8 @@ msgstr "Home Assistant: verbinden…"
 msgid "Home Assistant: invalid token"
 msgstr "Home Assistant: ongeldig token"
 
-#: extension.js:694 extension.js:720 lib/ha.js:40 lib/ha.js:43 lib/ma.js:142
-#: lib/ma.js:146 lib/ma.js:226
+#: extension.js:694 extension.js:720 lib/ha.js:41 lib/ha.js:44 lib/ma.js:143
+#: lib/ma.js:147 lib/ma.js:227
 msgid "no connection"
 msgstr "geen verbinding"
 
@@ -60,172 +71,172 @@ msgstr "Music Assistant: verbinden…"
 msgid "Music Assistant: access denied (API key?)"
 msgstr "Music Assistant: toegang geweigerd (API-sleutel?)"
 
-#: lib/ha.js:85
+#: lib/ha.js:86
 msgid "destroyed"
 msgstr "vernietigd"
 
-#: lib/ha.js:117
+#: lib/ha.js:118
 msgid "invalid token"
 msgstr "ongeldig token"
 
-#: lib/ha.js:237
+#: lib/ha.js:238
 msgid "Home Assistant is not connected"
 msgstr "Home Assistant is niet verbonden"
 
-#: lib/ma.js:286
+#: lib/ma.js:287
 msgid "denied - check the API key"
 msgstr "geweigerd - controleer de API-sleutel"
 
-#: lib/mpris.js:188 lib/ui.js:1296
+#: lib/mpris.js:190 lib/ui.js:1299
 msgid "Nothing playing"
 msgstr "Niets wordt afgespeeld"
 
-#: lib/mpris.js:302
+#: lib/mpris.js:304
 #, javascript-format
 msgid "Unknown property %s on %s"
 msgstr "Onbekende eigenschap %s op %s"
 
-#: lib/mpris.js:363
+#: lib/mpris.js:365
 #, javascript-format
 msgid "Unknown method %s"
 msgstr "Onbekende methode %s"
 
-#: lib/ui.js:273
-msgid "on"
-msgstr "aan"
-
-#: lib/ui.js:274
-msgid "off"
-msgstr "uit"
-
-#: lib/ui.js:275 lib/ui.js:291 lib/ui.js:548
+#: lib/ui.js:278 lib/ui.js:551
 msgid "unavailable"
 msgstr "niet beschikbaar"
 
-#: lib/ui.js:276
+#: lib/ui.js:280
+msgid "on"
+msgstr "aan"
+
+#: lib/ui.js:281
+msgid "off"
+msgstr "uit"
+
+#: lib/ui.js:282
 msgid "unknown"
 msgstr "onbekend"
 
-#: lib/ui.js:277
+#: lib/ui.js:283
 msgid "idle"
 msgstr "inactief"
 
-#: lib/ui.js:278
+#: lib/ui.js:284
 msgid "playing"
 msgstr "speelt"
 
-#: lib/ui.js:279
+#: lib/ui.js:285
 msgid "paused"
 msgstr "gepauzeerd"
 
-#: lib/ui.js:280
+#: lib/ui.js:286
 msgid "standby"
 msgstr "standby"
 
-#: lib/ui.js:281
+#: lib/ui.js:287
 msgid "open"
 msgstr "open"
 
-#: lib/ui.js:282
+#: lib/ui.js:288
 msgid "opening"
 msgstr "opent"
 
-#: lib/ui.js:283
+#: lib/ui.js:289
 msgid "closed"
 msgstr "gesloten"
 
-#: lib/ui.js:284
+#: lib/ui.js:290
 msgid "closing"
 msgstr "sluit"
 
-#: lib/ui.js:285
+#: lib/ui.js:291
 msgid "home"
 msgstr "thuis"
 
-#: lib/ui.js:286
+#: lib/ui.js:292
 msgid "away"
 msgstr "weg"
 
-#: lib/ui.js:688
+#: lib/ui.js:691
 msgid "text…"
 msgstr "tekst…"
 
-#: lib/ui.js:718
+#: lib/ui.js:721
 msgid "Brightness"
 msgstr "Helderheid"
 
-#: lib/ui.js:734
+#: lib/ui.js:737
 msgid "Volume"
 msgstr "Volume"
 
-#: lib/ui.js:750
+#: lib/ui.js:753
 msgid "Position"
 msgstr "Positie"
 
-#: lib/ui.js:974
+#: lib/ui.js:977
 msgid "click to toggle"
 msgstr "klik om te schakelen"
 
-#: lib/ui.js:988
+#: lib/ui.js:991
 msgid "click to run"
 msgstr "klik om uit te voeren"
 
-#: lib/ui.js:1033
+#: lib/ui.js:1036
 msgid "scroll to change"
 msgstr "scroll om te wijzigen"
 
-#: lib/ui.js:1059
+#: lib/ui.js:1062
 msgid "click to cycle"
 msgstr "klik om te wisselen"
 
-#: lib/ui.js:1148
+#: lib/ui.js:1151
 msgid "Player"
 msgstr "Speler"
 
-#: lib/ui.js:1240
+#: lib/ui.js:1243
 msgid "No player"
 msgstr "Geen speler"
 
-#: lib/ui.js:1277
+#: lib/ui.js:1280
 msgid "Off"
 msgstr "Uit"
 
-#: lib/ui.js:1416
+#: lib/ui.js:1419
 msgid "Ask the Assistant..."
 msgstr "Vraag het de assistent..."
 
-#: lib/ui.js:1455
+#: lib/ui.js:1458
 msgid "You"
 msgstr "U"
 
-#: lib/ui.js:1456
+#: lib/ui.js:1459
 msgid "Thinking..."
 msgstr "Bezig met nadenken..."
 
-#: lib/ui.js:1465
+#: lib/ui.js:1468
 msgid "Done."
 msgstr "Klaar."
 
-#: lib/ui.js:1469
+#: lib/ui.js:1472
 msgid "Error"
 msgstr "Fout"
 
-#: lib/ws.js:223
+#: lib/ws.js:225
 #, javascript-format
 msgid "connection did not open within %s s"
 msgstr "verbinding niet geopend binnen %s s"
 
-#: lib/ws.js:232
+#: lib/ws.js:234
 #, javascript-format
 msgid "invalid URL (cannot create message): %s"
 msgstr "ongeldige URL (kan bericht niet aanmaken): %s"
 
-#: lib/ws.js:251 lib/ws.js:268
+#: lib/ws.js:253 lib/ws.js:270
 #, javascript-format
 msgid "connection failed: %s"
 msgstr "verbinding mislukt: %s"
 
-#: lib/ws.js:325
+#: lib/ws.js:327
 msgid "connection closed by server"
 msgstr "verbinding gesloten door server"
 
@@ -314,8 +325,16 @@ msgid "Maximum threshold"
 msgstr "Drempel maximum"
 
 #: prefs.js:609
-msgid "Values outside thresholds are highlighted red. Icon, name,\ndecimal places and thresholds apply to both the panel and the\nmenu; the display mode applies to the panel only (in the menu\nthe toggle is the value itself)."
-msgstr "Waarden buiten drempels worden rood gemarkeerd. Pictogram, naam,\ndecimalen en drempels gelden voor zowel paneel als menu; de\nweergavemodus geldt alleen voor het paneel (in het menu is de\nschakelaar zelf de waarde)."
+msgid ""
+"Values outside thresholds are highlighted red. Icon, name,\n"
+"decimal places and thresholds apply to both the panel and the\n"
+"menu; the display mode applies to the panel only (in the menu\n"
+"the toggle is the value itself)."
+msgstr ""
+"Waarden buiten drempels worden rood gemarkeerd. Pictogram, naam,\n"
+"decimalen en drempels gelden voor zowel paneel als menu; de\n"
+"weergavemodus geldt alleen voor het paneel (in het menu is de\n"
+"schakelaar zelf de waarde)."
 
 #: prefs.js:670
 msgid "Not set"
@@ -392,7 +411,8 @@ msgstr "ook gevonden in HA"
 
 #: prefs.js:1270
 msgid "No players — they load after testing the connection above."
-msgstr "Geen spelers — deze worden geladen na het testen van de verbinding hierboven."
+msgstr ""
+"Geen spelers — deze worden geladen na het testen van de verbinding hierboven."
 
 #: prefs.js:1339 prefs.js:1479
 msgid "Connection"
@@ -435,8 +455,14 @@ msgid "Panel entities"
 msgstr "Entiteiten in de bovenbalk"
 
 #: prefs.js:1377
-msgid "Entity values (e.g. a temperature sensor) shown directly in the GNOME top bar. Switches, buttons and other controls can be operated right in the bar; the entity name appears on hover."
-msgstr "Entiteitswaarden (bijv. een temperatuursensor) die direct in de GNOME-bovenbalk worden getoond. Schakelaars, knoppen en andere bedieningselementen zijn direct in de balk te bedienen; de entiteitnaam verschijnt bij aanwijzen."
+msgid ""
+"Entity values (e.g. a temperature sensor) shown directly in the GNOME top "
+"bar. Switches, buttons and other controls can be operated right in the bar; "
+"the entity name appears on hover."
+msgstr ""
+"Entiteitswaarden (bijv. een temperatuursensor) die direct in de GNOME-"
+"bovenbalk worden getoond. Schakelaars, knoppen en andere bedieningselementen "
+"zijn direct in de balk te bedienen; de entiteitnaam verschijnt bij aanwijzen."
 
 #: prefs.js:1383
 msgid "Decimal places for numeric values"
@@ -451,12 +477,21 @@ msgid "Entity icons"
 msgstr "Entiteitspictogrammen"
 
 #: prefs.js:1398
-msgid "Icon source for the panel and menu. \"From Home Assistant (MDI)\" uses the entity's own icon (mdi:…) from the MDI set bundled with the extension"
-msgstr "Bron van de pictogrammen voor paneel en menu. \\\"Van Home Assistant (MDI)\\\" gebruikt het eigen pictogram van de entiteit (mdi:…) uit de meegeleverde MDI-set"
+msgid ""
+"Icon source for the panel and menu. \"From Home Assistant (MDI)\" uses the "
+"entity's own icon (mdi:…) from the MDI set bundled with the extension"
+msgstr ""
+"Bron van de pictogrammen voor paneel en menu. \\\"Van Home Assistant (MDI)\\"
+"\" gebruikt het eigen pictogram van de entiteit (mdi:…) uit de meegeleverde "
+"MDI-set"
 
 #: prefs.js:1406
 msgid "No icons"
 msgstr "Geen pictogrammen"
+
+#: prefs.js:1413
+msgid "Shortcuts"
+msgstr "Sneltoetsen"
 
 #: prefs.js:1414
 msgid "Extension global keyboard shortcuts"
@@ -475,8 +510,15 @@ msgid "Menu entities"
 msgstr "Entiteiten in het menu"
 
 #: prefs.js:1429
-msgid "Controls in the popup menu. The control type adapts automatically by domain: switch (switch, light, fan), slider (light brightness, volume, covers), button (script, scene), dropdown (input_select), text or sensor."
-msgstr "Bedieningselementen in het uitklapmenu. Het type past zich automatisch aan per domein: schakelaar (switch, light, fan), schuifregelaar (helderheid, volume, zonwering), knop (script, scène), keuzelijst (input_select), tekst of sensor."
+msgid ""
+"Controls in the popup menu. The control type adapts automatically by domain: "
+"switch (switch, light, fan), slider (light brightness, volume, covers), "
+"button (script, scene), dropdown (input_select), text or sensor."
+msgstr ""
+"Bedieningselementen in het uitklapmenu. Het type past zich automatisch aan "
+"per domein: schakelaar (switch, light, fan), schuifregelaar (helderheid, "
+"volume, zonwering), knop (script, scène), keuzelijst (input_select), tekst "
+"of sensor."
 
 #: prefs.js:1433
 msgid "e.g. light.livingroom or switch.coffee"
@@ -539,16 +581,22 @@ msgid "MPRIS bridge (media keys)"
 msgstr "MPRIS-brug (mediasneltoetsen)"
 
 #: prefs.js:1577
-msgid "Lets you control players with hardware keys and the GNOME media controls"
-msgstr "Laat je spelers bedienen met hardwaretoetsen en de mediabediening van GNOME"
+msgid ""
+"Lets you control players with hardware keys and the GNOME media controls"
+msgstr ""
+"Laat je spelers bedienen met hardwaretoetsen en de mediabediening van GNOME"
 
 #: prefs.js:1583
 msgid "Players in MPRIS"
 msgstr "Spelers in MPRIS"
 
 #: prefs.js:1584
-msgid "Check the players from Music Assistant and Home Assistant. On name clash Music Assistant wins."
-msgstr "Vink spelers van Music Assistant en Home Assistant aan. Bij dezelfde naam heeft Music Assistant voorrang."
+msgid ""
+"Check the players from Music Assistant and Home Assistant. On name clash "
+"Music Assistant wins."
+msgstr ""
+"Vink spelers van Music Assistant en Home Assistant aan. Bij dezelfde naam "
+"heeft Music Assistant voorrang."
 
 #: prefs.js:1598
 msgid "Menu controls"
@@ -582,7 +630,7 @@ msgstr "Volumeschuifregelaar"
 msgid "Shuffle and repeat"
 msgstr "Willekeurig en herhalen"
 
-#: prefs.js:1613 prefs.js:1707
+#: prefs.js:1613 prefs.js:1726
 msgid "Top bar"
 msgstr "Bovenbalk"
 
@@ -609,3 +657,27 @@ msgstr "Kleurindicator van de status van Home Assistant en Music Assistant"
 #: prefs.js:1621
 msgid "Show connection status (dots)"
 msgstr "Verbindingsstatus tonen (stippen)"
+
+#: prefs.js:1625
+msgid "Interface"
+msgstr "Interface"
+
+#: prefs.js:1626
+msgid "Extension interface language"
+msgstr "Taal van de extensie-interface"
+
+#: prefs.js:1628
+msgid "Interface language"
+msgstr "Interfacetaal"
+
+#: prefs.js:1629
+msgid ""
+"Automatic follows the system language. The menu updates right away; reopen "
+"this window to translate it too."
+msgstr ""
+"Volgt automatisch de systeemtaal. Het menu wordt meteen bijgewerkt; open dit "
+"venster opnieuw om het ook te vertalen."
+
+#: prefs.js:1634
+msgid "Automatic (follow system)"
+msgstr "Automatisch (volgt het systeem)"

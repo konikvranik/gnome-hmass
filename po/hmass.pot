@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/konikvranik/gnome-hmass/issues\n"
-"POT-Creation-Date: 2026-09-26 18:44+0200\n"
+"POT-Creation-Date: 2026-09-26 19:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,8 +53,8 @@ msgstr ""
 msgid "Home Assistant: invalid token"
 msgstr ""
 
-#: extension.js:694 extension.js:720 lib/ha.js:40 lib/ha.js:43 lib/ma.js:142
-#: lib/ma.js:146 lib/ma.js:226
+#: extension.js:694 extension.js:720 lib/ha.js:41 lib/ha.js:44 lib/ma.js:143
+#: lib/ma.js:147 lib/ma.js:227
 msgid "no connection"
 msgstr ""
 
@@ -70,172 +70,172 @@ msgstr ""
 msgid "Music Assistant: access denied (API key?)"
 msgstr ""
 
-#: lib/ha.js:85
+#: lib/ha.js:86
 msgid "destroyed"
 msgstr ""
 
-#: lib/ha.js:117
+#: lib/ha.js:118
 msgid "invalid token"
 msgstr ""
 
-#: lib/ha.js:237
+#: lib/ha.js:238
 msgid "Home Assistant is not connected"
 msgstr ""
 
-#: lib/ma.js:286
+#: lib/ma.js:287
 msgid "denied - check the API key"
 msgstr ""
 
-#: lib/mpris.js:188 lib/ui.js:1296
+#: lib/mpris.js:190 lib/ui.js:1299
 msgid "Nothing playing"
 msgstr ""
 
-#: lib/mpris.js:302
+#: lib/mpris.js:304
 #, javascript-format
 msgid "Unknown property %s on %s"
 msgstr ""
 
-#: lib/mpris.js:363
+#: lib/mpris.js:365
 #, javascript-format
 msgid "Unknown method %s"
 msgstr ""
 
-#: lib/ui.js:273
-msgid "on"
-msgstr ""
-
-#: lib/ui.js:274
-msgid "off"
-msgstr ""
-
-#: lib/ui.js:275 lib/ui.js:291 lib/ui.js:548
+#: lib/ui.js:278 lib/ui.js:551
 msgid "unavailable"
 msgstr ""
 
-#: lib/ui.js:276
-msgid "unknown"
-msgstr ""
-
-#: lib/ui.js:277
-msgid "idle"
-msgstr ""
-
-#: lib/ui.js:278
-msgid "playing"
-msgstr ""
-
-#: lib/ui.js:279
-msgid "paused"
-msgstr ""
-
 #: lib/ui.js:280
-msgid "standby"
+msgid "on"
 msgstr ""
 
 #: lib/ui.js:281
-msgid "open"
+msgid "off"
 msgstr ""
 
 #: lib/ui.js:282
-msgid "opening"
+msgid "unknown"
 msgstr ""
 
 #: lib/ui.js:283
-msgid "closed"
+msgid "idle"
 msgstr ""
 
 #: lib/ui.js:284
-msgid "closing"
+msgid "playing"
 msgstr ""
 
 #: lib/ui.js:285
-msgid "home"
+msgid "paused"
 msgstr ""
 
 #: lib/ui.js:286
+msgid "standby"
+msgstr ""
+
+#: lib/ui.js:287
+msgid "open"
+msgstr ""
+
+#: lib/ui.js:288
+msgid "opening"
+msgstr ""
+
+#: lib/ui.js:289
+msgid "closed"
+msgstr ""
+
+#: lib/ui.js:290
+msgid "closing"
+msgstr ""
+
+#: lib/ui.js:291
+msgid "home"
+msgstr ""
+
+#: lib/ui.js:292
 msgid "away"
 msgstr ""
 
-#: lib/ui.js:688
+#: lib/ui.js:691
 msgid "text…"
 msgstr ""
 
-#: lib/ui.js:718
+#: lib/ui.js:721
 msgid "Brightness"
 msgstr ""
 
-#: lib/ui.js:734
+#: lib/ui.js:737
 msgid "Volume"
 msgstr ""
 
-#: lib/ui.js:750
+#: lib/ui.js:753
 msgid "Position"
 msgstr ""
 
-#: lib/ui.js:974
+#: lib/ui.js:977
 msgid "click to toggle"
 msgstr ""
 
-#: lib/ui.js:988
+#: lib/ui.js:991
 msgid "click to run"
 msgstr ""
 
-#: lib/ui.js:1033
+#: lib/ui.js:1036
 msgid "scroll to change"
 msgstr ""
 
-#: lib/ui.js:1059
+#: lib/ui.js:1062
 msgid "click to cycle"
 msgstr ""
 
-#: lib/ui.js:1148
+#: lib/ui.js:1151
 msgid "Player"
 msgstr ""
 
-#: lib/ui.js:1240
+#: lib/ui.js:1243
 msgid "No player"
 msgstr ""
 
-#: lib/ui.js:1277
+#: lib/ui.js:1280
 msgid "Off"
 msgstr ""
 
-#: lib/ui.js:1416
+#: lib/ui.js:1419
 msgid "Ask the Assistant..."
 msgstr ""
 
-#: lib/ui.js:1455
+#: lib/ui.js:1458
 msgid "You"
 msgstr ""
 
-#: lib/ui.js:1456
+#: lib/ui.js:1459
 msgid "Thinking..."
 msgstr ""
 
-#: lib/ui.js:1465
+#: lib/ui.js:1468
 msgid "Done."
 msgstr ""
 
-#: lib/ui.js:1469
+#: lib/ui.js:1472
 msgid "Error"
 msgstr ""
 
-#: lib/ws.js:223
+#: lib/ws.js:225
 #, javascript-format
 msgid "connection did not open within %s s"
 msgstr ""
 
-#: lib/ws.js:232
+#: lib/ws.js:234
 #, javascript-format
 msgid "invalid URL (cannot create message): %s"
 msgstr ""
 
-#: lib/ws.js:251 lib/ws.js:268
+#: lib/ws.js:253 lib/ws.js:270
 #, javascript-format
 msgid "connection failed: %s"
 msgstr ""
 
-#: lib/ws.js:325
+#: lib/ws.js:327
 msgid "connection closed by server"
 msgstr ""
 
@@ -477,6 +477,10 @@ msgstr ""
 msgid "No icons"
 msgstr ""
 
+#: prefs.js:1413
+msgid "Shortcuts"
+msgstr ""
+
 #: prefs.js:1414
 msgid "Extension global keyboard shortcuts"
 msgstr ""
@@ -607,7 +611,7 @@ msgstr ""
 msgid "Shuffle and repeat"
 msgstr ""
 
-#: prefs.js:1613 prefs.js:1707
+#: prefs.js:1613 prefs.js:1726
 msgid "Top bar"
 msgstr ""
 
@@ -633,4 +637,26 @@ msgstr ""
 
 #: prefs.js:1621
 msgid "Show connection status (dots)"
+msgstr ""
+
+#: prefs.js:1625
+msgid "Interface"
+msgstr ""
+
+#: prefs.js:1626
+msgid "Extension interface language"
+msgstr ""
+
+#: prefs.js:1628
+msgid "Interface language"
+msgstr ""
+
+#: prefs.js:1629
+msgid ""
+"Automatic follows the system language. The menu updates right away; reopen "
+"this window to translate it too."
+msgstr ""
+
+#: prefs.js:1634
+msgid "Automatic (follow system)"
 msgstr ""

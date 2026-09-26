@@ -34,6 +34,22 @@ Gtk.init(null);
 const Prefs = imports.prefs;
 const settings = imports.misc.extensionUtils.getSettings();
 
+// ---- i18n: vynucený jazyk rozhraní (JSON mapy ze skutečného adresáře) ----
+{
+    const Gio = imports.gi.Gio;
+    const I18n = imports.lib.i18n;
+    I18n.init(settings, Gio.File.new_for_path(EXT_DIR));
+    I18n.apply('cs');
+    check('i18n: vynucená čeština', I18n._('Settings') === 'Nastavení' &&
+        I18n._('Reconnect') === 'Připojit znovu', I18n._('Settings'));
+    check('i18n: cs hint asistenta', I18n._('Ask the Assistant...') === 'Požádej asistenta...',
+        I18n._('Ask the Assistant...'));
+    I18n.apply('nl');
+    check('i18n: vynucená nizozemština', I18n._('Settings') === 'Instellingen' &&
+        I18n._('on') === 'aan', I18n._('Settings'));
+    I18n.apply('auto');
+}
+
 // simulovat načtené přehrávače: Obývák je v MA i HA (duplicita → MA), Ložnice jen v HA
 Prefs._maPlayers = [
     {player_id: 'p1', name: 'Obývák'},

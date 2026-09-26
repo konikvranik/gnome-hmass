@@ -105,6 +105,17 @@
       <default>true</default>
       <summary>Zobrazit ikonu v liště</summary>
     </key>
+    <key type="s" name="interface-language">
+      <choices>
+        <choice value="auto"/>
+        <choice value="en"/>
+        <choice value="cs"/>
+        <choice value="nl"/>
+      </choices>
+      <default>"auto"</default>
+      <summary>Jazyk rozhraní rozšíření</summary>
+      <description>auto = podle jazyku systému; jinak vynucený jazyk (en, cs, nl). Platí pro menu i okno nastavení (po jeho opětovném otevření).</description>
+    </key>
     <key type="b" name="panel-show-status">
       <default>true</default>
       <summary>Zobrazit stav připojení (tečky) v liště</summary>

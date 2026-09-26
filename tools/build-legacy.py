@@ -76,7 +76,8 @@ def transform_js(content: str, rel_path: str) -> str:
         if 'resource:///org/gnome/shell/extensions/extension.js' in line:
             out_lines.append("const ExtensionUtils = imports.misc.extensionUtils;")
             out_lines.append("const Me = ExtensionUtils.getCurrentExtension();")
-            out_lines.append("const _ = ExtensionUtils.gettext || (s => s);")
+            if 'gettext' in line:
+                out_lines.append("const _ = ExtensionUtils.gettext || (s => s);")
             i += 1
             continue
 
@@ -84,7 +85,8 @@ def transform_js(content: str, rel_path: str) -> str:
         if 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js' in line:
             out_lines.append("const ExtensionUtils = imports.misc.extensionUtils;")
             out_lines.append("const Me = ExtensionUtils.getCurrentExtension();")
-            out_lines.append("const _ = ExtensionUtils.gettext || (s => s);")
+            if 'gettext' in line:
+                out_lines.append("const _ = ExtensionUtils.gettext || (s => s);")
             i += 1
             continue
 
@@ -156,6 +158,7 @@ def transform_js(content: str, rel_path: str) -> str:
             out_lines.append("")
             out_lines.append("function init() {")
             out_lines.append("    ExtensionUtils.initTranslations();")
+            out_lines.append("    I18n.init(ExtensionUtils.getSettings(), Me.dir);")
             out_lines.append("}")
             out_lines.append("")
             out_lines.append("function enable() {")
@@ -180,6 +183,7 @@ def transform_js(content: str, rel_path: str) -> str:
         if is_prefs_js and line.strip().startswith('export default class HMassPreferences extends ExtensionPreferences'):
             out_lines.append("function init() {")
             out_lines.append("    ExtensionUtils.initTranslations();")
+            out_lines.append("    I18n.init(ExtensionUtils.getSettings(), Me.dir);")
             out_lines.append("}")
             i += 1
             continue
@@ -191,6 +195,8 @@ def transform_js(content: str, rel_path: str) -> str:
 
         if is_prefs_js and 'this.getSettings()' in line:
             line = line.replace('this.getSettings()', 'ExtensionUtils.getSettings()')
+        if is_prefs_js and 'this.dir' in line:
+            line = line.replace('this.dir', 'Me.dir')
 
         # Pokud jsme v prefs.js a jsme na poslední neprázdné řádce s uzavírací závorkou třídy '}'
         if is_prefs_js and line.strip() in ('}', '};'):

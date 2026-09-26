@@ -149,6 +149,14 @@ DISPLAY=:1 import -window root /tmp/shot.png                # screenshot
   (reverzní proxy je blokuje). Funguje POST `/api/template` — ale výstup
   šablony má limit 256 kB, proto po dávkách po 2500 entitách
   (`_haEnrichDevices` v prefs.js, chunk `states|list[a:b]`).
+- **i18n**: gettext doména "hmass", msgid anglicky, cs/nl v po/*.po.
+  Vynucený jazyk (nastavení interface-language) řeší lib/i18n.js - JSON
+  mapy locale/l10n/<jazyk>.json generuje tools/gen-l10n.py (make all),
+  protože setlocale/LANGUAGE je procesové a v shellu by přeplo celé
+  GNOME. Pozor: v modulech z lib/ musí být import přes Me.imports.lib.*
+  (imports.lib.* v shellu neexistuje - ImportError), a literály překládané
+  přes proměnnou (humanState) musí zůstat viditelné pro xgettext - tabulku
+  stavět až uvnitř funkce, jinak msgmerge msgidy pošle do obsolete.
 - **Prefs proces a GC varování**: proces `gjs org.gnome.Shell.Extensions`
   chronicky plní journal hlášením „Attempting to run a JS callback during
   garbage collection… The offending callback was SourceFunc()" — u

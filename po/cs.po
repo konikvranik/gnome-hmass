@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hmass 1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/konikvranik/gnome-hmass/issues\n"
-"POT-Creation-Date: 2026-09-26 18:25+0200\n"
+"POT-Creation-Date: 2026-09-26 19:17+0200\n"
 "PO-Revision-Date: 2026-09-26 18:25+0200\n"
 "Last-Translator: pvranik\n"
 "Language-Team: Czech\n"
@@ -57,8 +57,8 @@ msgstr "Home Assistant: připojuji…"
 msgid "Home Assistant: invalid token"
 msgstr "Home Assistant: neplatný token"
 
-#: extension.js:694 extension.js:720 lib/ha.js:40 lib/ha.js:43 lib/ma.js:142
-#: lib/ma.js:146 lib/ma.js:226
+#: extension.js:694 extension.js:720 lib/ha.js:41 lib/ha.js:44 lib/ma.js:143
+#: lib/ma.js:147 lib/ma.js:227
 msgid "no connection"
 msgstr "bez spojení"
 
@@ -74,172 +74,172 @@ msgstr "Music Assistant: připojuji…"
 msgid "Music Assistant: access denied (API key?)"
 msgstr "Music Assistant: přístup odepřen (API klíč?)"
 
-#: lib/ha.js:85
+#: lib/ha.js:86
 msgid "destroyed"
 msgstr "Zničeno"
 
-#: lib/ha.js:117
+#: lib/ha.js:118
 msgid "invalid token"
 msgstr "neplatný token"
 
-#: lib/ha.js:237
+#: lib/ha.js:238
 msgid "Home Assistant is not connected"
 msgstr "Home Assistant není připojen"
 
-#: lib/ma.js:286
+#: lib/ma.js:287
 msgid "denied - check the API key"
 msgstr "odmítnuto - zkontroluj API klíč"
 
-#: lib/mpris.js:188 lib/ui.js:1296
+#: lib/mpris.js:190 lib/ui.js:1299
 msgid "Nothing playing"
 msgstr "Nic se nepřehrává"
 
-#: lib/mpris.js:302
+#: lib/mpris.js:304
 #, javascript-format
 msgid "Unknown property %s on %s"
 msgstr "Neznámá vlastnost %s na %s"
 
-#: lib/mpris.js:363
+#: lib/mpris.js:365
 #, javascript-format
 msgid "Unknown method %s"
 msgstr "Neznámá metoda %s"
 
-#: lib/ui.js:273
-msgid "on"
-msgstr "zapnuto"
-
-#: lib/ui.js:274
-msgid "off"
-msgstr "vypnuto"
-
-#: lib/ui.js:275 lib/ui.js:291 lib/ui.js:548
+#: lib/ui.js:278 lib/ui.js:551
 msgid "unavailable"
 msgstr "nedostupné"
 
-#: lib/ui.js:276
+#: lib/ui.js:280
+msgid "on"
+msgstr "zapnuto"
+
+#: lib/ui.js:281
+msgid "off"
+msgstr "vypnuto"
+
+#: lib/ui.js:282
 msgid "unknown"
 msgstr "neznámé"
 
-#: lib/ui.js:277
+#: lib/ui.js:283
 msgid "idle"
 msgstr "nečinné"
 
-#: lib/ui.js:278
+#: lib/ui.js:284
 msgid "playing"
 msgstr "hraje"
 
-#: lib/ui.js:279
+#: lib/ui.js:285
 msgid "paused"
 msgstr "pozastaveno"
 
-#: lib/ui.js:280
+#: lib/ui.js:286
 msgid "standby"
 msgstr "pohotovost"
 
-#: lib/ui.js:281
+#: lib/ui.js:287
 msgid "open"
 msgstr "otevřeno"
 
-#: lib/ui.js:282
+#: lib/ui.js:288
 msgid "opening"
 msgstr "otevírá se"
 
-#: lib/ui.js:283
+#: lib/ui.js:289
 msgid "closed"
 msgstr "zavřeno"
 
-#: lib/ui.js:284
+#: lib/ui.js:290
 msgid "closing"
 msgstr "zavírá se"
 
-#: lib/ui.js:285
+#: lib/ui.js:291
 msgid "home"
 msgstr "doma"
 
-#: lib/ui.js:286
+#: lib/ui.js:292
 msgid "away"
 msgstr "pryč"
 
-#: lib/ui.js:688
+#: lib/ui.js:691
 msgid "text…"
 msgstr "text…"
 
-#: lib/ui.js:718
+#: lib/ui.js:721
 msgid "Brightness"
 msgstr "Jas"
 
-#: lib/ui.js:734
+#: lib/ui.js:737
 msgid "Volume"
 msgstr "Hlasitost"
 
-#: lib/ui.js:750
+#: lib/ui.js:753
 msgid "Position"
 msgstr "Pozice"
 
-#: lib/ui.js:974
+#: lib/ui.js:977
 msgid "click to toggle"
 msgstr "klik přepne"
 
-#: lib/ui.js:988
+#: lib/ui.js:991
 msgid "click to run"
 msgstr "klik spustí"
 
-#: lib/ui.js:1033
+#: lib/ui.js:1036
 msgid "scroll to change"
 msgstr "kolečko mění hodnotu"
 
-#: lib/ui.js:1059
+#: lib/ui.js:1062
 msgid "click to cycle"
 msgstr "klik přepne volbu"
 
-#: lib/ui.js:1148
+#: lib/ui.js:1151
 msgid "Player"
 msgstr "Přehrávač"
 
-#: lib/ui.js:1240
+#: lib/ui.js:1243
 msgid "No player"
 msgstr "Žádný přehrávač"
 
-#: lib/ui.js:1277
+#: lib/ui.js:1280
 msgid "Off"
 msgstr "Vypnout"
 
-#: lib/ui.js:1416
+#: lib/ui.js:1419
 msgid "Ask the Assistant..."
 msgstr "Požádej asistenta..."
 
-#: lib/ui.js:1455
+#: lib/ui.js:1458
 msgid "You"
 msgstr "Vy"
 
-#: lib/ui.js:1456
+#: lib/ui.js:1459
 msgid "Thinking..."
 msgstr "Přemýšlím..."
 
-#: lib/ui.js:1465
+#: lib/ui.js:1468
 msgid "Done."
 msgstr "Hotovo."
 
-#: lib/ui.js:1469
+#: lib/ui.js:1472
 msgid "Error"
 msgstr "Chyba"
 
-#: lib/ws.js:223
+#: lib/ws.js:225
 #, javascript-format
 msgid "connection did not open within %s s"
 msgstr "připojení se nepovedlo do %s s"
 
-#: lib/ws.js:232
+#: lib/ws.js:234
 #, javascript-format
 msgid "invalid URL (cannot create message): %s"
 msgstr "neplatná URL (nelze vytvořit zprávu): %s"
 
-#: lib/ws.js:251 lib/ws.js:268
+#: lib/ws.js:253 lib/ws.js:270
 #, javascript-format
 msgid "connection failed: %s"
 msgstr "připojení selhalo: %s"
 
-#: lib/ws.js:325
+#: lib/ws.js:327
 msgid "connection closed by server"
 msgstr "spojení ukončeno serverem"
 
@@ -333,7 +333,8 @@ msgid ""
 "decimal places and thresholds apply to both the panel and the\n"
 "menu; the display mode applies to the panel only (in the menu\n"
 "the toggle is the value itself)."
-msgstr "Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n"
+msgstr ""
+"Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n"
 "desetinná místa a prahy platí pro lištu i menu; režim\n"
 "zobrazení jen pro lištu (v menu u přepínače je hodnotou\n"
 "sám přepínač)."
@@ -489,6 +490,10 @@ msgstr ""
 msgid "No icons"
 msgstr "Bez ikon"
 
+#: prefs.js:1413
+msgid "Shortcuts"
+msgstr "Zkratky"
+
 #: prefs.js:1414
 msgid "Extension global keyboard shortcuts"
 msgstr "Globální klávesové zkratky rozšíření"
@@ -627,7 +632,7 @@ msgstr "Posuvník hlasitosti"
 msgid "Shuffle and repeat"
 msgstr "Náhodné přehrávání a opakování (Shuffle a repeat)"
 
-#: prefs.js:1613 prefs.js:1707
+#: prefs.js:1613 prefs.js:1726
 msgid "Top bar"
 msgstr "Horní lišta"
 
@@ -655,13 +660,26 @@ msgstr "Barevná indikace stavu Home Assistant a Music Assistant"
 msgid "Show connection status (dots)"
 msgstr "Zobrazit stav spojení (tečky)"
 
-#~ msgid ""
-#~ "Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n"
-#~ "desetinná místa a prahy platí pro lištu i menu; režim\n"
-#~ "zobrazení jen pro lištu (v menu u přepínače je hodnotou\n"
-#~ "sám přepínač)."
-#~ msgstr ""
-#~ "Hodnota mimo prahy se zvýrazní červeně. Ikona, název,\n"
-#~ "desetinná místa a prahy platí pro lištu i menu; režim\n"
-#~ "zobrazení jen pro lištu (v menu u přepínače je hodnotou\n"
-#~ "sám přepínač)."
+#: prefs.js:1625
+msgid "Interface"
+msgstr "Rozhraní"
+
+#: prefs.js:1626
+msgid "Extension interface language"
+msgstr "Jazyk rozhraní rozšíření"
+
+#: prefs.js:1628
+msgid "Interface language"
+msgstr "Jazyk rozhraní"
+
+#: prefs.js:1629
+msgid ""
+"Automatic follows the system language. The menu updates right away; reopen "
+"this window to translate it too."
+msgstr ""
+"Automaticky podle jazyku systému. Menu se aktualizuje hned; toto okno "
+"přeložíte jeho znovuotevřením."
+
+#: prefs.js:1634
+msgid "Automatic (follow system)"
+msgstr "Automaticky (podle systému)"

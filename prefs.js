@@ -13,9 +13,11 @@ import GObject from 'gi://GObject';
 import Gtk from 'gi://Gtk';
 import Pango from 'gi://Pango';
 import Soup from 'gi://Soup';
-import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 import {MAClient} from './lib/ma.js';
+import * as I18n from './lib/i18n.js';
 
+const _ = I18n._;
 // %s/%d nahrazování - String.format z GNOME Shell prostředí tady
 // není (čistý gjs / prefs proces)
 const _f = (str, ...args) => str.replace(/%[sd]/g, () => args.shift());
@@ -1410,7 +1412,7 @@ function buildHaPage(settings) {
 
     // Zkratky
     const keysGroup = new Adw.PreferencesGroup({
-        title: 'Zkratky',
+        title: _('Shortcuts'),
         description: _('Extension global keyboard shortcuts'),
     });
     keysGroup.add(_keybindingRow(
@@ -1620,8 +1622,27 @@ function buildPanelPage(settings) {
     group.add(_switchRow(_('Show icon'), _('House / note / offline status icon'), settings, 'panel-show-icon'));
     group.add(_switchRow(_('Show connection status (dots)'), _('Color indicator of Home Assistant and Music Assistant status'), settings, 'panel-show-status'));
     page.add(group);
+
+    const langGroup = new Adw.PreferencesGroup({
+        title: _('Interface'),
+        description: _('Extension interface language'),
+    });
+    langGroup.add(_comboRowStr(_('Interface language'),
+        _('Automatic follows the system language. The menu updates right ' +
+          'away; reopen this window to translate it too.'),
+        settings,
+        'interface-language',
+        [
+            {value: 'auto', label: _('Automatic (follow system)')},
+            {value: 'en', label: 'English'},
+            {value: 'cs', label: 'Čeština'},
+            {value: 'nl', label: 'Nederlands'},
+        ]
+    ));
+    page.add(langGroup);
     return page;
 }
+
 
 
 /**
@@ -1657,6 +1678,7 @@ function _rememberWindowSize(settings, window) {
 export default class HMassPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         const settings = this.getSettings();
+        I18n.init(settings, this.dir);
 
         window.set_default_size(..._clampWindowSize(
             settings.get_int('prefs-width'), settings.get_int('prefs-height')));

@@ -5,14 +5,15 @@ SHELL_MAJOR := $(shell gnome-shell --version 2>/dev/null | sed -E 's/[^0-9]*([0-
 IS_V45_PLUS := $(shell test "$$(echo $(SHELL_MAJOR) | cut -d. -f1)" -ge 45 2>/dev/null && echo 1 || echo 0)
 
 FILES = metadata.json extension.js prefs.js stylesheet.css LICENSE lib schemas icons locale README.md
-ZIPFILES = metadata.json extension.js prefs.js stylesheet.css LICENSE lib schemas icons locale
+ZIPFILES = metadata.json extension.js prefs.js stylesheet.css LICENSE lib schemas icons locale po
 
 .PHONY: all build-legacy check test install install-46 install-42 zip clean uninstall update-po
 
 LANGUAGES = cs nl
 MOFILES = $(LANGUAGES:%=locale/%/LC_MESSAGES/hmass.mo)
+L10NFILES = $(LANGUAGES:%=locale/l10n/%.json)
 
-all: schemas/gschemas.compiled $(MOFILES)
+all: schemas/gschemas.compiled $(MOFILES) $(L10NFILES)
 
 schemas/gschemas.compiled: schemas/org.gnome.shell.extensions.hmass.gschema.xml
 	glib-compile-schemas schemas/
@@ -21,6 +22,11 @@ schemas/gschemas.compiled: schemas/org.gnome.shell.extensions.hmass.gschema.xml
 locale/%/LC_MESSAGES/hmass.mo: po/%.po
 	mkdir -p $(dir $@)
 	msgfmt $< -o $@
+
+# JSON mapy pro vynucený jazyk rozhraní (interface-language != auto)
+locale/l10n/%.json: po/%.po tools/gen-l10n.py
+	mkdir -p $(dir $@)
+	python3 tools/gen-l10n.py $< $@
 
 po/hmass.pot: po/POTFILES.in extension.js prefs.js lib/*.js
 	xgettext --from-code=UTF-8 -L JavaScript --keyword=_ -kformat \
@@ -81,8 +87,8 @@ install-42: build-legacy
 # Balíčky pro EGO (extensions.gnome.org): verze pro 45+ i pro 42-44
 zip: all build-legacy
 	rm -f $(UUID)-v46.zip $(UUID)-v42.zip $(UUID).zip
-	zip -r $(UUID)-v46.zip $(ZIPFILES)
-	cd build/v42 && zip -r ../../$(UUID)-v42.zip $(ZIPFILES)
+	zip -r $(UUID)-v46.zip $(ZIPFILES) -x 'schemas/gschemas.compiled'
+	cd build/v42 && zip -r ../../$(UUID)-v42.zip $(ZIPFILES) -x 'schemas/gschemas.compiled'
 	cp $(UUID)-v46.zip $(UUID).zip
 	@echo "Vytvořen $(UUID)-v46.zip (pro GNOME 45-48)"
 	@echo "Vytvořen $(UUID)-v42.zip (pro GNOME 42-44)"

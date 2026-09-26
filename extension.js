@@ -21,7 +21,10 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as Util from 'resource:///org/gnome/shell/misc/util.js';
-import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+
+import * as I18n from './lib/i18n.js';
+const _ = I18n._;
 
 import {HAClient} from './lib/ha.js';
 import {MAClient, PlayerView} from './lib/ma.js';
@@ -832,6 +835,7 @@ const HMassIndicator = GObject.registerClass({
 
 export default class HMassExtension extends Extension {
     enable() {
+        I18n.init(this.getSettings(), this.dir);
         this._indicator = new HMassIndicator(this);
         Main.panel.addToStatusArea('hmass', this._indicator);
         this._indicator._connectClients();
