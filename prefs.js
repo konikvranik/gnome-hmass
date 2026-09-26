@@ -5,13 +5,15 @@
  * Nastavení rozšíření (GTK4 + Libadwaita). GNOME 42+.
  */
 
-imports.gi.versions.Gtk = '4.0';
-imports.gi.versions.Soup = '3.0';
-
-const {Adw, Gdk, Gio, GLib, GObject, Gtk, Soup} = imports.gi;
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const {MAClient} = Me.imports.lib.ma;
+import Adw from 'gi://Adw';
+import Gdk from 'gi://Gdk';
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import Gtk from 'gi://Gtk';
+import Soup from 'gi://Soup';
+import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {MAClient} from './lib/ma.js';
 
 const _decoder = new TextDecoder();
 
@@ -1065,63 +1067,23 @@ function buildPanelPage(settings) {
     return page;
 }
 
-function init() {
-}
-
 /**
  * Moderní vstupní bod pro GNOME 42+ (Libadwaita).
  */
-function fillPreferencesWindow(window) {
-    const settings = ExtensionUtils.getSettings();
+export default class HMassPreferences extends ExtensionPreferences {
+    fillPreferencesWindow(window) {
+        const settings = this.getSettings();
 
-    window.set_default_size(680, 750);
-    window.set_search_enabled(true);
+        window.set_default_size(680, 750);
+        window.set_search_enabled(true);
 
-    window.add(buildHaPage(settings));
-    window.add(buildMaPage(settings));
-    window.add(buildPanelPage(settings));
+        window.add(buildHaPage(settings));
+        window.add(buildMaPage(settings));
+        window.add(buildPanelPage(settings));
 
-    GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-        _autoLoadPlayers(settings);
-        return GLib.SOURCE_REMOVE;
-    });
-}
-
-/**
- * Zpětně kompatibilní fallback (GTK4 widget).
- */
-function buildPrefsWidget() {
-    const settings = ExtensionUtils.getSettings();
-
-    const box = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL,
-        spacing: 12,
-        margin_top: 12,
-        margin_bottom: 12,
-        margin_start: 12,
-        margin_end: 12,
-    });
-
-    const stack = new Gtk.Stack({
-        transition_type: Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
-    });
-    const switcher = new Gtk.StackSwitcher({
-        stack: stack,
-        halign: Gtk.Align.CENTER,
-        margin_bottom: 12,
-    });
-
-    box.append(switcher);
-    box.append(stack);
-
-    stack.add_titled(buildHaPage(settings), 'ha', 'Home Assistant');
-    stack.add_titled(buildMaPage(settings), 'ma', 'Music Assistant');
-    stack.add_titled(buildPanelPage(settings), 'panel', 'Horní lišta');
-
-    GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-        _autoLoadPlayers(settings);
-        return GLib.SOURCE_REMOVE;
-    });
-
-    return box;
+        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            _autoLoadPlayers(settings);
+            return GLib.SOURCE_REMOVE;
+        });
+    }
 }

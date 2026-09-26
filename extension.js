@@ -9,19 +9,26 @@
  * - MA: ovládání přehrávání v menu + MPRIS most pro multimediální klávesy
  */
 
-const {Clutter, Gio, GLib, GObject, Meta, Shell, St} = imports.gi;
-const Main = imports.ui.main;
-const PanelMenu = imports.ui.panelMenu;
-const PopupMenu = imports.ui.popupMenu;
-const Util = imports.misc.util;
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
+import Clutter from 'gi://Clutter';
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import Meta from 'gi://Meta';
+import Shell from 'gi://Shell';
+import St from 'gi://St';
 
-const {HAClient} = Me.imports.lib.ha;
-const {MAClient, PlayerView} = Me.imports.lib.ma;
-const {MprisBridge} = Me.imports.lib.mpris;
-const {HaPlayerAdapter} = Me.imports.lib.haPlayer;
-const UI = Me.imports.lib.ui;
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import * as Util from 'resource:///org/gnome/shell/misc/util.js';
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+
+import {HAClient} from './lib/ha.js';
+import {MAClient, PlayerView} from './lib/ma.js';
+import {MprisBridge} from './lib/mpris.js';
+import {HaPlayerAdapter} from './lib/haPlayer.js';
+import * as UI from './lib/ui.js';
+import * as MdiIcons from './lib/icons.js';
 
 const CONNECTION_KEYS = new Set([
     'ha-url', 'ha-token', 'ma-url', 'ma-token', 'ma-enabled', 'ma-default-player',
@@ -48,10 +55,13 @@ const STATUS_COLORS = {
 
 const HMassIndicator = GObject.registerClass({
 }, class HMassIndicator extends PanelMenu.Button {
-    _init() {
+    _init(extension) {
         super._init(0.0, 'Home Assistant & Music Assistant');
 
-        this._settings = ExtensionUtils.getSettings();
+        this._extension = extension;
+        this._settings = (extension && typeof extension.getSettings === 'function')
+            ? extension.getSettings()
+            : (typeof ExtensionUtils !== 'undefined' ? ExtensionUtils.getSettings() : null);
 
         this._ha = new HAClient();
         this._ma = new MAClient();
@@ -66,10 +76,17 @@ const HMassIndicator = GObject.registerClass({
         this._maStatusValue = 'disabled';
         this._dotsArea = null;
 
-        const haIconFile = Me.dir.get_child('icons').get_child('home-assistant.svg');
-        this._haFileIcon = Gio.FileIcon.new(haIconFile);
-        const maIconFile = Me.dir.get_child('icons').get_child('music-assistant.svg');
-        this._maFileIcon = Gio.FileIcon.new(maIconFile);
+        const extDir = extension && extension.dir;
+        if (extDir) {
+            const haIconFile = extDir.get_child('icons').get_child('home-assistant.svg');
+            this._haFileIcon = Gio.FileIcon.new(haIconFile);
+            const maIconFile = extDir.get_child('icons').get_child('music-assistant.svg');
+            this._maFileIcon = Gio.FileIcon.new(maIconFile);
+            MdiIcons.setIconDir(extDir.get_child('icons').get_child('mdi'));
+        } else {
+            this._haFileIcon = null;
+            this._maFileIcon = null;
+        }
 
         this._maSection = null;
         this._haSeparator = null;
@@ -561,15 +578,22 @@ const HMassIndicator = GObject.registerClass({
         const prefsItem = new PopupMenu.PopupMenuItem('Nastavení');
         prefsItem.connect('activate', () => {
             try {
-                if (typeof ExtensionUtils.openPrefs === 'function') {
+                if (this._extension && typeof this._extension.openPreferences === 'function') {
+                    this._extension.openPreferences();
+                    return;
+                }
+            } catch (e) {
+            }
+            try {
+                if (typeof ExtensionUtils !== 'undefined' && typeof ExtensionUtils.openPrefs === 'function') {
                     ExtensionUtils.openPrefs();
                     return;
                 }
             } catch (e) {
-                logError(e, 'hmass: ExtensionUtils.openPrefs selhalo');
             }
             try {
-                Util.spawn(['gnome-extensions', 'prefs', Me.uuid]);
+                const uuid = (this._extension && this._extension.uuid) || 'hmass@pvranik';
+                Util.spawn(['gnome-extensions', 'prefs', uuid]);
             } catch (e) {
                 logError(e, 'hmass: Nelze spustit gnome-extensions prefs');
             }
@@ -791,22 +815,17 @@ const HMassIndicator = GObject.registerClass({
     }
 });
 
-let _indicator = null;
+export default class HMassExtension extends Extension {
+    enable() {
+        this._indicator = new HMassIndicator(this);
+        Main.panel.addToStatusArea('hmass', this._indicator);
+        this._indicator._connectClients();
+    }
 
-function init() {
-}
-
-function enable() {
-    if (_indicator !== null)
-        return;
-    _indicator = new HMassIndicator();
-    Main.panel.addToStatusArea('hmass', _indicator);
-    _indicator._connectClients();
-}
-
-function disable() {
-    if (_indicator === null)
-        return;
-    _indicator.destroy();
-    _indicator = null;
+    disable() {
+        if (this._indicator) {
+            this._indicator.destroy();
+            this._indicator = null;
+        }
+    }
 }

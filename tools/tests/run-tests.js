@@ -14,8 +14,9 @@ const {GLib, Gio} = imports.gi;
 const System = imports.system;
 
 const EXT_DIR = ARGV[0] || '.';
+const REPO_DIR = ARGV[1] || EXT_DIR;
 imports.searchPath.push(EXT_DIR);
-imports.searchPath.push(EXT_DIR + '/tools/tests/harness');
+imports.searchPath.push(REPO_DIR + '/tools/tests/harness');
 
 const misc = imports.misc; // načte stub
 const WsLib = imports.lib.ws;
@@ -171,7 +172,7 @@ function testMa() {
 // vlastní testovací jméno, aby testy nekolidovaly s případně běžícím rozšířením
 const TEST_SUFFIX = 'test1';
 const TEST_DEST = 'org.mpris.MediaPlayer2.hmass.' + TEST_SUFFIX;
-const TEST_PATH = '/org/mpris/MediaPlayer2/hmass/' + TEST_SUFFIX;
+const TEST_PATH = '/org/mpris/MediaPlayer2';
 
 /** Async wrapper - call_sync ze stejného procesu by deadlockovalo main loop. */
 function dbusCall(method, params, replyType) {
@@ -416,7 +417,7 @@ async function _testPlayersPhaseInner() {
     await sleepMs(400);
 
     const getP = (dest, prop) => dbusCallOn(dest,
-        `/org/mpris/MediaPlayer2/hmass/${dest.split('.').pop()}`,
+        '/org/mpris/MediaPlayer2',
         'org.freedesktop.DBus.Properties', 'Get',
         new GLib.Variant('(ss)', ['org.mpris.MediaPlayer2.Player', prop]),
         new GLib.VariantType('(v)')).then(v => v.deepUnpack()[0].deepUnpack());
@@ -442,12 +443,12 @@ async function _testPlayersPhaseInner() {
             String(posHa));
 
         // příkazy: hlasitost, přehrání, seek (relativní v HA)
-        await dbusCallOn(destHa, `/org/mpris/MediaPlayer2/hmass/${destHa.split('.').pop()}`,
+        await dbusCallOn(destHa, '/org/mpris/MediaPlayer2',
             'org.freedesktop.DBus.Properties', 'Set', new GLib.Variant('(ssv)',
                 ['org.mpris.MediaPlayer2.Player', 'Volume', new GLib.Variant('d', 0.55)]), null);
-        await dbusCallOn(destHa, `/org/mpris/MediaPlayer2/hmass/${destHa.split('.').pop()}`,
+        await dbusCallOn(destHa, '/org/mpris/MediaPlayer2',
             'org.mpris.MediaPlayer2.Player', 'PlayPause', null, null);
-        await dbusCallOn(destHa, `/org/mpris/MediaPlayer2/hmass/${destHa.split('.').pop()}`,
+        await dbusCallOn(destHa, '/org/mpris/MediaPlayer2',
             'org.mpris.MediaPlayer2.Player', 'SetPosition',
             new GLib.Variant('(ox)', ['/x', 60000000]), null);
         await sleepMs(400);

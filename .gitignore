@@ -1,5 +1,6 @@
-# artefakt make zip (balíček pro extensions.gnome.org)
-hmass@pvranik.zip
+# artefakty make zip (balíčky pro extensions.gnome.org)
+*.zip
+build/
 
 # generováno glib-compile-schemas (make all/check/install)
 schemas/gschemas.compiled

@@ -5,8 +5,9 @@ set -u
 cd "$(dirname "$0")/../.."
 export GSETTINGS_BACKEND=memory
 export GSETTINGS_SCHEMA_DIR="$PWD/schemas"
-export GI_TYPELIB_PATH="/usr/lib/gnome-shell:/usr/lib/x86_64-linux-gnu/mutter-10"
-export LD_LIBRARY_PATH="/usr/lib/gnome-shell:/usr/lib/x86_64-linux-gnu/mutter-10"
+MUTTER_DIR=$(ls -d /usr/lib/x86_64-linux-gnu/mutter* 2>/dev/null | tail -n 1)
+export GI_TYPELIB_PATH="/usr/lib/gnome-shell:${MUTTER_DIR}:${GI_TYPELIB_PATH:-}"
+export LD_LIBRARY_PATH="/usr/lib/gnome-shell:${MUTTER_DIR}:${LD_LIBRARY_PATH:-}"
 
 # uvolnit porty po případném dřívějším běhu
 for p in 8721 8722 8723 8724 8725; do

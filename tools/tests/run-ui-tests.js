@@ -10,14 +10,17 @@
  */
 
 imports.gi.versions.Soup = '3.0';
-imports.gi.versions.Clutter = '10';
+const _clutterVers = imports.gi.GIRepository.Repository.get_default().enumerate_versions('Clutter');
+if (_clutterVers && _clutterVers.includes('10'))
+    imports.gi.versions.Clutter = '10';
 
 const {GLib, GObject, Gio, Clutter} = imports.gi;
 const System = imports.system;
 
 const EXT_DIR = ARGV[0] || '.';
+const REPO_DIR = ARGV[1] || EXT_DIR;
 imports.searchPath.push(EXT_DIR);
-imports.searchPath.push(EXT_DIR + '/tools/tests/harness');
+imports.searchPath.push(REPO_DIR + '/tools/tests/harness');
 
 const loop = GLib.MainLoop.new(null, false);
 

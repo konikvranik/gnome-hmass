@@ -23,10 +23,10 @@ vše přes GObject introspection. Licence GPL-2.0-or-later.
 ## Příkazy
 
 ```bash
-make check          # syntax kontrola všech JS (rychlé, povinné po každé změně)
+make check          # syntax kontrola ESM i generovaného CJS (rychlé, povinné po každé změně)
 make test           # celá testovací suita (E2E + UI + prefs + Soup kompatibilita)
-make install        # atomická instalace do ~/.local/share/gnome-shell/extensions/
-make zip            # balíček pro extensions.gnome.org (bez testů a README)
+make install        # atomická instalace (auto-detekuje GNOME 45+ ESM vs GNOME 42-44 CJS)
+make zip            # vygeneruje balíčky pro EGO: hmass@pvranik-v46.zip i hmass@pvranik-v42.zip
 ```
 
 Živé testy proti reálným HA/MA (čtou přihlašovací údaje z GSettings uživatele;
@@ -64,9 +64,11 @@ gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
 
 ## Tvrdá pravidla
 
-1. **GNOME Shell 42 API, ne ESM.** Žádné `import`/`export`; importy přes
-   `imports.gi` a `Me.imports`. ESM až od GNOME 45 — pokud přidáváte podporu,
-   držte obě varianty odděleně a testujte obě.
+1. **ESM primárně (GNOME 45–48), automatická transpilace pro GNOME 42–44.**
+   Zdrojový kód v repozitáři je moderní čisté ESM (`import`/`export`).
+   Skript `tools/build-legacy.py` automaticky generuje CJS variantu pro GNOME 42–44
+   do `build/v42`. `make check` ověřuje obě varianty a `make install` nainstaluje
+   správnou verzi podle běžícího GNOME Shellu.
 2. **Dvě verze Soup závisí na vstupním bodě.** Shell a testy nastavují
    `imports.gi.versions.Soup = '2.4'`, prefs (GTK4) `'3.0'` — **vždy dřív,
    než se načte `lib/`**. `lib/*.js` nesmí verzi Soup pinovat ani řešit jinak
