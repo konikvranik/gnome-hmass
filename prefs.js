@@ -8,7 +8,7 @@
 imports.gi.versions.Gtk = '4.0';
 imports.gi.versions.Soup = '3.0';
 
-const {Adw, Gio, GLib, GObject, Gtk, Soup} = imports.gi;
+const {Adw, Gdk, Gio, GLib, GObject, Gtk, Soup} = imports.gi;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const {MAClient} = Me.imports.lib.ma;
@@ -110,6 +110,54 @@ function _comboRow(title, subtitle, settings, key, values) {
     combo.connect('destroy', () => settings.disconnect(settingsHandler));
     row.add_suffix(combo);
     row.activatable_widget = combo;
+    return row;
+}
+
+/**
+ * Řádek pro zachycení globální klávesové zkratky: klikni na tlačítko
+ * a stiskni kombinaci kláves (Esc/Backspace zkratku smaže).
+ */
+function _keybindingRow(title, subtitle, settings, key) {
+    const row = new Adw.ActionRow({
+        title: title,
+        subtitle: subtitle || '',
+    });
+    const btn = new Gtk.Button({valign: Gtk.Align.CENTER});
+    btn.add_css_class('flat');
+
+    const render = () => {
+        const accels = settings.get_strv(key);
+        if (accels.length === 0) {
+            btn.label = 'Není nastavena';
+            return;
+        }
+        const [ok, keyval, mods] = Gtk.accelerator_parse(accels[0]);
+        btn.label = ok && keyval ? Gtk.accelerator_get_label(keyval, mods) : accels[0];
+    };
+    render();
+
+    const ctrl = new Gtk.EventControllerKey();
+    btn.add_controller(ctrl);
+    ctrl.connect('key-pressed', (c, keyval, keycode, state) => {
+        const mods = state & Gtk.accelerator_get_default_mod_mask();
+        if (keyval === Gdk.KEY_Escape || keyval === Gdk.KEY_BackSpace) {
+            settings.set_strv(key, []);
+            return Gdk.EVENT_STOP;
+        }
+        // samotné klávesy bez modifikátoru (a ne F1-F12) nejsou platná zkratka
+        const isFn = keyval >= Gdk.KEY_F1 && keyval <= Gdk.KEY_F12;
+        if (mods === 0 && !isFn)
+            return Gdk.EVENT_STOP;
+        settings.set_strv(key, [Gtk.accelerator_name(keyval, mods)]);
+        return Gdk.EVENT_STOP;
+    });
+    ctrl.connect('key-released', () => render());
+    const settingsHandler = settings.connect(`changed::${key}`, render);
+    btn.connect('destroy', () => settings.disconnect(settingsHandler));
+
+    btn.connect('clicked', () => btn.grab_focus());
+    row.add_suffix(btn);
+    row.activatable_widget = btn;
     return row;
 }
 
@@ -586,6 +634,19 @@ function buildHaPage(settings) {
         ]
     ));
     page.add(panelEditor.group);
+
+    // Zkratky
+    const keysGroup = new Adw.PreferencesGroup({
+        title: 'Zkratky',
+        description: 'Globální klávesové zkratky rozšíření',
+    });
+    keysGroup.add(_keybindingRow(
+        'Otevřít menu a chat s asistentem',
+        'Otevře menu rozšíření a nastaví kurzor do pole konverzace',
+        settings,
+        'hotkey-open-menu'
+    ));
+    page.add(keysGroup);
 
     // Entity v menu
     const menuEditor = _createEntityGroup(

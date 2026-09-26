@@ -9,7 +9,7 @@
  * - MA: ovládání přehrávání v menu + MPRIS most pro multimediální klávesy
  */
 
-const {Clutter, Gio, GLib, GObject, Shell, St} = imports.gi;
+const {Clutter, Gio, GLib, GObject, Meta, Shell, St} = imports.gi;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
@@ -93,6 +93,47 @@ const HMassIndicator = GObject.registerClass({
 
         this.menu.connect('open-state-changed', (menu, open) => {
             this._onMenuOpenChanged(open);
+        });
+
+        this._registerHotkey();
+    }
+
+    /** Globální zkratka: otevřít menu a foucnout do pole Assist chatu. */
+    _registerHotkey() {
+        if (!Main.wm || !Main.wm.addKeybinding || !Meta.KeyBindingFlags)
+            return;
+        try {
+            Main.wm.addKeybinding('hotkey-open-menu',
+                this._settings,
+                Meta.KeyBindingFlags.NONE,
+                Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+                () => this._openMenuAndFocusAssist());
+            this._hotkeyRegistered = true;
+        } catch (e) {
+            logError(e, 'hmass: registrace zkratky selhala');
+        }
+    }
+
+    _unregisterHotkey() {
+        if (this._hotkeyRegistered && Main.wm && Main.wm.removeKeybinding) {
+            try {
+                Main.wm.removeKeybinding('hotkey-open-menu');
+            } catch (e) {
+                // ignore
+            }
+        }
+        this._hotkeyRegistered = false;
+    }
+
+    _openMenuAndFocusAssist() {
+        this.menu.open();
+        if (!this._haAssist)
+            return;
+        // menu si po otevření vezme grab - fokus vstupu až poté
+        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            if (this.menu.isOpen && this._haAssist && this._haAssist.entry)
+                this._haAssist.entry.grab_key_focus();
+            return GLib.SOURCE_REMOVE;
         });
     }
 
@@ -692,6 +733,7 @@ const HMassIndicator = GObject.registerClass({
             this._settings.disconnect(this._settingsChangedId);
             this._settingsChangedId = 0;
         }
+        this._unregisterHotkey();
         this._disconnectClients();
         UI.hidePanelTooltip();
         if (this._haAssist) {

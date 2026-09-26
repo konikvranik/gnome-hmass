@@ -19,10 +19,16 @@ check: all
 test: all
 	bash tools/tests/run-all.sh
 
+# atomická instalace: nová kopie se připraví vedle a přehodí rename,
+# aby se za běhu shellu nepřepisovaly namapované soubory (gschemas.compiled)
 install: all
-	mkdir -p $(EXTDIR)
-	cp -r $(FILES) $(EXTDIR)/
-	@echo "Nainstalováno do $(EXTDIR)"
+	rm -rf $(EXTDIR).staging $(EXTDIR).old
+	mkdir -p $(EXTDIR).staging
+	cp -r $(FILES) $(EXTDIR).staging/
+	if [ -d $(EXTDIR) ]; then mv $(EXTDIR) $(EXTDIR).old; fi
+	mv $(EXTDIR).staging $(EXTDIR)
+	rm -rf $(EXTDIR).old
+	@echo "Nainstalováno do $(EXTDIR) (atomicky)"
 	@echo "Restartujte GNOME Shell (Alt+F2 -> r na X11; odhlášení na Wayland) a poté:"
 	@echo "  gnome-extensions enable $(UUID)"
 

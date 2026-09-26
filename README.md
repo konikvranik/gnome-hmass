@@ -34,6 +34,8 @@ přítomní v issue a diskuzích zdvořile a vstřícně.
 - **Assist chat v menu** – textový rozhovor s asistentem Home Assistant. Používá
   agenta a jazyk z preferované **Assist pipeline** (stejně jako voice asistent
   a HA aplikace), takže rozumí stejným frázím a umí spouštět scény a skripty.
+- **Globální zkratka** (výchozí `Ctrl+Super+H`, nastavitelná v prefs) otevře
+  menu a rovnou nastaví kurzor do pole Assist chatu.
 - Hodnoty se aktualizují v reálném čase přes WebSocket (subscribe `state_changed`).
 - Stav spojení – dvě barevné tečky v liště (horní HA, dolní MA).
 

@@ -22,6 +22,11 @@
       <summary>Počet desetinných míst číselných hodnot</summary>
       <description>-1 = automaticky (podle atributu suggested_display_precision entity), 0-4 = pevný počet desetinných míst.</description>
     </key>
+    <key type="as" name="hotkey-open-menu">
+      <default>['&lt;Primary&gt;&lt;Super&gt;h']</default>
+      <summary>Zkratka pro otevření menu a fokusu Assist chatu</summary>
+      <description>Globální klávesová zkratka, která otevře menu rozšíření a nastaví kurzor do pole konverzace s asistentem.</description>
+    </key>
     <key type="as" name="ha-menu-entities">
       <default>[]</default>
       <summary>Entity zobrazené v menu</summary>
