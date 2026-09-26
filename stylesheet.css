@@ -24,8 +24,9 @@
     font-feature-settings: "tnum";
 }
 
-/* Hodnota mimo nastavené prahy entity */
-.hmass-value-alert {
+/* Hodnota mimo nastavené prahy entity (přebíjí barvu hodnoty) */
+.hmass-value-alert,
+.hmass-ha-value.hmass-value-alert {
     color: #ff6b6b;
     font-weight: bold;
 }
@@ -174,8 +175,20 @@
     /* let the value float to the right */
 }
 
+/* Hodnota entity: stejná barva jako název (jednotné řádky ovládání);
+   nedostupná entita ztlumená, alert červený (viz nahoře) */
 .hmass-ha-value {
-    color: rgba(255, 255, 255, 0.7);
+    color: #ffffff;
+}
+
+.hmass-ha-value.hmass-value-off {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* Sekundární akce menu (Nastavení, Připojit znovu) - vizuálně oddělené
+   od ovládání entit */
+.hmass-menu-secondary {
+    color: rgba(255, 255, 255, 0.55);
 }
 
 .hmass-entry {

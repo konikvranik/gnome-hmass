@@ -159,8 +159,17 @@ const HMassIndicator = GObject.registerClass({
     _wireClients() {
         this._ha.onstate = (status, detail) => this._updateHaStatus(status, detail);
         this._ha.onstates = () => {
-            this._rebuildHaRows();
-            this._updatePanelValues();
+            // rebuild synchronně ve websocket callbacku na začátku session
+            // občas nechá destroy handlery položek spadnout do GC sweep fáze
+            // a shell je zablokuje (prázdné menu, nealokovaný indikátor)
+            if (this._rebuildIdle)
+                GLib.source_remove(this._rebuildIdle);
+            this._rebuildIdle = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                this._rebuildIdle = 0;
+                this._rebuildHaRows();
+                this._updatePanelValues();
+                return GLib.SOURCE_REMOVE;
+            });
         };
         this._ha.onentity = (entityId, st) => {
             this._onHaEntity(entityId, st);
@@ -569,6 +578,7 @@ const HMassIndicator = GObject.registerClass({
         this._maStatus = null;
 
         const reloadItem = new PopupMenu.PopupMenuItem('Připojit znovu');
+        reloadItem.add_style_class_name('hmass-menu-secondary');
         reloadItem.connect('activate', () => {
             this._ha.reconnect();
             this._ma.reconnect();
@@ -576,6 +586,7 @@ const HMassIndicator = GObject.registerClass({
         this.menu.addMenuItem(reloadItem);
 
         const prefsItem = new PopupMenu.PopupMenuItem('Nastavení');
+        prefsItem.add_style_class_name('hmass-menu-secondary');
         prefsItem.connect('activate', () => {
             try {
                 if (this._extension && typeof this._extension.openPreferences === 'function') {
@@ -785,6 +796,10 @@ const HMassIndicator = GObject.registerClass({
         if (this._tickId) {
             GLib.source_remove(this._tickId);
             this._tickId = 0;
+        }
+        if (this._rebuildIdle) {
+            GLib.source_remove(this._rebuildIdle);
+            this._rebuildIdle = 0;
         }
         if (this._reconnectId) {
             GLib.source_remove(this._reconnectId);

@@ -11,6 +11,7 @@ var Ornament = {
     NONE: 0,
     DOT: 1,
     CHECK: 2,
+    HIDDEN: 3,
 };
 
 var FakeMenu = class FakeMenu {
@@ -60,6 +61,9 @@ var PopupBaseMenuItem = GObject.registerClass({
         this.children = [];
         this.destroyed = false;
         this._handlers = {};
+        // věrně shellu: ornament label je vždy první dítě řádku
+        this._ornamentLabel = {text: '', style_class: 'popup-menu-ornament', visible: false};
+        this.children.push(this._ornamentLabel);
     }
     add_child(child) {
         this.children.push(child);
@@ -67,8 +71,23 @@ var PopupBaseMenuItem = GObject.registerClass({
     add_actor(child) {
         this.children.push(child);
     }
+    add_style_class_name(name) {
+        const classes = new Set((this.style_class || '').split(/\s+/).filter(Boolean));
+        classes.add(name);
+        this.style_class = Array.from(classes).join(' ');
+    }
+    remove_style_class_name(name) {
+        const classes = new Set((this.style_class || '').split(/\s+/).filter(Boolean));
+        classes.delete(name);
+        this.style_class = Array.from(classes).join(' ');
+    }
+    has_style_class_name(name) {
+        const classes = new Set((this.style_class || '').split(/\s+/).filter(Boolean));
+        return classes.has(name);
+    }
     setOrnament(ornament) {
         this._ornament = ornament;
+        this._ornamentLabel.visible = ornament !== Ornament.HIDDEN;
     }
     insert_child_above(child, sibling) {
         const idx = this.children.indexOf(sibling);

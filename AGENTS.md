@@ -130,6 +130,25 @@ DISPLAY=:1 import -window root /tmp/shot.png                # screenshot
   (`icon.gicon = …`), ne v params konstruktoru — GJS 1.72 je v params u
   St.Icon tiše zahodí a ikona má 0×0 (ověřeno bolestivě). SVG pro
   FileIcon musí mít `width`/`height` atributy (jen viewBox nestačí).
+- **Adw.ActionRow + vstupní pole**: pole v `add_prefix`/`add_suffix` se
+  neroztáhne — interní `title_box` má v template `hexpand=True` a sežere
+  volné místo. Buď `_collapseTitleBox` (najde GtkBox s hexpand a sbalí ho),
+  nebo pro URL/token řádky `_fieldRow` (název+popis nad sebou, pole celé
+  široké). Label popisku musí mít class `subtitle` a `Pango.WrapMode`
+  (ne `Gtk.WrapMode` — špatný enum).
+- **Našeptávač entit: NE Gtk.EntryCompletion, NE popup nad oknem** —
+  EntryCompletion s desítkami tisíc položek přeblikává; Gtk.Popover na
+  GTK 4.6 (= Ubuntu 22.04; vlastnost `modal` přibyla až ve 4.10) při
+  otevření bere klávesový grab, takže psaní do entry zasekává. Vzor:
+  seznam VLOŽENÝ pod polem (Gtk.Revealer + Gtk.ListBox v Gtk.Box, vzor
+  Adw.EntryRow), filtr v JS s předpočítanými poli, limit 30 položek,
+  debounce 300 ms, start od 2–3 znaků, cache dotazů, vlastnost
+  `has_focus` (NE metoda!) — `_attachEntityCompletion` v prefs.js.
+  Převod 45k entit na položky po dávkách v GLib.idle (jinak zamrzne UI).
+- **Názvy zařízení z HA**: `/api/config/*_registry/list` vrací 404
+  (reverzní proxy je blokuje). Funguje POST `/api/template` — ale výstup
+  šablony má limit 256 kB, proto po dávkách po 2500 entitách
+  (`_haEnrichDevices` v prefs.js, chunk `states|list[a:b]`).
 - Změny nastavení se projeví do ~1 s (connection klíče po ~0,8 s).
 - Nepřehánějte živé testy, které mění stav domácnosti (scény, přehrávání) —
   ověřovat čtením, kde to jde.

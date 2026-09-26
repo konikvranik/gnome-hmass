@@ -247,8 +247,9 @@ function testHaRows() {
     check('Rows: switch = přepínač', r.rows.length === 1 &&
         r.rows[0] instanceof imports.ui.popupMenu.PopupSwitchMenuItem &&
         r.rows[0].label.text === 'Kotel' && r.rows[0].state === false);
-    check('Rows: switch má ikonu entity', r.rows[0].children[0].icon_name !== undefined,
-        JSON.stringify(r.rows[0].children[0]));
+    check('Rows: switch má ikonu entity (za ornamentem)', r.rows[0].children[1] &&
+        r.rows[0].children[1].icon_name !== undefined,
+        JSON.stringify(r.rows[0].children[1]));
     r.rows[0].activateItem();
     check('Rows: switch toggle → callService', ha.calls.length === 1 &&
         ha.calls[0].domain === 'switch' && ha.calls[0].service === 'toggle' &&
@@ -499,8 +500,8 @@ function testMaSection() {
     };
     const section = new UI.MaSection(fakeClient, settings);
     check('Ma: transport + průběh na jednom řádku',
-        !!section.seekRow && section.seekRow.children.length === 3 &&
-        section.seekRow.children[0].children.length === 6,
+        !!section.seekRow && section.seekRow.children.length === 4 &&
+        section.seekRow.children[1].children.length === 6,
         JSON.stringify(section.seekRow && section.seekRow.children.length));
     check('Ma: play tlačítko v kombinovaném řádku', !!section.playBtn);
     section.seekRow.setValue(0.5);

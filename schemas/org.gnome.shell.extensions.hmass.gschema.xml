@@ -114,5 +114,15 @@
       <summary>Povolit neověřené TLS certifikáty</summary>
       <description>Pro servery s vlastními podpsanými certifikáty (vyžaduje libsoup 3.2+).</description>
     </key>
+
+    <!-- Okno nastavení (pamatuji si velikost) -->
+    <key type="i" name="prefs-width">
+      <default>680</default>
+      <summary>Šířka okna nastavení</summary>
+    </key>
+    <key type="i" name="prefs-height">
+      <default>750</default>
+      <summary>Výška okna nastavení</summary>
+    </key>
   </schema>
 </schemalist>

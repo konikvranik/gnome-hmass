@@ -11,6 +11,7 @@ import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
 import Gtk from 'gi://Gtk';
+import Pango from 'gi://Pango';
 import Soup from 'gi://Soup';
 import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 import {MAClient} from './lib/ma.js';
@@ -51,36 +52,377 @@ function _switchRow(title, subtitle, settings, key) {
     return row;
 }
 
-function _entryRow(title, subtitle, settings, key, placeholder) {
-    const row = new Adw.ActionRow({
-        title: title,
-        subtitle: subtitle || '',
+/**
+ * Řádek s polem přes celou šířku: název a popis nad sebou, pole pod nimi.
+ * (Adw.ActionRow by pole stiskl na šířku popisku — suffix-box se neroztahuje.)
+ */
+function _fieldRow(title, subtitle, entry) {
+    const row = new Adw.PreferencesRow({activatable: false});
+    const box = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 3,
+        valign: Gtk.Align.CENTER,
     });
+    // class 'header' = stejné okraje (12px) a min-výška jako u ActionRow
+    box.add_css_class('header');
+    if (title) {
+        const titleLabel = new Gtk.Label({
+            label: title, xalign: 0, wrap: true, wrap_mode: Pango.WrapMode.WORD_CHAR,
+        });
+        box.append(titleLabel);
+    }
+    if (subtitle) {
+        const subLabel = new Gtk.Label({
+            label: subtitle, xalign: 0, wrap: true, wrap_mode: Pango.WrapMode.WORD_CHAR,
+        });
+        // class 'subtitle' = stejný styl popisku jako u ActionRow (menší, tlumený)
+        subLabel.add_css_class('subtitle');
+        box.append(subLabel);
+    }
+    entry.hexpand = true;
+    entry.margin_top = 3;
+    box.append(entry);
+    row.set_child(box);
+    return row;
+}
+
+function _entryRow(title, subtitle, settings, key, placeholder) {
     const entry = new Gtk.Entry({
         valign: Gtk.Align.CENTER,
-        hexpand: true,
         placeholder_text: placeholder || '',
     });
     settings.bind(key, entry, 'text', Gio.SettingsBindFlags.DEFAULT);
-    row.add_suffix(entry);
-    row.activatable_widget = entry;
-    return {row, entry};
+    return {row: _fieldRow(title, subtitle, entry), entry};
 }
 
 function _passwordRow(title, subtitle, settings, key) {
-    const row = new Adw.ActionRow({
-        title: title,
-        subtitle: subtitle || '',
-    });
     const entry = new Gtk.PasswordEntry({
         valign: Gtk.Align.CENTER,
-        hexpand: true,
         show_peek_icon: true,
     });
     settings.bind(key, entry, 'text', Gio.SettingsBindFlags.DEFAULT);
-    row.add_suffix(entry);
-    row.activatable_widget = entry;
-    return {row, entry};
+    return {row: _fieldRow(title, subtitle, entry), entry};
+}
+
+/**
+ * Adw.ActionRow roztahuje interní blok titulku (hexpand=True z template),
+ * takže pole v prefixes nezabere volné místo až k suffixům. Titulkový blok
+ * tady sbalíme, aby se roztáhlo pole s hexpand=true (např. entry entity).
+ */
+function _collapseTitleBox(row) {
+    let header = row.get_first_child();
+    for (let c = header && header.get_first_child(); c; c = c.get_next_sibling()) {
+        if (c instanceof Gtk.Box && c.hexpand) {
+            c.hexpand = false;
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Porovnání pro našeptávač entit. key je zadaný text (lowercase).
+ *  - dotaz s tečkou („sensor.pro“) → filtr na začátek entity_id,
+ *  - jinak podřetězec v entity_id, názvu entity (bez diakritiky)
+ *    nebo názvu zařízení.
+ */
+function _entityMatch(key, id, name, device) {
+    const k = String(key || '').toLowerCase();
+    if (!k)
+        return false;
+    return _entityMatchItem(k, _normName(k), _makeEntityItem(id, name, device));
+}
+
+/** Položka našeptávače s předpočítanými poli pro rychlé filtrování. */
+function _makeEntityItem(id, name, device) {
+    return {
+        id,
+        name,
+        device,
+        lcId: id.toLowerCase(),
+        nName: _normName(name),
+        nDev: _normName(device),
+    };
+}
+
+/** Rychlé porovnání s předpočítanými poli (stejná sémantika jako _entityMatch). */
+function _entityMatchItem(k, kn, it) {
+    if (k.includes('.'))
+        return it.lcId.startsWith(k);
+    if (it.lcId.includes(k))
+        return true;
+    return !!(kn && ((it.nName && it.nName.includes(kn)) ||
+                     (it.nDev && it.nDev.includes(kn))));
+}
+
+/** Markup řádku našeptávače: název + zařízení + entity_id. */
+function _entityDisplayMarkup(it) {
+    const esc = s => GLib.markup_escape_text(String(s || ''), -1);
+    if (it.name && it.name !== it.id && it.device)
+        return `<b>${esc(it.name)}</b>  <small>${esc(it.device)} · ${esc(it.id)}</small>`;
+    if (it.name && it.name !== it.id)
+        return `<b>${esc(it.name)}</b>  <small>${esc(it.id)}</small>`;
+    if (it.device)
+        return `<b>${esc(it.id)}</b>  <small>${esc(it.device)}</small>`;
+    return `<b>${esc(it.id)}</b>`;
+}
+
+// limit počtu nabízených položek a výška řádku (pro scroll a fixní šířku)
+const ENTITY_MAX_MATCHES = 30;
+const ENTITY_ROW_HEIGHT = 34;
+const ENTITY_MIN_CHARS = 3;        // napovídat od 3 znaků (dotaz bez domény)
+const ENTITY_MIN_CHARS_DOT = 2;    // dotaz s doménou („li“) od 2 znaků
+const ENTITY_DEBOUNCE_MS = 300;    // prodleva po stisku klávesy
+const ENTITY_CACHE_SIZE = 32;      // zapamatované dotazy → shody
+
+/**
+ * Vlastní našeptávač entit — VLOŽENÝ SEZNAM pod polem (Gtk.Revealer,
+ * vzor Adw.EntryRow). Gtk.EntryCompletion ani popup (Gtk.Popover) se s
+ * desítkami tisíc položek na GTK 4.6 chovají nestabilně: popup mění
+ * nativní okna a bere klávesový grab, takže psaní zasekává a přeblikává.
+ * Tady seznam žije přímo v řádku: žádný grab (psaní běží dál), žádné
+ * přesouvání oken, obsah se přepoužívá z cache dotazů.
+ * Vrací holder (Gtk.Box k vložení do řádku) a API pro testy.
+ */
+function _attachEntityCompletion(entry, getItems) {
+    const holder = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 4,
+    });
+    holder.append(entry);
+    const scroller = new Gtk.ScrolledWindow({
+        hscrollbar_policy: Gtk.PolicyType.NEVER,
+        vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+    });
+    scroller.add_css_class('card');
+    const listBox = new Gtk.ListBox({selection_mode: Gtk.SelectionMode.SINGLE});
+    scroller.set_child(listBox);
+    const revealer = new Gtk.Revealer({
+        transition_type: Gtk.RevealerTransitionType.SLIDE_DOWN,
+        transition_duration: 120,
+        reveal_child: false,
+    });
+    revealer.set_child(scroller);
+    holder.append(revealer);
+
+    const state = {matches: [], idx: -1, timer: 0, accepting: false,
+        lastQuery: null, rendered: null};
+    const queryCache = new Map();
+
+    const collapse = () => {
+        revealer.reveal_child = false;
+    };
+
+    const pick = it => {
+        state.accepting = true;
+        state.lastQuery = null;
+        entry.set_text(it.id);
+        entry.set_position(-1);
+        collapse();
+    };
+
+    const rebuildRows = () => {
+        if (state.rendered === state.matches)
+            return;
+        state.rendered = state.matches;
+        for (let c = listBox.get_first_child(); c; ) {
+            const next = c.get_next_sibling();
+            listBox.remove(c);
+            c = next;
+        }
+        for (const it of state.matches) {
+            const row = new Gtk.ListBoxRow({focusable: false});
+            const lbl = new Gtk.Label({
+                label: _entityDisplayMarkup(it),
+                use_markup: true,
+                xalign: 0,
+                ellipsize: Pango.EllipsizeMode.END,
+                margin_top: 6,
+                margin_bottom: 6,
+                margin_start: 10,
+                margin_end: 10,
+            });
+            row.set_child(lbl);
+            // tooltip při hoveru: celý název, zařízení i přesné entity_id
+            // (label je ořezávaný, takže tooltip i plný text)
+            const tip = [];
+            if (it.name)
+                tip.push(`<b>${GLib.markup_escape_text(it.name, -1)}</b>`);
+            if (it.device)
+                tip.push(GLib.markup_escape_text(it.device, -1));
+            tip.push(GLib.markup_escape_text(it.id, -1));
+            row.tooltip_markup = tip.join('\n');
+            const gesture = new Gtk.GestureClick();
+            gesture.set_button(1);
+            gesture.connect('released', () => pick(it));
+            row.add_controller(gesture);
+            listBox.append(row);
+        }
+        if (state.idx >= 0 && listBox.get_row_at_index(state.idx))
+            listBox.select_row(listBox.get_row_at_index(state.idx));
+    };
+
+    const computeMatches = text => {
+        const k = String(text || '').toLowerCase();
+        if (!k)
+            return [];
+        const kn = _normName(k);
+        const out = [];
+        for (const it of getItems()) {
+            if (_entityMatchItem(k, kn, it)) {
+                out.push(it);
+                if (out.length >= ENTITY_MAX_MATCHES)
+                    break;
+            }
+        }
+        return out;
+    };
+
+    const runFilter = () => {
+        const text = String(entry.get_text() || '');
+        const minLen = text.includes('.') ? ENTITY_MIN_CHARS_DOT : ENTITY_MIN_CHARS;
+        if (text.length < minLen) {
+            // bez brány fokusu — vlastnost has_focus je v GTK 4.6 nespolehlivá
+            // (hlásila false i při psaní); seznam se otevírá jen na změnu
+            // textu a pick() si to potlačí přes accepting
+            state.lastQuery = null;
+            state.matches = [];
+            state.idx = -1;
+            collapse();
+            return;
+        }
+        if (state.lastQuery === text)
+            return;             // stejné zadání — nic nepřekreslovat
+        let matches = queryCache.get(text);
+        if (!matches) {
+            matches = computeMatches(text);
+            if (queryCache.size >= ENTITY_CACHE_SIZE) {
+                const oldest = queryCache.keys().next().value;
+                queryCache.delete(oldest);
+            }
+            queryCache.set(text, matches);
+        }
+        state.lastQuery = text;
+        state.matches = matches;
+        state.idx = state.matches.length ? 0 : -1;
+        if (state.matches.length === 0) {
+            collapse();
+            return;
+        }
+        rebuildRows();
+        // Gtk.ScrolledWindow bez min-content má přirozený rozměr 0 — seznam
+        // by se odhalil nulové šířky/výšky (neviditelný)
+        scroller.min_content_width =
+            Math.max(entry.get_allocated_width() || 300, 240);
+        scroller.min_content_height =
+            Math.min(state.matches.length, 8) * ENTITY_ROW_HEIGHT + 8;
+        revealer.reveal_child = true;
+    };
+
+    entry.connect('changed', () => {
+        if (state.accepting) {
+            state.accepting = false;
+            return;
+        }
+        if (state.timer)
+            GLib.source_remove(state.timer);
+        state.timer = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
+            ENTITY_DEBOUNCE_MS, () => {
+                state.timer = 0;
+                runFilter();
+                return GLib.SOURCE_REMOVE;
+            });
+    });
+
+    const keyCtl = new Gtk.EventControllerKey();
+    // CAPTURE: jinak vnitřní Gtk.Text Enter sám zkousne (aktivace entry)
+    // a náš bubble-phase controller se na něj nedostane (šipky ano — ty
+    // Gtk.Text nehandluje, proto pohyb v seznamu fungoval)
+    keyCtl.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
+    entry.add_controller(keyCtl);
+    keyCtl.connect('key-pressed', (c, keyval) => {
+        if (!revealer.reveal_child)
+            return Gdk.EVENT_PROPAGATE;
+        const step = keyval === Gdk.KEY_Down || keyval === Gdk.KEY_KP_Down ? 1 :
+            keyval === Gdk.KEY_Up || keyval === Gdk.KEY_KP_Up ? -1 : 0;
+        if (step !== 0) {
+            if (state.matches.length) {
+                state.idx = Math.max(0, Math.min(state.idx + step, state.matches.length - 1));
+                const row = listBox.get_row_at_index(state.idx);
+                if (row)
+                    listBox.select_row(row);
+                const adj = scroller.get_vadjustment();
+                const y = state.idx * ENTITY_ROW_HEIGHT;
+                if (y < adj.value)
+                    adj.value = y;
+                else if (y + ENTITY_ROW_HEIGHT > adj.value + adj.page_size)
+                    adj.value = y + ENTITY_ROW_HEIGHT - adj.page_size;
+            }
+            return Gdk.EVENT_STOP;
+        }
+        if (keyval === Gdk.KEY_Return || keyval === Gdk.KEY_KP_Enter) {
+            const it = state.matches[state.idx];
+            if (it)
+                pick(it);
+            return Gdk.EVENT_STOP;
+        }
+        if (keyval === Gdk.KEY_Escape) {
+            collapse();
+            return Gdk.EVENT_STOP;
+        }
+        return Gdk.EVENT_PROPAGATE;
+    });
+
+    const focusCtl = new Gtk.EventControllerFocus();
+    entry.add_controller(focusCtl);
+    focusCtl.connect('leave', () => {
+        state.lastQuery = null;
+        collapse();
+    });
+
+    return {holder, computeMatches, pick,
+        reset() {
+            queryCache.clear();
+            state.lastQuery = null;
+            state.matches = [];
+            state.idx = -1;
+            state.rendered = null;
+            collapse();
+        },
+        /** Stav pro testy: revealed + počet řádků + tooltip prvního řádku. */
+        _debug() {
+            let rowCount = 0;
+            let firstTooltip = '';
+            for (let c = listBox.get_first_child(); c; c = c.get_next_sibling()) {
+                if (rowCount === 0)
+                    firstTooltip = c.tooltip_markup || '';
+                rowCount += 1;
+            }
+            return {revealed: revealer.reveal_child, rows: rowCount,
+                matches: state.matches.length, firstTooltip};
+        }};
+}
+
+/**
+ * Přesune řádek seznamu entit před/za cílový (drag&drop). rows a entries
+ * jsou paralelní pole — přeskupí oba a přemístí widget v listu.
+ * Vrací cílovou pozici v polích, nebo -1 když přesun nemá smysl.
+ */
+function _reorderEntities(list, rows, entries, srcRow, dstRow, after) {
+    const srcIdx = rows.indexOf(srcRow);
+    const dstIdx = rows.indexOf(dstRow);
+    if (srcIdx < 0 || dstIdx < 0 || srcIdx === dstIdx)
+        return -1;
+    const movedRow = rows.splice(srcIdx, 1)[0];
+    const movedEntry = entries.splice(srcIdx, 1)[0];
+    const target = rows.indexOf(dstRow) + (after ? 1 : 0);
+    rows.splice(target, 0, movedRow);
+    entries.splice(target, 0, movedEntry);
+    // widget: index cíle v listu se po odstranění zdroje sám posune
+    const insertIdx = dstRow.get_index() + (after ? 1 : 0);
+    list.remove(srcRow);
+    list.insert(srcRow, insertIdx);
+    return target;
 }
 
 /**
@@ -365,8 +707,10 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
 
     const entries = [];
     const rows = [];
+    const completions = [];
     let persistId = 0;
-    let sharedCompletion = null;
+    let rowSeq = 0;
+    let sharedItems = [];   // položky našeptávače {id, name, device, lcId, nName, nDev}
 
     const persist = () => {
         if (persistId)
@@ -399,8 +743,8 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
             placeholder_text: placeholder || 'např. sensor.teplota_obyvak',
             text: initialText || '',
         });
-        if (sharedCompletion)
-            entry.set_completion(sharedCompletion);
+        const completion = _attachEntityCompletion(entry, () => sharedItems);
+        completions.push(completion);
 
         entry.connect('changed', persist);
         entries.push(entry);
@@ -443,18 +787,80 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
             persist();
         });
 
-        row.add_prefix(entry);
+        // přetahování za úchyt změní pořadí entit
+        const uid = `row${++rowSeq}`;
+        row._hmassUid = uid;
+        const handle = new Gtk.Image({
+            icon_name: 'list-drag-handle-symbolic',
+            valign: Gtk.Align.CENTER,
+            tooltip_text: 'Přetáhnutím změníte pořadí',
+        });
+        handle.add_css_class('dim-label');
+        const dragSource = new Gtk.DragSource({actions: Gdk.DragAction.MOVE});
+        dragSource.connect('prepare', () => {
+            const v = new GObject.Value();
+            v.init(GObject.TYPE_STRING);
+            v.set_string(uid);
+            return Gdk.ContentProvider.new_for_value(v);
+        });
+        dragSource.connect('drag-begin', src => {
+            row.opacity = 0.35;
+            const paintable = handle.get_paintable();
+            if (paintable)
+                src.set_icon(paintable, 8, 8);
+        });
+        dragSource.connect('drag-end', () => {
+            row.opacity = 1.0;
+        });
+        handle.add_controller(dragSource);
+
+        const dropTarget = Gtk.DropTarget.new(GObject.TYPE_STRING, Gdk.DragAction.MOVE);
+        dropTarget.connect('drop', (t, value, x, y) => {
+            const srcRow = rows.find(r => r._hmassUid === value);
+            if (!srcRow)
+                return false;
+            if (srcRow === row)
+                return true;
+            const list = row.get_parent();
+            if (!list)
+                return false;
+            _reorderEntities(list, rows, entries, srcRow, row, y > row.get_height() / 2);
+            persist();
+            return true;
+        });
+        row.add_controller(dropTarget);
+
+        row.add_prefix(handle);
+        row.add_prefix(completion.holder);
         row.add_suffix(cfgBtn);
         row.add_suffix(removeBtn);
+        _collapseTitleBox(row);
         rows.push(row);
 
-        // vložit před addBtnRow
-        group.remove(addBtnRow);
-        group.add(row);
-        group.add(addBtnRow);
+        // vložit těsně před addBtnRow — na její přesnou pozici, i když
+        // jsou ve skupině za ní další řádky (globální nastavení na HA stránce)
+        const list = addBtnRow.get_parent();
+        const idx = addBtnRow.get_index();
+        if (list && idx >= 0) {
+            group.remove(addBtnRow);
+            group.add(row);
+            group.remove(row);
+            list.insert(row, idx);
+            list.insert(addBtnRow, idx + 1);
+        } else {
+            group.add(row);
+        }
     };
 
-    addBtnRow.connect('activated', () => addRow(''));
+    addBtnRow.connect('activated', () => {
+        addRow('');
+        // nové pole hned pro psaní — fokusem a kurzorem na začátek
+        const last = entries[entries.length - 1];
+        if (last) {
+            last.grab_focus();
+            last.set_position(0);
+        }
+    });
     group.add(addBtnRow);
 
     const stored = settings.get_strv(key);
@@ -465,20 +871,36 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
 
     return {
         group,
-        setCompletion(ids) {
-            const store = new Gtk.ListStore();
-            store.set_column_types([GObject.TYPE_STRING]);
-            const limit = Math.min((ids || []).length, 500);
-            for (let i = 0; i < limit; i++) {
-                const iter = store.append();
-                store.set(iter, [0], [ids[i]]);
+        // API našeptávače posledního řádku (pro testy)
+        get completionApi() {
+            return completions[completions.length - 1] || null;
+        },
+        /**
+         * Našeptávač entit. items: pole entity_id (string) nebo objekty
+         * {id, name, device}. Popup ukazuje název + zařízení + entity_id,
+         * výběr vloží do pole entity_id. Převod na položky probíhá po
+         * dávkách v idle (desítky tisíc entit nezamrznou UI).
+         */
+        setCompletion(items) {
+            const list = [];
+            for (const raw of (items || [])) {
+                const it = typeof raw === 'string' ? {id: raw, name: '', device: ''} : raw;
+                const id = String((it && it.id) || '');
+                if (!id)
+                    continue;
+                list.push(_makeEntityItem(id, String(it.name || ''), String(it.device || '')));
             }
-            sharedCompletion = new Gtk.EntryCompletion();
-            sharedCompletion.set_model(store);
-            sharedCompletion.set_text_column(0);
-            sharedCompletion.set_minimum_key_length(1);
-            for (const e of entries)
-                e.set_completion(sharedCompletion);
+            sharedItems = [];
+            // staré cacheované shody ukazují na předchozí položky
+            for (const c of completions)
+                c.reset();
+            let pos = 0;
+            GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+                const end = Math.min(pos + 5000, list.length);
+                for (; pos < end; pos++)
+                    sharedItems.push(list[pos]);
+                return pos < list.length;
+            });
         },
     };
 }
@@ -569,7 +991,112 @@ function _handleHaStatesResponse(status, body, callback) {
             id: s.entity_id,
             name: (s.attributes && s.attributes.friendly_name) || s.entity_id,
         }));
-    callback(true, `Připojeno — nalezeno ${ids.length} entit.`, ids, mediaPlayers);
+    const entities = states
+        .filter(s => s.entity_id)
+        .map(s => ({
+            id: s.entity_id,
+            name: (s.attributes && s.attributes.friendly_name) || '',
+            device: '',
+        }))
+        .sort((a, b) => a.id.localeCompare(b.id));
+    callback(true, `Připojeno — nalezeno ${ids.length} entit.`, ids, mediaPlayers, entities);
+    return entities;
+}
+
+/** HTTP request přes Soup 2.4/3.0; payload = objekt pro POST JSON. Při chybě cb(null). */
+function _soupRequest(session, method, url, token, payload, cb) {
+    const msg = _createSoupMessage(method, url);
+    if (!msg) {
+        cb(null);
+        return;
+    }
+    if (token)
+        msg.request_headers.append('Authorization', `Bearer ${token}`);
+    if (payload) {
+        const body = JSON.stringify(payload);
+        if (typeof msg.set_request_body_from_bytes === 'function')
+            msg.set_request_body_from_bytes('application/json', new GLib.Bytes(body));
+        else
+            msg.request_body.append(Soup.MemoryUse.COPY, body);
+    }
+    const parse = (status, body) => {
+        if (status !== 200 || !body) {
+            cb(null);
+            return;
+        }
+        try {
+            cb(JSON.parse(body));
+        } catch (e) {
+            cb(null);
+        }
+    };
+    if (typeof session.queue_message === 'function') {
+        session.queue_message(msg, (sess, message) => {
+            parse(message.status_code, message.response_body && message.response_body.data);
+        });
+    } else {
+        session.send_and_read_async(msg, GLib.PRIORITY_DEFAULT, null, (sess, res) => {
+            try {
+                const status = typeof msg.get_status === 'function' ? msg.get_status() : msg.status_code;
+                parse(status, _decodeBytes(sess.send_and_read_finish(res)));
+            } catch (e) {
+                cb(null);
+            }
+        });
+    }
+}
+
+// počet entit na jeden template požadavek (výstup šablony má limit 256 kB)
+const HA_DEVICE_CHUNK = 2500;
+const HA_DEVICE_PARALLEL = 4;   // souběžné dávky (19+ požadavků × sekvenčně = dlouho)
+
+/**
+ * Doplní k entitám název zařízení přes POST /api/template po dávkách
+ * (registry endpointy mívá reverzní proxy zakázané; /api/states zařízení
+ * neobsahuje). Když se dávkám nedaří, zařízení zůstane ''.
+ */
+function _haEnrichDevices(session, base, token, entities, done) {
+    const tmplChunk = (a, b) =>
+        '[{% set all = states | list %}{% for s in all[' + a + ':' + b + '] %}' +
+        '{"i":{{ s.entity_id|to_json }},"d":{{ (device_attr(s.entity_id, "name_by_user") ' +
+        'or device_attr(s.entity_id, "name") or "")|to_json }} }' +
+        '{{ "," if not loop.last else "" }}{% endfor %}]';
+    const byId = {};
+    let next = 0;
+    let failures = 0;
+    let finished = 0;
+    const total = Math.ceil(entities.length / HA_DEVICE_CHUNK);
+    const finishOne = res => {
+        if (Array.isArray(res)) {
+            for (const r of res)
+                if (r && r.i)
+                    byId[r.i] = r;
+        } else {
+            failures += 1;
+        }
+        finished += 1;
+        if (finished < total && failures < 3)
+            launch();
+        if (finished >= total || failures >= 3) {
+            for (const e of entities) {
+                const r = byId[e.id];
+                if (r)
+                    e.device = r.d || '';
+            }
+            done(entities);
+        }
+    };
+    const launch = () => {
+        if (next >= entities.length)
+            return;
+        const a = next;
+        const b = Math.min(next + HA_DEVICE_CHUNK, entities.length);
+        next = b;
+        _soupRequest(session, 'POST', `${base}/api/template`, token,
+            {template: tmplChunk(a, b)}, finishOne);
+    };
+    for (let i = 0; i < HA_DEVICE_PARALLEL; i++)
+        launch();
 }
 
 function testHa(url, token, allowInsecure, callback) {
@@ -603,12 +1130,21 @@ function testHa(url, token, allowInsecure, callback) {
     if (cleanToken)
         msg.request_headers.append('Authorization', `Bearer ${cleanToken}`);
 
+    // zpracování odpovědi: callback hned, pak doplnění zařízení do našeptávače
+    const onStates = (status, body) => {
+        const entities = _handleHaStatesResponse(status, body, callback);
+        if (entities && entities.length > 0)
+            _haEnrichDevices(session, base, cleanToken, entities, enriched => {
+                if (_applyHaCompletion)
+                    _applyHaCompletion(enriched);
+            });
+    };
+
     if (typeof session.queue_message === 'function') {
         session.queue_message(msg, (sess, message) => {
             try {
-                const status = message.status_code;
-                const body = (message.response_body && message.response_body.data) ? message.response_body.data : '';
-                _handleHaStatesResponse(status, body, callback);
+                onStates(message.status_code,
+                    (message.response_body && message.response_body.data) ? message.response_body.data : '');
             } catch (e) {
                 callback(false, `Chyba spojení: ${e.message}`);
             }
@@ -618,8 +1154,7 @@ function testHa(url, token, allowInsecure, callback) {
             try {
                 const bytes = sess.send_and_read_finish(res);
                 const status = typeof msg.get_status === 'function' ? msg.get_status() : msg.status_code;
-                const body = _decodeBytes(bytes);
-                _handleHaStatesResponse(status, body, callback);
+                onStates(status, _decodeBytes(bytes));
             } catch (e) {
                 callback(false, `Chyba spojení: ${e.message}`);
             }
@@ -674,6 +1209,8 @@ function testMa(url, token, allowInsecure, callback) {
 var _maPlayers = [];   // [{player_id, name}]
 var _haPlayers = [];   // [{id, name}] (pouze media_player.*)
 var _playersBox = null;
+var _syncPlayerCombo = null;  // doplní combo „Výchozí přehrávač" (MA stránka)
+var _applyHaCompletion = null; // napojí našeptávač na načtené entity (HA stránka)
 
 function _normName(name) {
     return String(name || '')
@@ -762,7 +1299,10 @@ function _autoLoadPlayers(settings) {
     if (settings.get_string('ha-url') && settings.get_string('ha-token')) {
         testHa(settings.get_string('ha-url'), settings.get_string('ha-token'),
             settings.get_boolean('allow-insecure-tls'),
-            (ok, msg, ids, mediaPlayers) => {
+            (ok, msg, ids, mediaPlayers, entities) => {
+                // napovědět hned z /api/states (názvy); zařízení doplní enrich
+                if (ok && entities && entities.length > 0 && _applyHaCompletion)
+                    _applyHaCompletion(entities);
                 if (ok && mediaPlayers)
                     _collectHaPlayers(mediaPlayers);
                 _refreshPlayerList(settings);
@@ -774,6 +1314,8 @@ function _autoLoadPlayers(settings) {
             (ok, msg, players) => {
                 if (ok)
                     _maPlayers = players.map(p => ({player_id: p.player_id, name: p.name || p.player_id}));
+                if (_syncPlayerCombo)
+                    _syncPlayerCombo();
                 _refreshPlayerList(settings);
             });
     }
@@ -885,6 +1427,12 @@ function buildHaPage(settings) {
     );
     page.add(menuEditor.group);
 
+    // společné napojení našeptávače obou skupin entit na načtené entity
+    _applyHaCompletion = entities => {
+        panelEditor.setCompletion(entities);
+        menuEditor.setCompletion(entities);
+    };
+
     testBtn.connect('clicked', () => {
         testBtn.sensitive = false;
         testRow.subtitle = 'Testuji spojení…';
@@ -898,13 +1446,11 @@ function buildHaPage(settings) {
         if (token)
             settings.set_string('ha-token', token);
 
-        testHa(url, token, allowInsecure, (ok, msg, ids, mediaPlayers) => {
+        testHa(url, token, allowInsecure, (ok, msg, ids, mediaPlayers, entities) => {
             testBtn.sensitive = true;
             testRow.subtitle = msg;
-            if (ok && ids && ids.length > 0) {
-                panelEditor.setCompletion(ids);
-                menuEditor.setCompletion(ids);
-            }
+            if (ok && entities && entities.length > 0)
+                _applyHaCompletion(entities);
             if (ok && mediaPlayers) {
                 _collectHaPlayers(mediaPlayers);
                 _refreshPlayerList(settings);
@@ -966,22 +1512,28 @@ function buildMaPage(settings) {
         subtitle: 'Přehrávač zobrazený v menu po otevření',
     });
     const playerCombo = new Gtk.ComboBoxText({valign: Gtk.Align.CENTER});
-    playerCombo.append('auto', 'Automaticky (první hrající)');
-    playerCombo.active_id = settings.get_string('ma-default-player') || 'auto';
+    const fillPlayerCombo = () => {
+        playerCombo.remove_all();
+        playerCombo.append('auto', 'Automaticky (první hrající)');
+        for (const p of _maPlayers)
+            playerCombo.append(p.player_id, p.name || p.player_id);
+        const current = settings.get_string('ma-default-player') || 'auto';
+        playerCombo.active_id = current === 'auto' ||
+            _maPlayers.some(p => p.player_id === current) ? current : 'auto';
+    };
+    fillPlayerCombo();
     playerCombo.connect('changed', () => {
         const id = playerCombo.active_id || 'auto';
         settings.set_string('ma-default-player', id === 'auto' ? '' : id);
     });
     playerRow.add_suffix(playerCombo);
     playerGroup.add(playerRow);
+    _syncPlayerCombo = fillPlayerCombo;
     page.add(playerGroup);
 
     testBtn.connect('clicked', () => {
         testBtn.sensitive = false;
         testRow.subtitle = 'Testuji spojení…';
-        playerCombo.remove_all();
-        playerCombo.append('auto', 'Automaticky (první hrající)');
-        playerCombo.active_id = 'auto';
 
         const url = urlField.entry.get_text().trim() || settings.get_string('ma-url').trim();
         const token = tokenField.entry.get_text().trim() || settings.get_string('ma-token').trim();
@@ -1001,11 +1553,8 @@ function buildMaPage(settings) {
                 testBtn.sensitive = true;
                 testRow.subtitle = msg;
                 if (ok && players.length > 0) {
-                    const current = settings.get_string('ma-default-player') || 'auto';
-                    for (const p of players)
-                        playerCombo.append(p.player_id, p.name || p.player_id);
-                    playerCombo.active_id = current;
                     _maPlayers = players.map(p => ({player_id: p.player_id, name: p.name || p.player_id}));
+                    fillPlayerCombo();
                     _refreshPlayerList(settings);
                 }
             });
@@ -1068,14 +1617,43 @@ function buildPanelPage(settings) {
 }
 
 /**
+ * Uložení/obnova velikosti okna nastavení (GSettings prefs-width/height).
+ * Hodnoty se clampují na rozumné minimum i maximum.
+ */
+var PREFS_MIN_W = 480;
+var PREFS_MIN_H = 400;
+var PREFS_MAX_W = 3840;
+var PREFS_MAX_H = 2160;
+
+function _clampWindowSize(w, h) {
+    const clamp = (v, min, max) =>
+        Math.max(min, Math.min(max, Math.round(v) || min));
+    return [clamp(w, PREFS_MIN_W, PREFS_MAX_W), clamp(h, PREFS_MIN_H, PREFS_MAX_H)];
+}
+
+function _rememberWindowSize(settings, window) {
+    window.connect('close-request', () => {
+        const alloc = window.get_allocation();
+        if (alloc && alloc.width > 1 && alloc.height > 1) {
+            const [w, h] = _clampWindowSize(alloc.width, alloc.height);
+            settings.set_int('prefs-width', w);
+            settings.set_int('prefs-height', h);
+        }
+        return Gdk.EVENT_PROPAGATE;   // okno se zavře jako obvykle
+    });
+}
+
+/**
  * Moderní vstupní bod pro GNOME 42+ (Libadwaita).
  */
 export default class HMassPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         const settings = this.getSettings();
 
-        window.set_default_size(680, 750);
+        window.set_default_size(..._clampWindowSize(
+            settings.get_int('prefs-width'), settings.get_int('prefs-height')));
         window.set_search_enabled(true);
+        _rememberWindowSize(settings, window);
 
         window.add(buildHaPage(settings));
         window.add(buildMaPage(settings));
