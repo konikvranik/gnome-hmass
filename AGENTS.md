@@ -149,6 +149,15 @@ DISPLAY=:1 import -window root /tmp/shot.png                # screenshot
   (reverzní proxy je blokuje). Funguje POST `/api/template` — ale výstup
   šablony má limit 256 kB, proto po dávkách po 2500 entitách
   (`_haEnrichDevices` v prefs.js, chunk `states|list[a:b]`).
+- **Prefs proces a GC varování**: proces `gjs org.gnome.Shell.Extensions`
+  chronicky plní journal hlášením „Attempting to run a JS callback during
+  garbage collection… The offending callback was SourceFunc()" — u
+  běžících instancí je to neškodný šum (okno funguje). Pokud ale prefs
+  okno NEOTEVŘE a proces žere ~100 % CPU, zůstal zaseknutý ve smyčce
+  blokovaných callbacků (hlavně při plném disku — zápis do journalu/
+  syslogu miliony hlášek zvětšil problém na GB). Oprava: `pkill -f
+  org.gnome.Shell.Extensions`, zkontrolovat `df -h /` a případně
+  `journalctl --vacuum-size=300M`; pak prefs otevřít znovu.
 - Změny nastavení se projeví do ~1 s (connection klíče po ~0,8 s).
 - Nepřehánějte živé testy, které mění stav domácnosti (scény, přehrávání) —
   ověřovat čtením, kde to jde.

@@ -171,6 +171,18 @@
     spacing: 8px;
 }
 
+/* Jednotný styl entit v menu: neaktivní řádky (senzory, text) přidává
+   PopupBaseMenuItem do třídy popup-inactive-menu-item a St k tomu dává
+   pseudo-class :insensitive, kterou je theme zašedívá (#8a8a8a). Entity
+   musí vypadat stejně jako ovládací řádky (switche) - přebijeme barvu. */
+.hmass-ha-row.popup-inactive-menu-item {
+    color: #F7F7F7;
+}
+
+.hmass-ha-row:insensitive {
+    color: #F7F7F7;
+}
+
 .hmass-ha-name {
     /* let the value float to the right */
 }

@@ -751,7 +751,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
 
         const cfgBtn = new Gtk.Button({
             icon_name: 'document-edit-symbolic',
-            valign: Gtk.Align.CENTER,
+            valign: Gtk.Align.START,
             has_frame: false,
             tooltip_text: 'Individuální nastavení entity (ikona, desetinná místa, prahy…)',
         });
@@ -770,7 +770,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
 
         const removeBtn = new Gtk.Button({
             icon_name: 'user-trash-symbolic',
-            valign: Gtk.Align.CENTER,
+            valign: Gtk.Align.START,
             has_frame: false,
             tooltip_text: 'Odebrat entitu',
         });
@@ -792,7 +792,8 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
         row._hmassUid = uid;
         const handle = new Gtk.Image({
             icon_name: 'list-drag-handle-symbolic',
-            valign: Gtk.Align.CENTER,
+            valign: Gtk.Align.START,
+            margin_top: 9,          // střed 16px ikony proti ~34px poli
             tooltip_text: 'Přetáhnutím změníte pořadí',
         });
         handle.add_css_class('dim-label');
