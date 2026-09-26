@@ -452,13 +452,15 @@ const HMassIndicator = GObject.registerClass({
     // ---- menu ----
 
     _rebuildMenu() {
-        this.menu.removeAll();
-        this._haRows.clear();
-        this._maSection = null;
+        // nejdřív zrušit assist chat - jeho položky pak removeAll nebude
+        // rušit podruhé (disposed objekty)
         if (this._haAssist) {
             this._haAssist.destroy();
             this._haAssist = null;
         }
+        this.menu.removeAll();
+        this._haRows.clear();
+        this._maSection = null;
 
         const s = this._settings;
 
