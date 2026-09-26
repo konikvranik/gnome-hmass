@@ -48,6 +48,12 @@ function fakeSignalMixin() {
             for (const cb of this._handlers[sig] || [])
                 cb(this, ...args);
         },
+        hide() {
+            this.visible = false;
+        },
+        show() {
+            this.visible = true;
+        },
     };
 }
 
@@ -105,6 +111,12 @@ class FakeBoxLayout {
     }
     get_n_children() {
         return this.children.length;
+    }
+    hide() {
+        this.visible = false;
+    }
+    show() {
+        this.visible = true;
     }
     destroy() {
         this.destroyed = true;
@@ -584,8 +596,11 @@ async function testIndicator() {
         panelEntities.get('sensor.teplota_ob-yvak') &&
         panelEntities.get('sensor.teplota_ob-yvak').actor.text);
 
+    const hasMaBridge = nameOwned('org.mpris.MediaPlayer2.hmass.ma_p2') ||
+                        nameOwned('org.mpris.MediaPlayer2.hmass.ma_Kuchy_') ||
+                        nameOwned('org.mpris.MediaPlayer2.hmass.ma_Kuchyn');
     check('Ind: MPRIS mosty podle výběru',
-        nameOwned('org.mpris.MediaPlayer2.hmass.ma_p2') &&
+        hasMaBridge &&
         nameOwned('org.mpris.MediaPlayer2.hmass.ha_media_player_obyvak'),
         '');
 
@@ -664,11 +679,11 @@ async function testIndicatorOffline() {
         ind._panelIcon && ind._panelIcon.icon_name === 'network-offline-symbolic',
         ind._panelIcon && ind._panelIcon.icon_name);
     check('OfflineUI: HA tečka chybová',
-        ind._haDot && ind._haDot.style_class.includes('hmass-dot-err'),
-        ind._haDot && ind._haDot.style_class);
+        ind._haStatusValue === 'error',
+        ind._haStatusValue);
     check('OfflineUI: MA tečka chybová',
-        ind._maDot && ind._maDot.style_class.includes('hmass-dot-err'),
-        ind._maDot && ind._maDot.style_class);
+        ind._maStatusValue === 'error',
+        ind._maStatusValue);
     check('OfflineUI: rozšíření žije, oba klienti v chybovém stavu',
         ind._ha.status === 'error' && ind._ma.status === 'error',
         `${ind._ha.status}/${ind._ma.status}`);

@@ -25,21 +25,22 @@ trap 'kill $P1 $P2 $P3 $P4 $P5 2>/dev/null' EXIT
 sleep 0.6
 
 RC=0
+TARGET_DIR="${1:-$PWD/build/v42}"
 echo "=== E2E: protokoly HA/MA + MPRIS most ==="
-gjs tools/tests/run-tests.js "$PWD" || RC=1
+gjs tools/tests/run-tests.js "$TARGET_DIR" "$PWD" || RC=1
 echo
 echo "=== UI: panel, menu, řádky, Indicator, MPRIS manager ==="
 # načtení mutter/St knihoven drží proces po doběhnutí testů naživu,
 # proto timeout a úspěch podle výsledku v výstupu
-UI_OUT=$(timeout 90 gjs tools/tests/run-ui-tests.js "$PWD" 2>&1) || true
+UI_OUT=$(timeout 90 gjs tools/tests/run-ui-tests.js "$TARGET_DIR" "$PWD" 2>&1) || true
 echo "$UI_OUT"
 echo "$UI_OUT" | grep -q "VŠECHNY UI TESTY PROŠLY" || RC=1
 echo
 echo "=== Prefs: checklist přehrávačů, dedup, persist ==="
-gjs tools/tests/run-prefs-tests.js "$PWD" || RC=1
+gjs tools/tests/run-prefs-tests.js "$TARGET_DIR" "$PWD" || RC=1
 echo
 echo "=== Kompatibilita: Libsoup 2.4 (GNOME Shell 42 / Ubuntu 22.04) ==="
-gjs tools/tests/test-soup2.js "$PWD" || RC=1
+gjs tools/tests/test-soup2.js "$TARGET_DIR" "$PWD" || RC=1
 
 echo
 if [ "$RC" -eq 0 ]; then

@@ -15,8 +15,9 @@ const {GLib, Gtk} = imports.gi;
 const System = imports.system;
 
 const EXT_DIR = ARGV[0] || '.';
+const REPO_DIR = ARGV[1] || EXT_DIR;
 imports.searchPath.push(EXT_DIR);
-imports.searchPath.push(EXT_DIR + '/tools/tests/harness');
+imports.searchPath.push(REPO_DIR + '/tools/tests/harness');
 
 let failures = 0;
 function check(name, cond, detail) {

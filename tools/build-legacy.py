@@ -136,6 +136,18 @@ def transform_js(content: str, rel_path: str) -> str:
             i += 1
             continue
 
+        # export { ... };
+        m = re.match(r"^export\s*\{([^}]+)\};?$", line.strip())
+        if m:
+            i += 1
+            continue
+
+        if line.strip() == 'export {' or line.strip().startswith('export {'):
+            while i < len(lines) and '}' not in lines[i]:
+                i += 1
+            i += 1  # skip closing '};' line
+            continue
+
         # 6. Životní cyklus v extension.js:
         # export default class HMassExtension extends Extension { ... } -> let _indicator = null; function init() ...
         if is_extension_js and line.strip().startswith('export default class HMassExtension extends Extension'):

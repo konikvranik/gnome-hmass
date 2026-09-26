@@ -46,6 +46,7 @@ var PopupBaseMenuItem = GObject.registerClass({
     Signals: {
         'activate': {param_types: []},
         'destroy': {param_types: []},
+        'scroll-event': {},
     },
 }, class PopupBaseMenuItem extends GObject.Object {
     _init(params) {
