@@ -362,10 +362,10 @@ const HMassIndicator = GObject.registerClass({
                 this._panelBox.add_child(this._dotsArea);
         }
 
-        const decimals = s.get_int('value-decimals');
         for (const entityId of s.get_strv('ha-panel-entities')) {
             const built = UI.createPanelEntity(
-                entityId, this._ha.states[entityId] || null, this._ha, decimals);
+                entityId, this._ha.states[entityId] || null, this._ha,
+                this._entityConfig(entityId));
             this._panelEntities.set(entityId, built);
             this._panelBox.add_child(built.actor);
         }
@@ -580,11 +580,32 @@ const HMassIndicator = GObject.registerClass({
     }
 
     _appendHaRow(entityId) {
-        const decimals = this._settings.get_int('value-decimals');
-        const built = UI.createHaRows(entityId, this._ha.states[entityId] || null, this._ha, decimals);
+        const built = UI.createHaRows(
+            entityId, this._ha.states[entityId] || null, this._ha,
+            this._entityConfig(entityId));
         this._haRows.set(entityId, built);
         for (const row of built.rows)
             this.menu.addMenuItem(row);
+    }
+
+    /**
+     * Sloučená konfigurace jedné entity: globální nastavení + přepis
+     * z klíče entity-configs (JSON). Chybný JSON se tiše ignoruje.
+     */
+    _entityConfig(entityId) {
+        let overrides = null;
+        try {
+            const dict = this._settings.get_value('entity-configs').deep_unpack();
+            const raw = dict[entityId];
+            if (raw)
+                overrides = JSON.parse(raw);
+        } catch (e) {
+            overrides = null;
+        }
+        return UI.mergeEntityConfig(
+            overrides,
+            this._settings.get_int('value-decimals'),
+            this._settings.get_string('entity-icon'));
     }
 
     _rebuildHaRows() {

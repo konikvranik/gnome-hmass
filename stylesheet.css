@@ -24,6 +24,12 @@
     font-feature-settings: "tnum";
 }
 
+/* Hodnota mimo nastavené prahy entity */
+.hmass-value-alert {
+    color: #ff6b6b;
+    font-weight: bold;
+}
+
 /* Interaktivní prvky entit v liště */
 .hmass-panel-btn {
     padding: 0 2px;

@@ -14,6 +14,16 @@ přítomní v issue a diskuzích zdvořile a vstřícně.
 - **Hodnoty v horní liště** – libovolné entity (typicky sensory) se zobrazí jako
   kompaktní text přímo v panelu GNOME (např. `21.4 °C`). U číselných hodnot lze
   nastavit počet desetinných míst (automaticky podle entity, nebo pevně 0–4).
+- **Ikony entit z Home Assistant** – přepínače, tlačítka a ostatní entity
+  zobrazují svou ikonu z HA (`mdi:…` z atributů entity). Rozšíření obsahuje
+  vestavěnou sadu ~500 MDI ikon (Apache-2.0), takže funguje i offline; když
+  ikona v sadě chybí, použije se ikona podle typu entity. Zdroj ikon jde přepnout
+  globálně i pro jednotlivé entity.
+- **Individuální nastavení entity** – tlačítko vedle entity v nastavení otevře
+  dialog s přepisy jen pro danou entitu: vlastní název, zdroj ikony, režim
+  zobrazení v liště (jen ikona / ikona+hodnota / jen hodnota), počet desetinných
+  míst a prahové hodnoty – hodnota mimo rozsah se zvýrazní červeně. Nastavení
+  platí pro lištu i menu.
 - **Ovládání přímo v liště** – přepínače (`switch`, `light`, `fan`, …) a tlačítka
   (`script`, `scene`, `button`, …) lze ovládat kliknutím v panelu, `input_number`
   kolečkem myši, `input_select` klikem přepíná volby a `input_text` je rovnou
@@ -104,9 +114,12 @@ gnome-extensions prefs hmass@pvranik
    tokeny* → vytvořit token a vložit sem.
 3. **Entity v liště** a **entity v menu** – zadejte `entity_id`; po kliknutí na
    *Otestovat spojení* se u polí nastaví automatické doplňování podle skutečných
-   entit.
+   entit. Tlačítko s tužkou u každé entity otevře individuální nastavení
+   (název, ikona, zobrazení, desetinná místa, prahy).
 4. **Desetinná místa číselných hodnot** – *Automaticky* (podle atributu
    `suggested_display_precision` entity, bez něj max 2 místa) nebo pevně 0–4.
+5. **Ikony entit** – *Z Home Assistant* (MDI ikona entity), *Podle typu entity*
+   nebo *Bez ikon*.
 
 Assist chat běží přes preferovanou Assist pipeline z HA (nastavení
 *Voice assistants* v HA); změna agenta se projeví po *Připojit znovu*.

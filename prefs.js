@@ -113,6 +113,195 @@ function _comboRow(title, subtitle, settings, key, values) {
     return row;
 }
 
+/** Jako _comboRow, ale pro textový klíč (např. entity-icon). */
+function _comboRowStr(title, subtitle, settings, key, values) {
+    const row = new Adw.ActionRow({
+        title: title,
+        subtitle: subtitle || '',
+    });
+    const combo = new Gtk.ComboBoxText({
+        valign: Gtk.Align.CENTER,
+    });
+    for (const v of values)
+        combo.append_text(v.label);
+    const applyCombo = () => {
+        const current = settings.get_string(key);
+        const idx = Math.max(0, values.findIndex(v => v.value === current));
+        combo.set_active(idx);
+    };
+    applyCombo();
+    combo.connect('changed', () => {
+        const idx = combo.get_active();
+        if (idx >= 0 && idx < values.length && values[idx].value !== settings.get_string(key))
+            settings.set_string(key, values[idx].value);
+    });
+    const settingsHandler = settings.connect(`changed::${key}`, applyCombo);
+    combo.connect('destroy', () => settings.disconnect(settingsHandler));
+    row.add_suffix(combo);
+    row.activatable_widget = combo;
+    return row;
+}
+
+// ---- individuální nastavení entit (klíč entity-configs) ----
+
+/** Přečte přepis jedné entity z entity-configs (JSON), nebo null. */
+function _entityOverrides(settings, entityId) {
+    try {
+        const dict = settings.get_value('entity-configs').deep_unpack();
+        const raw = dict[entityId];
+        return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+/**
+ * Uloží přepis entity (objekt) nebo ho smaže (null) v entity-configs.
+ */
+function _setEntityOverrides(settings, entityId, obj) {
+    let dict = {};
+    try {
+        dict = settings.get_value('entity-configs').deep_unpack();
+    } catch (e) {
+    }
+    if (obj)
+        dict[entityId] = JSON.stringify(obj);
+    else
+        delete dict[entityId];
+    settings.set_value('entity-configs', new GLib.Variant('a{ss}', dict));
+}
+
+/**
+ * Dialog individuálního nastavení entity: vlastní název, ikona, režim
+ * zobrazení v liště, desetinná místa a prahové hodnoty pro zvýraznění.
+ */
+function _entityConfigDialog(settings, entityId, root) {
+    const ov = _entityOverrides(settings, entityId) || {};
+
+    const dlg = new Gtk.Dialog({
+        title: `Nastavení entity`,
+        modal: true,
+        use_header_bar: 1,
+    });
+    if (root)
+        dlg.set_transient_for(root);
+    dlg.add_button('Zrušit', Gtk.ResponseType.CANCEL);
+    dlg.add_button('Vymazat', Gtk.ResponseType.REJECT);
+    dlg.add_button('Uložit', Gtk.ResponseType.OK);
+    dlg.set_default_response(Gtk.ResponseType.OK);
+
+    const box = dlg.get_content_area();
+    box.set({
+        spacing: 10,
+        margin_top: 14, margin_bottom: 14,
+        margin_start: 16, margin_end: 16,
+    });
+
+    const idLabel = new Gtk.Label({
+        label: `<b>${GLib.markup_escape_text(entityId, -1)}</b>`,
+        use_markup: true,
+        halign: Gtk.Align.START,
+    });
+    box.append(idLabel);
+
+    const comboRow = (labelText, values, current) => {
+        const hbox = new Gtk.Box({spacing: 10});
+        const lbl = new Gtk.Label({label: labelText, hexpand: true, xalign: 0});
+        const combo = new Gtk.ComboBoxText();
+        for (const v of values)
+            combo.append_text(v.label);
+        const idx = Math.max(0, values.findIndex(v => v.value === current));
+        combo.set_active(idx);
+        hbox.append(lbl);
+        hbox.append(combo);
+        box.append(hbox);
+        return combo;
+    };
+
+    const entryRow = (labelText, placeholder, initial) => {
+        const hbox = new Gtk.Box({spacing: 10});
+        const lbl = new Gtk.Label({label: labelText, hexpand: true, xalign: 0});
+        const entry = new Gtk.Entry({
+            placeholder_text: placeholder,
+            hexpand: false, width_chars: 12,
+            text: initial || '',
+        });
+        hbox.append(lbl);
+        hbox.append(entry);
+        box.append(hbox);
+        return entry;
+    };
+
+    const nameEntry = entryRow('Vlastní název', 'dle Home Assistant', ov.name || '');
+    const iconCombo = comboRow('Ikona', [
+        {value: '', label: 'Globální nastavení'},
+        {value: 'ha', label: 'Z Home Assistant (MDI)'},
+        {value: 'type', label: 'Podle typu entity'},
+        {value: 'text', label: 'Bez ikony'},
+    ], ov.icon || '');
+    const displayCombo = comboRow('Zobrazení v liště', [
+        {value: '', label: 'Automaticky'},
+        {value: 'icon', label: 'Jen ikona'},
+        {value: 'icon-value', label: 'Ikona + hodnota'},
+        {value: 'value', label: 'Jen hodnota / text'},
+    ], ov.display || '');
+    const decimalsCombo = comboRow('Desetinná místa', [
+        {value: '', label: 'Globální nastavení'},
+        {value: 0, label: '0 (celá čísla)'},
+        {value: 1, label: '1'},
+        {value: 2, label: '2'},
+        {value: 3, label: '3'},
+        {value: 4, label: '4'},
+    ], Number.isInteger(ov.decimals) ? ov.decimals : '');
+    const minEntry = entryRow('Práh minimum', 'neomezeno',
+        typeof ov.min === 'number' ? String(ov.min) : '');
+    const maxEntry = entryRow('Práh maximum', 'neomezeno',
+        typeof ov.max === 'number' ? String(ov.max) : '');
+    const hint = new Gtk.Label({
+        label: 'Hodnota mimo prahy se v liště zvýrazní červeně.\n' +
+               'Nastavení platí pro lištu i menu.',
+        halign: Gtk.Align.START,
+        wrap: true,
+    });
+    hint.get_style_context().add_class('dim-label');
+    box.append(hint);
+
+    dlg.connect('response', (d, resp) => {
+        if (resp === Gtk.ResponseType.REJECT) {
+            _setEntityOverrides(settings, entityId, null);
+        } else if (resp === Gtk.ResponseType.OK) {
+            const out = {};
+            const name = nameEntry.get_text().trim();
+            if (name)
+                out.name = name;
+            const iconVal = iconCombo.get_active();
+            if (iconVal > 0)
+                out.icon = ['', 'ha', 'type', 'text'][iconVal];
+            const dispVal = displayCombo.get_active();
+            if (dispVal > 0)
+                out.display = ['', 'icon', 'icon-value', 'value'][dispVal];
+            const decIdx = decimalsCombo.get_active();
+            if (decIdx > 0)
+                out.decimals = decIdx - 1;
+            const parseNum = txt => {
+                const n = parseFloat((txt || '').trim().replace(',', '.'));
+                return isFinite(n) ? n : null;
+            };
+            const mn = parseNum(minEntry.get_text());
+            if (mn !== null)
+                out.min = mn;
+            const mx = parseNum(maxEntry.get_text());
+            if (mx !== null)
+                out.max = mx;
+            _setEntityOverrides(settings, entityId,
+                Object.keys(out).length > 0 ? out : null);
+        }
+        d.destroy();
+    });
+
+    dlg.present();
+}
+
 /**
  * Řádek pro zachycení globální klávesové zkratky: klikni na tlačítko
  * a stiskni kombinaci kláves (Esc/Backspace zkratku smaže).
@@ -212,6 +401,25 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
         entry.connect('changed', persist);
         entries.push(entry);
 
+        const cfgBtn = new Gtk.Button({
+            icon_name: 'document-edit-symbolic',
+            valign: Gtk.Align.CENTER,
+            has_frame: false,
+            tooltip_text: 'Individuální nastavení entity (ikona, desetinná místa, prahy…)',
+        });
+        cfgBtn.add_css_class('flat');
+        cfgBtn.connect('clicked', () => {
+            const id = (entry.get_text() || '').trim();
+            if (!id.includes('.'))
+                return;
+            let root = null;
+            try {
+                root = entry.get_root();
+            } catch (e) {
+            }
+            _entityConfigDialog(settings, id, root);
+        });
+
         const removeBtn = new Gtk.Button({
             icon_name: 'user-trash-symbolic',
             valign: Gtk.Align.CENTER,
@@ -232,6 +440,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
         });
 
         row.add_prefix(entry);
+        row.add_suffix(cfgBtn);
         row.add_suffix(removeBtn);
         rows.push(row);
 
@@ -631,6 +840,18 @@ function buildHaPage(settings) {
             {value: 2, label: '2'},
             {value: 3, label: '3'},
             {value: 4, label: '4'},
+        ]
+    ));
+    panelEditor.group.add(_comboRowStr(
+        'Ikony entit',
+        'Zdroj ikon v liště i menu. "Z Home Assistant" používá ikonu entity ' +
+        '(mdi:…), které rozšíření obsahuje jako součástí dodávanou sadu MDI',
+        settings,
+        'entity-icon',
+        [
+            {value: 'ha', label: 'Z Home Assistant (MDI)'},
+            {value: 'type', label: 'Podle typu entity'},
+            {value: 'text', label: 'Bez ikon'},
         ]
     ));
     page.add(panelEditor.group);
