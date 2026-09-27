@@ -27,12 +27,8 @@ let _ext = null;
 
 function getSettings() {
     if (!_testSettings) {
-        try {
-            const backend = Gio.MemorySettingsBackend.new();
-            _testSettings = Gio.Settings.new_with_backend('org.gnome.shell.extensions.hmass', backend);
-        } catch (e) {
-            _testSettings = new Gio.Settings({schema_id: 'org.gnome.shell.extensions.hmass'});
-        }
+        const backend = Gio.MemorySettingsBackend.new();
+        _testSettings = Gio.Settings.new_with_backend('org.gnome.shell.extensions.hmass', backend);
     }
     return _testSettings;
 }
