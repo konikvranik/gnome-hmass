@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// SPDX-FileCopyrightText: 2026 pvranik
+// SPDX-FileCopyrightText: 2026 konikvranik
 /*
  * Stub imports.ui.popupMenu pro testy mimo GNOME Shell.
  * Itemy jsou skutečné GObject třídy (kvůli registerClass a signálům).

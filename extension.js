@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// SPDX-FileCopyrightText: 2026 pvranik
+// SPDX-FileCopyrightText: 2026 konikvranik
 //
 /*
  * Home Assistant & Music Assistant pro GNOME Shell 42.
@@ -606,7 +606,7 @@ const HMassIndicator = GObject.registerClass({
             } catch (e) {
             }
             try {
-                const uuid = (this._extension && this._extension.uuid) || 'hmass@pvranik';
+                const uuid = (this._extension && this._extension.uuid) || 'hmass@konikvranik';
                 Util.spawn(['gnome-extensions', 'prefs', uuid]);
             } catch (e) {
                 logError(e, 'hmass: Nelze spustit gnome-extensions prefs');

@@ -1,6 +1,6 @@
 #!/usr/bin/env gjs
 // SPDX-License-Identifier: GPL-2.0-or-later
-// SPDX-FileCopyrightText: 2026 pvranik
+// SPDX-FileCopyrightText: 2026 konikvranik
 /*
  * Probe Assist pipeline/agentů na živém HA:
  * 1) seznam pipeline (assist_pipeline/pipeline/list) + agentů (conversation/agent/list)

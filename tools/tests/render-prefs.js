@@ -1,6 +1,6 @@
 #!/usr/bin/env gjs
 // SPDX-License-Identifier: GPL-2.0-or-later
-// SPDX-FileCopyrightText: 2026 pvranik
+// SPDX-FileCopyrightText: 2026 konikvranik
 //
 /*
  * Vykreslí nastavovací dialog do Xvfb pro vizuální kontrolu layoutu

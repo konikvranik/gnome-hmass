@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
-# SPDX-FileCopyrightText: 2026 pvranik
+# SPDX-FileCopyrightText: 2026 konikvranik
 """
 Generuje JSON překladové mapy z .po souborů pro vynucený jazyk rozhraní
 (nastavení interface-language). Gettext totiž neumí přepnout jazyk jen pro

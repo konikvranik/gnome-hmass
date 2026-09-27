@@ -1,6 +1,6 @@
 #!/usr/bin/env gjs
 // SPDX-License-Identifier: GPL-2.0-or-later
-// SPDX-FileCopyrightText: 2026 pvranik
+// SPDX-FileCopyrightText: 2026 konikvranik
 /*
  * Read-only probe AI Radio DJ API (hosts/list, queue_dj/status).
  * Spouštět: GSETTINGS_SCHEMA_DIR=schemas DISPLAY=:1 gjs -I . tools/tests/test-dj-api.js

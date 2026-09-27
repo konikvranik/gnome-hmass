@@ -5,7 +5,7 @@
 #
 # Czech translation for hmass.
 # This file is distributed under the same license as the hmass package.
-# pvranik, 2026.
+# konikvranik, 2026.
 #
 msgid ""
 msgstr ""
@@ -13,7 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/konikvranik/gnome-hmass/issues\n"
 "POT-Creation-Date: 2026-09-26 19:17+0200\n"
 "PO-Revision-Date: 2026-09-26 18:25+0200\n"
-"Last-Translator: pvranik\n"
+"Last-Translator: konikvranik\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"

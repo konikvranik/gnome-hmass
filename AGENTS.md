@@ -30,7 +30,7 @@ vše přes GObject introspection. Licence GPL-2.0-or-later.
 make check          # syntax kontrola ESM i generovaného CJS (rychlé, povinné po každé změně)
 make test           # celá testovací suita (E2E + UI + prefs + Soup kompatibilita)
 make install        # atomická instalace (auto-detekuje GNOME 45+ ESM vs GNOME 42-44 CJS)
-make zip            # vygeneruje balíčky pro EGO: hmass@pvranik-v46.zip i hmass@pvranik-v42.zip
+make zip            # vygeneruje balíčky pro EGO: hmass@konikvranik-v46.zip i hmass@konikvranik-v42.zip
 ```
 
 Živé testy proti reálným HA/MA (čtou přihlašovací údaje z GSettings uživatele;
@@ -46,9 +46,9 @@ Reload rozšíření bez restartu shellu (bezpečné — instalace je atomická)
 ```bash
 B=/org/gnome/Shell/Extensions
 gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
-  --method org.gnome.Shell.Extensions.DisableExtension hmass@pvranik
+  --method org.gnome.Shell.Extensions.DisableExtension hmass@konikvranik
 gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
-  --method org.gnome.Shell.Extensions.EnableExtension hmass@pvranik
+  --method org.gnome.Shell.Extensions.EnableExtension hmass@konikvranik
 ```
 
 ## Architektura

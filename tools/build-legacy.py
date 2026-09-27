@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
-# SPDX-FileCopyrightText: 2026 pvranik
+# SPDX-FileCopyrightText: 2026 konikvranik
 """
 Transpilátor z moderního ESM kódu (GNOME 45+) na legacy CJS kód (GNOME 42-44).
 Zachovává mapování řádků 1:1, nepřidává žádné externí závislosti.

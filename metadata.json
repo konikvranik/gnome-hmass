@@ -1,5 +1,5 @@
 {
-    "uuid": "hmass@pvranik",
+    "uuid": "hmass@konikvranik",
     "name": "Home Assistant & Music Assistant",
     "description": "Home Assistant: entity values and controls right in the top bar (switches, buttons, scrollable numbers, selectors, text entries; entity name on hover), menu controls picked automatically by domain, and an Assist chat using your preferred pipeline.\nMusic Assistant: player control in the menu (player, seek, volume, AI Radio DJ) and an MPRIS bridge for media keys and the native GNOME media controls.",
     "shell-version": ["45", "46", "47", "48"],

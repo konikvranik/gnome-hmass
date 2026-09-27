@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// SPDX-FileCopyrightText: 2026 pvranik
+// SPDX-FileCopyrightText: 2026 konikvranik
 /*
  * Stub imports.misc.extensionUtils pro běh knihoven mimo GNOME Shell.
  * Knihovny v lib/ používají Me.imports.lib.xxx - tenhle stub je namapuje
@@ -14,7 +14,7 @@ function getCurrentExtension() {
     // metadata + dir nutné pro import extension.js (gettext doména) i ikony
     if (!_ext) {
         _ext = {
-            uuid: 'hmass@pvranik',
+            uuid: 'hmass@konikvranik',
             dir: Gio.File.new_for_path('/home/pvranik/priv/git/gnome-hmass'),
             metadata: {name: 'hmass', 'gettext-domain': 'hmass',
                 'settings-schema': 'org.gnome.shell.extensions.hmass'},

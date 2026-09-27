@@ -1,4 +1,4 @@
-UUID = hmass@pvranik
+UUID = hmass@konikvranik
 EXTDIR := $(HOME)/.local/share/gnome-shell/extensions/$(UUID)
 
 SHELL_MAJOR := $(shell gnome-shell --version 2>/dev/null | sed -E 's/[^0-9]*([0-9]+).*/\1/')

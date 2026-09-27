@@ -99,11 +99,11 @@ Poté restartujte GNOME Shell (**Alt+F2** → `r` na X11; na Waylandu odhlášen
 a přihlášení) a povolte rozšíření:
 
 ```bash
-gnome-extensions enable hmass@pvranik
+gnome-extensions enable hmass@konikvranik
 ```
 
 Ručně: zkopírujte `metadata.json extension.js prefs.js stylesheet.css lib
-schemas locale` do `~/.local/share/gnome-shell/extensions/hmass@pvranik/`
+schemas locale` do `~/.local/share/gnome-shell/extensions/hmass@konikvranik/`
 (adresář `schemas` musí obsahovat zkompilované `gschemas.compiled`, vytvoří
 `make`).
 
@@ -112,7 +112,7 @@ schemas locale` do `~/.local/share/gnome-shell/extensions/hmass@pvranik/`
 Otevřete přes tlačítko *Nastavení* v menu rozšíření nebo:
 
 ```bash
-gnome-extensions prefs hmass@pvranik
+gnome-extensions prefs hmass@konikvranik
 ```
 
 ### Home Assistant
@@ -240,7 +240,7 @@ Pravidla se tedy drží právě jednou — upravujte jen `AGENTS.md`.
 
 ## Publikování na extensions.gnome.org
 
-1. Vytvořte balíček: `make zip` → `hmass@pvranik.zip` (obsahuje jen potřebné
+1. Vytvořte balíček: `make zip` → `hmass@konikvranik.zip` (obsahuje jen potřebné
    soubory včetně XML schématu, licence a překladů, bez zkompilovaných
    schémat a vývojových nástrojů).
 2. Přihlaste se GNOME účtem na <https://extensions.gnome.org/upload/>, balíček

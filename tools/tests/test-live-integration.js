@@ -1,6 +1,6 @@
 #!/usr/bin/env gjs
 // SPDX-License-Identifier: GPL-2.0-or-later
-// SPDX-FileCopyrightText: 2026 pvranik
+// SPDX-FileCopyrightText: 2026 konikvranik
 /*
  * Kompletní integrační test běžící pod Libsoup 2.4 s reálnými servery HA a MA.
  */

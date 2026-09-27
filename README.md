@@ -106,11 +106,11 @@ Then restart GNOME Shell (**Alt+F2** → `r` on X11; on Wayland log out and
 back in) and enable the extension:
 
 ```bash
-gnome-extensions enable hmass@pvranik
+gnome-extensions enable hmass@konikvranik
 ```
 
 Manually: copy `metadata.json extension.js prefs.js stylesheet.css lib schemas
-locale` into `~/.local/share/gnome-shell/extensions/hmass@pvranik/` (the
+locale` into `~/.local/share/gnome-shell/extensions/hmass@konikvranik/` (the
 `schemas` directory must contain the compiled `gschemas.compiled`, created by
 `make`).
 
@@ -119,7 +119,7 @@ locale` into `~/.local/share/gnome-shell/extensions/hmass@pvranik/` (the
 Open it via the *Settings* button in the extension menu, or:
 
 ```bash
-gnome-extensions prefs hmass@pvranik
+gnome-extensions prefs hmass@konikvranik
 ```
 
 ### Home Assistant
@@ -253,7 +253,7 @@ The rules are therefore kept exactly once — edit `AGENTS.md` only.
 
 ## Publishing to extensions.gnome.org
 
-1. Build the package: `make zip` → `hmass@pvranik.zip` (contains only the
+1. Build the package: `make zip` → `hmass@konikvranik.zip` (contains only the
    needed files incl. the XML schema, license and translations; no compiled
    schemas, no development tools).
 2. Sign in with your GNOME account at

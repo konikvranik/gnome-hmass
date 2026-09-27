@@ -1,6 +1,6 @@
 #!/usr/bin/env gjs
 // SPDX-License-Identifier: GPL-2.0-or-later
-// SPDX-FileCopyrightText: 2026 pvranik
+// SPDX-FileCopyrightText: 2026 konikvranik
 /*
  * UI testy rozšíření mimo GNOME Shell: logika panelu, menu, HA řádků,
  * SliderRow, MPRIS manageru v Indicatoru a logika prefs (checklist).
@@ -15,6 +15,10 @@ if (_clutterVers && _clutterVers.includes('10'))
     imports.gi.versions.Clutter = '10';
 
 const {GLib, GObject, Gio, Clutter} = imports.gi;
+try {
+    Clutter.init(null);
+} catch (e) {
+}
 const System = imports.system;
 
 const EXT_DIR = ARGV[0] || '.';
