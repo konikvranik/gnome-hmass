@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Test připojení k Home Assistant z terminálu:
+ * Terminal connection test to Home Assistant:
  *   gjs tools/test-ha.js http://ha:8123 TOKEN
  */
 
@@ -16,7 +16,7 @@ const url = (ARGV[0] || '').replace(/\/+$/, '');
 const token = ARGV[1] || '';
 
 if (!url || !token) {
-    print('Použití: gjs tools/test-ha.js <url> <token>');
+    print('Usage: gjs tools/test-ha.js <url> <token>');
     System.exit(1);
 }
 
@@ -31,20 +31,20 @@ session.send_and_read_async(msg, GLib.PRIORITY_DEFAULT, null, (sess, res) => {
         const status = typeof msg.get_status === 'function' ? msg.get_status() : msg.status_code;
         const body = _decoder.decode(bytes instanceof Uint8Array ? bytes : bytes.get_data());
         if (status === 401 || status === 403) {
-            print('CHYBA: přihlášení selhalo (401/403) - zkontrolujte token.');
+            print('ERROR: authentication failed (401/403) - check token.');
             loop.quit();
             return;
         }
         if (status !== 200) {
-            print(`CHYBA: server vrátil ${status}`);
+            print(`ERROR: server returned ${status}`);
             loop.quit();
             return;
         }
         const states = JSON.parse(body);
-        print(`OK: nalezeno ${states.length} entit. Prvních 30:`);
+        print(`OK: found ${states.length} entities. First 30:`);
         states.slice(0, 30).forEach(s => print(`  ${s.entity_id} = ${s.state}`));
     } catch (e) {
-        print(`CHYBA: ${e.message}`);
+        print(`ERROR: ${e.message}`);
     }
     loop.quit();
 });

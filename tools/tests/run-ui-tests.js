@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * UI testy rozšíření mimo GNOME Shell: logika panelu, menu, HA řádků,
- * SliderRow, MPRIS manageru v Indicatoru a logika prefs (checklist).
+ * Extension UI tests outside GNOME Shell: panel logic, menu, HA rows,
+ * SliderRow, MPRIS manager in Indicator and prefs logic (checklist).
  *
- * Spuštění (env nastaví Makefile cíl check-ui):
+ * Execution (env configured by Makefile check-ui target):
  *   gjs tools/tests/run-ui-tests.js "$PWD"
  */
 
@@ -38,7 +38,7 @@ function check(name, cond, detail) {
     }
 }
 
-// ---- St fakes: nahradí widgetové třídy v načteném namespace St ----
+// ---- St fakes: replaces widget classes in loaded St namespace ----
 const St = imports.gi.St;
 
 function fakeSignalMixin() {
@@ -61,8 +61,8 @@ function fakeSignalMixin() {
     };
 }
 
-// no-op viditelnost (historyBox.show/hide, clearBtn.hide…) - fakes jsou
-// vždy "viditelné", jen nesmí chybět metody
+// No-op visibility (historyBox.show/hide, clearBtn.hide…) - fakes are
+// always "visible", methods must simply exist
 const fakeVisibility = () => ({
     show() {},
     hide() {},
@@ -198,14 +198,41 @@ class FakeEntry {
     }
 }
 
+class FakeDrawingArea {
+    constructor(params) {
+        params = params || {};
+        this.style_class = params.style_class || '';
+        this.width = params.width || 0;
+        this.height = params.height || 0;
+        this._handlers = {};
+        Object.assign(this, fakeSignalMixin(), fakeVisibility());
+        this.destroyed = false;
+    }
+    queue_repaint() {}
+    get_context() {
+        return {
+            arc() {},
+            fill() {},
+            $dispose() {},
+        };
+    }
+    get_surface_size() {
+        return [this.width, this.height];
+    }
+    destroy() {
+        this.destroyed = true;
+    }
+}
+
 St.Label = FakeLabel;
 St.BoxLayout = FakeBoxLayout;
 St.Bin = FakeBin;
 St.Icon = FakeIcon;
 St.Button = FakeButton;
 St.Entry = FakeEntry;
+St.DrawingArea = FakeDrawingArea;
 
-// ---- import testovaných modulů (až po nahrazení St) ----
+// ---- Import tested modules (after replacing St) ----
 const UI = imports.lib.ui;
 const WsLib = imports.lib.ws;
 const {HAClient} = imports.lib.ha;
@@ -213,7 +240,7 @@ const {MAClient} = imports.lib.ma;
 const Main = imports.ui.main;
 const Util = imports.misc.util;
 
-// ---- jednotkové testy čisté logiky ----
+// ---- Pure logic unit tests ----
 
 function testUnits() {
     check('UI: formatTime', UI.formatTime(0) === '0:00' && UI.formatTime(65) === '1:05' &&
@@ -225,7 +252,7 @@ function testUnits() {
         state: '21.4', attributes: {unit_of_measurement: '°C'},
     }) === '21.4 °C' && UI.panelValueText({state: 'off', attributes: {}}) === 'off' &&
         UI.panelValueText(null) === '—');
-    check('UI: panelValueText auto zaokrouhlení',
+    check('UI: panelValueText auto rounding',
         UI.panelValueText({state: '65.6158981323242', attributes: {unit_of_measurement: 'cm'}}) === '65.62 cm' &&
         UI.panelValueText({state: '42', attributes: {}}) === '42' &&
         UI.panelValueText({state: '21.4', attributes: {}}) === '21.4' &&
@@ -236,7 +263,7 @@ function testUnits() {
         WsLib.wsUrlFromHttp('ws://x:1/', '/ws') === 'ws://x:1/ws');
 }
 
-// ---- createHaRows: automatické ovládací prvky podle domény ----
+// ---- createHaRows: automatic control elements by domain ----
 
 function recorderHa() {
     return {
@@ -787,7 +814,7 @@ function testEntityConfig() {
         ch(cold, 2) > ch(cold, 0), cold);
 }
 
-// ---- běh ----
+// ---- Execution ----
 
 async function main() {
     testUnits();
@@ -796,31 +823,31 @@ async function main() {
         try {
             fn();
         } catch (e) {
-            check(`${name}: fáze selhala`, false, `${e}\n${e.stack}`);
+            check(`${name}: phase failed`, false, `${e}\n${e.stack}`);
         }
     }
     try {
         await testIndicator();
     } catch (e) {
-        check('Ind: fáze selhala', false, `${e}\n${e.stack}`);
+        check('Ind: phase failed', false, `${e}\n${e.stack}`);
     }
     try {
         await testIndicatorOffline();
     } catch (e) {
-        check('OfflineUI: fáze selhala', false, `${e}\n${e.stack}`);
+        check('OfflineUI: phase failed', false, `${e}\n${e.stack}`);
     }
 
     print('');
     if (failures === 0)
-        print('VŠECHNY UI TESTY PROŠLY');
+        print('ALL UI TESTS PASSED');
     else
-        print(`SELHALO UI TESTŮ: ${failures}`);
+        print(`UI TESTS FAILED: ${failures}`);
     System.exit(failures === 0 ? 0 : 1);
 }
 
 GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
     main().catch(e => {
-        print('CHYBA SUITY: ' + e);
+        print('SUITE ERROR: ' + e);
         System.exit(1);
     });
     return GLib.SOURCE_REMOVE;

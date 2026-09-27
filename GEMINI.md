@@ -1,5 +1,5 @@
 @AGENTS.md
 
-Veškeré pokyny pro práci v tomto repozitáři (konvence, příkazy, tvrdá pravidla,
-testy, ladění, git) jsou v AGENTS.md — tento soubor ho importuje.
-(Antigravity/Gemini CLI umí číst AGENTS.md i přímo.)
+All guidelines for working in this repository (conventions, commands, hard rules,
+tests, debugging, git) are in AGENTS.md — this file imports it.
+(Antigravity/Gemini CLI can also read AGENTS.md directly.)

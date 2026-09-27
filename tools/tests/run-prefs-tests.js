@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Testy logiky prefs (checklist přehrávačů s deduplikací, preferencí MA).
- * Samostatný proces - UI harness načítá přes St Gtk 3.0, zde potřebujeme 4.0.
+ * Prefs logic tests (player checklist with deduplication, MA preference).
+ * Separate process - UI harness loads via St Gtk 3.0, here we need 4.0.
  *
  *   gjs tools/tests/run-prefs-tests.js "$PWD"
  */
@@ -34,23 +34,23 @@ Gtk.init(null);
 const Prefs = imports.prefs;
 const settings = imports.misc.extensionUtils.getSettings();
 
-// ---- i18n: vynucený jazyk rozhraní (JSON mapy ze skutečného adresáře) ----
+// ---- i18n: forced interface language (JSON maps from real directory) ----
 {
     const Gio = imports.gi.Gio;
     const I18n = imports.lib.i18n;
     I18n.init(settings, Gio.File.new_for_path(EXT_DIR));
     I18n.apply('cs');
-    check('i18n: vynucená čeština', I18n._('Settings') === 'Nastavení' &&
+    check('i18n: forced Czech', I18n._('Settings') === 'Nastavení' &&
         I18n._('Reconnect') === 'Připojit znovu', I18n._('Settings'));
-    check('i18n: cs hint asistenta', I18n._('Ask the Assistant...') === 'Požádej asistenta...',
+    check('i18n: cs assistant hint', I18n._('Ask the Assistant...') === 'Požádej asistenta...',
         I18n._('Ask the Assistant...'));
     I18n.apply('nl');
-    check('i18n: vynucená nizozemština', I18n._('Settings') === 'Instellingen' &&
+    check('i18n: forced Dutch', I18n._('Settings') === 'Instellingen' &&
         I18n._('on') === 'aan', I18n._('Settings'));
     I18n.apply('auto');
 }
 
-// simulovat načtené přehrávače: Obývák je v MA i HA (duplicita → MA), Ložnice jen v HA
+// Simulate loaded players: Living room is in both MA and HA (duplicate → MA), Bedroom only in HA
 Prefs._maPlayers = [
     {player_id: 'p1', name: 'Obývák'},
     {player_id: 'p2', name: 'Kuchyň'},
@@ -303,16 +303,16 @@ check('Reorder: paralelní pole zůstávají synchronní',
 
 const passEntry = new Gtk.PasswordEntry();
 
-// --- velikost okna nastavení: clamp ---
-check('Velikost: běžné hodnoty zůstávají',
+// --- Window preferences size: clamp ---
+check('Size: regular values remain',
     JSON.stringify(Prefs._clampWindowSize(900, 600)) === '[900,600]');
-check('Velikost: příliš malé se zvednou na minimum',
+check('Size: too small values raised to minimum',
     JSON.stringify(Prefs._clampWindowSize(10, 5)) === `[${Prefs.PREFS_MIN_W},${Prefs.PREFS_MIN_H}]`);
-check('Velikost: obří se seříznou na maximum',
+check('Size: huge values clamped to maximum',
     JSON.stringify(Prefs._clampWindowSize(99999, 99999)) === `[${Prefs.PREFS_MAX_W},${Prefs.PREFS_MAX_H}]`);
-check('Velikost: nečíselné spadnou na minimum',
+check('Size: non-numbers clamped to minimum',
     JSON.stringify(Prefs._clampWindowSize(NaN, NaN)) === `[${Prefs.PREFS_MIN_W},${Prefs.PREFS_MIN_H}]`);
-check('Schema: klíče prefs-width/height existují',
+check('Schema: prefs-width/height keys exist',
     settings.get_int('prefs-width') === 680 && settings.get_int('prefs-height') === 750);
 
 const passEntry2 = new Gtk.PasswordEntry();
@@ -326,7 +326,7 @@ settings.set_string('ha-token', origToken);
 
 print('');
 if (failures === 0)
-    print('VŠECHNY PREFS TESTY PROŠLY');
+    print('ALL PREFS TESTS PASSED');
 else
-    print(`SELHALO PREFS TESTŮ: ${failures}`);
+    print(`PREFS TESTS FAILED: ${failures}`);
 System.exit(failures === 0 ? 0 : 1);

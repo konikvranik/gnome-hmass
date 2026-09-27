@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * E2E test knihoven rozšíření proti mock serverům:
+ * Extension libraries E2E test against mock servers:
  *   python3 tools/tests/mock_server.py ha 8721 /tmp/mock-ha.log &
  *   python3 tools/tests/mock_server.py ma 8722 /tmp/mock-ma.log &
  *   gjs tools/tests/run-tests.js
@@ -18,7 +18,7 @@ const REPO_DIR = ARGV[1] || EXT_DIR;
 imports.searchPath.push(EXT_DIR);
 imports.searchPath.push(REPO_DIR + '/tools/tests/harness');
 
-const misc = imports.misc; // načte stub
+const misc = imports.misc; // loads stub
 const WsLib = imports.lib.ws;
 const {HAClient} = imports.lib.ha;
 const {MAClient, PlayerView} = imports.lib.ma;
@@ -37,7 +37,7 @@ function check(name, cond, detail) {
     }
 }
 
-// počítadlo logů pro testy "nic nepřehnaně loguje"
+// Log counter for tests "does not log excessively"
 let logCalls = [];
 globalThis.log = (...a) => {
     logCalls.push(a.map(String).join(' '));
@@ -602,7 +602,7 @@ async function testOfflinePhase() {
     try {
         await _testOfflineInner();
     } catch (e) {
-        check('Offline: fáze selhala', false, `${e}\n${e.stack}`);
+        check('Offline: phase failed', false, `${e}\n${e.stack}`);
     }
     finish();
 }
@@ -610,9 +610,9 @@ async function testOfflinePhase() {
 function finish() {
     print('');
     if (failures === 0)
-        print('VŠECHNY TESTY PROŠLY');
+        print('ALL TESTS PASSED');
     else
-        print(`SELHALO TESTŮ: ${failures}`);
+        print(`TESTS FAILED: ${failures}`);
     quitSoon();
 }
 

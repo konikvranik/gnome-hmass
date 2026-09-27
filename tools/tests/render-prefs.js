@@ -3,8 +3,8 @@
 // SPDX-FileCopyrightText: 2026 konikvranik
 //
 /*
- * Vykreslí nastavovací dialog do Xvfb pro vizuální kontrolu layoutu
- * (bez GNOME Shell i bez zásahu do běžícího sezení).
+ * Renders preferences dialog into Xvfb for visual layout verification
+ * (without GNOME Shell or affecting running session).
  *
  *   Xvfb :99 -screen 0 900x800x24 &
  *   GSETTINGS_SCHEMA_DIR=schemas DISPLAY=:99 \
@@ -26,13 +26,13 @@ const H = parseInt(ARGV[3] || '520', 10);
 imports.searchPath.push(REPO);
 imports.searchPath.push(REPO + '/tools/tests/harness');
 
-const misc = imports.misc; // načte stub extensionUtils
+const misc = imports.misc; // loads extensionUtils stub
 
 Adw.init();
 
 const Prefs = imports.prefs;
 const win = new Adw.PreferencesWindow({default_width: W, default_height: H});
-win.set_title('Nastavení — Home Assistant & Music Assistant');
+win.set_title('Settings — Home Assistant & Music Assistant');
 Prefs.fillPreferencesWindow(win);
 win.present();
 
@@ -42,5 +42,5 @@ GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 6, () => {
     return GLib.SOURCE_REMOVE;
 });
 loop.run();
-print(`okno ${W}x${H} vykresleno (6 s) - snimek: ${OUT}`);
+print(`window ${W}x${H} rendered (6 s) - screenshot: ${OUT}`);
 System.exit(0);

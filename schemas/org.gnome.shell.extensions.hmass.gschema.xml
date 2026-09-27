@@ -4,106 +4,106 @@
     <!-- Home Assistant -->
     <key type="s" name="ha-url">
       <default>''</default>
-      <summary>URL Home Assistant</summary>
-      <description>Např. http://homeassistant.local:8123</description>
+      <summary>Home Assistant URL</summary>
+      <description>E.g. http://homeassistant.local:8123</description>
     </key>
     <key type="s" name="ha-token">
       <default>''</default>
-      <summary>Long-lived access token Home Assistant</summary>
-      <description>Vytvoří se v profilu uživatele v HA (Dlouhodobé přístupové tokeny).</description>
+      <summary>Home Assistant long-lived access token</summary>
+      <description>Created in HA user profile (Long-Lived Access Tokens).</description>
     </key>
     <key type="as" name="ha-panel-entities">
       <default>[]</default>
-      <summary>Entity zobrazené v horní liště</summary>
-      <description>Seznam entity_id (většinou sensory), jejichž hodnota se zobrazí v panelu.</description>
+      <summary>Entities displayed in the top bar</summary>
+      <description>List of entity_ids (typically sensors) whose values are shown in the panel.</description>
     </key>
     <key type="i" name="value-decimals">
       <default>-1</default>
-      <summary>Počet desetinných míst číselných hodnot</summary>
-      <description>-1 = automaticky (podle atributu suggested_display_precision entity), 0-4 = pevný počet desetinných míst.</description>
+      <summary>Number of decimal places for numeric values</summary>
+      <description>-1 = automatic (per entity suggested_display_precision attribute), 0-4 = fixed number of decimal places.</description>
     </key>
     <key type="s" name="entity-icon">
       <default>'ha'</default>
-      <summary>Zdroj ikon entit</summary>
-      <description>ha = ikona z Home Assistant (mdi:… z atributů entity, součástí rozšíření je sada MDI ikon), type = ikona podle domény entity, text = bez ikon.</description>
+      <summary>Entity icon source</summary>
+      <description>ha = icon from Home Assistant (mdi:... from entity attributes; bundled MDI icons), type = icon based on entity domain, text = no icons.</description>
     </key>
     <key type="a{ss}" name="entity-configs">
       <default>{}</default>
-      <summary>Přepisy nastavení jednotlivých entit</summary>
-      <description>Mapa entity_id na JSON s přepisy: {"decimals":0-4, "icon":"ha"|"type"|"text", "display":"auto"|"icon"|"icon-value"|"value", "name":"vlastní název", "min":číslo, "max":číslo}. Chybějící klíče dědí globální nastavení.</description>
+      <summary>Per-entity configuration overrides</summary>
+      <description>Map of entity_id to JSON override object: {"decimals":0-4, "icon":"ha"|"type"|"text", "display":"auto"|"icon"|"icon-value"|"value", "name":"custom name", "min":number, "max":number}. Missing keys inherit global settings.</description>
     </key>
     <key type="as" name="hotkey-open-menu">
       <default>['&lt;Primary&gt;&lt;Super&gt;h']</default>
-      <summary>Zkratka pro otevření menu a fokusu Assist chatu</summary>
-      <description>Globální klávesová zkratka, která otevře menu rozšíření a nastaví kurzor do pole konverzace s asistentem.</description>
+      <summary>Shortcut to open menu and focus Assist chat</summary>
+      <description>Global keyboard shortcut that opens the extension menu and focuses the Assist conversation entry.</description>
     </key>
     <key type="as" name="ha-menu-entities">
       <default>[]</default>
-      <summary>Entity zobrazené v menu</summary>
-      <description>Seznam entity_id; ovládací prvek se vybere automaticky podle domény.</description>
+      <summary>Entities displayed in the menu</summary>
+      <description>List of entity_ids; the control widget is selected automatically by domain.</description>
     </key>
 
     <!-- Music Assistant -->
     <key type="b" name="ma-enabled">
       <default>true</default>
-      <summary>Integrace Music Assistant zapnuta</summary>
+      <summary>Enable Music Assistant integration</summary>
     </key>
     <key type="s" name="ma-url">
       <default>''</default>
-      <summary>URL Music Assistant serveru</summary>
-      <description>Např. http://music-assistant:8095</description>
+      <summary>Music Assistant server URL</summary>
+      <description>E.g. http://music-assistant:8095</description>
     </key>
     <key type="s" name="ma-token">
       <default>''</default>
-      <summary>API klíč Music Assistant</summary>
-      <description>Vytvoří se v nastavení MA (Users/API keys). Prázdné, pokud MA nemá zapnuté přihlášení.</description>
+      <summary>Music Assistant API key</summary>
+      <description>Created in MA settings (Users/API keys). Empty if MA does not require authentication.</description>
     </key>
     <key type="s" name="ma-default-player">
       <default>''</default>
-      <summary>Výchozí přehrávač Music Assistant</summary>
-      <description>player_id přehrávače. Prázdné = automaticky (první hrající).</description>
+      <summary>Default Music Assistant player</summary>
+      <description>Player player_id. Empty = automatic (first active/playing player).</description>
     </key>
     <key type="b" name="ma-mpris">
       <default>true</default>
-      <summary>Zapnout MPRIS most</summary>
-      <description>Vybraní přehrávači budou ovladatelní multimediálními klávesami a nativním GNOME ovládáním médií.</description>
+      <summary>Enable MPRIS bridge</summary>
+      <description>Selected players will be controllable via media keys and native GNOME media controls.</description>
     </key>
     <key type="as" name="mpris-players">
       <default>[]</default>
-      <summary>Přehrávače v MPRIS</summary>
-      <description>Vybraní přehrávači ("ma:&lt;player_id&gt;" nebo "ha:&lt;entity_id&gt;"). Prázdné = aktivní přehrávač MA.</description>
+      <summary>Players in MPRIS</summary>
+      <description>Selected players ("ma:&lt;player_id&gt;" or "ha:&lt;entity_id&gt;"). Empty = active MA player.</description>
     </key>
     <key type="b" name="ma-show-player-selector">
       <default>true</default>
-      <summary>Zobrazit výběr přehrávače</summary>
+      <summary>Show player selector</summary>
     </key>
     <key type="b" name="ma-show-transport">
       <default>true</default>
-      <summary>Zobrazit tlačítka přehrávání</summary>
-      <description>Předchozí / přehraj-pauza / další / stop.</description>
+      <summary>Show transport playback buttons</summary>
+      <description>Previous / play-pause / next / stop.</description>
     </key>
     <key type="b" name="ma-show-seek">
       <default>true</default>
-      <summary>Zobrazit posuvník pozice skladby</summary>
+      <summary>Show track seek slider</summary>
     </key>
     <key type="b" name="ma-show-volume">
       <default>true</default>
-      <summary>Zobrazit posuvník hlasitosti</summary>
+      <summary>Show volume slider</summary>
     </key>
     <key type="b" name="ma-show-shuffle-repeat">
       <default>false</default>
-      <summary>Zobrazit shuffle a repeat</summary>
+      <summary>Show shuffle and repeat buttons</summary>
     </key>
     <key type="b" name="ma-show-dj-selector">
       <default>true</default>
-      <summary>Zobrazit AI DJ selector</summary>
-      <description>Submenu pro výběr AI Radio DJ hosta nebo jeho vypnutí v Music Assistant.</description>
+      <summary>Show AI DJ selector</summary>
+      <description>Submenu to select an AI Radio DJ host or turn off DJ in Music Assistant.</description>
     </key>
 
     <!-- Panel -->
     <key type="b" name="panel-show-icon">
       <default>true</default>
-      <summary>Zobrazit ikonu v liště</summary>
+      <summary>Show icon in panel</summary>
     </key>
     <key type="s" name="interface-language">
       <choices>
@@ -113,27 +113,27 @@
         <choice value="nl"/>
       </choices>
       <default>"auto"</default>
-      <summary>Jazyk rozhraní rozšíření</summary>
-      <description>auto = podle jazyku systému; jinak vynucený jazyk (en, cs, nl). Platí pro menu i okno nastavení (po jeho opětovném otevření).</description>
+      <summary>Extension interface language</summary>
+      <description>auto = system language; or forced language (en, cs, nl). Applies to both the menu and the preferences window (after reopening).</description>
     </key>
     <key type="b" name="panel-show-status">
       <default>true</default>
-      <summary>Zobrazit stav připojení (tečky) v liště</summary>
+      <summary>Show connection status dots in panel</summary>
     </key>
     <key type="b" name="allow-insecure-tls">
       <default>false</default>
-      <summary>Povolit neověřené TLS certifikáty</summary>
-      <description>Pro servery s vlastními podpsanými certifikáty (vyžaduje libsoup 3.2+).</description>
+      <summary>Allow unverified TLS certificates</summary>
+      <description>For servers with self-signed certificates (requires libsoup 3.2+).</description>
     </key>
 
-    <!-- Okno nastavení (pamatuji si velikost) -->
+    <!-- Preferences window dimensions -->
     <key type="i" name="prefs-width">
       <default>680</default>
-      <summary>Šířka okna nastavení</summary>
+      <summary>Preferences window width</summary>
     </key>
     <key type="i" name="prefs-height">
       <default>750</default>
-      <summary>Výška okna nastavení</summary>
+      <summary>Preferences window height</summary>
     </key>
   </schema>
 </schemalist>

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Stub imports.ui.popupMenu pro testy mimo GNOME Shell.
- * Itemy jsou skutečné GObject třídy (kvůli registerClass a signálům).
+ * Stub for imports.ui.popupMenu for tests outside GNOME Shell.
+ * Items are real GObject classes (for registerClass and signals).
  */
 
 const {GObject} = imports.gi;
@@ -61,7 +61,7 @@ var PopupBaseMenuItem = GObject.registerClass({
         this.children = [];
         this.destroyed = false;
         this._handlers = {};
-        // věrně shellu: ornament label je vždy první dítě řádku
+        // faithful to shell: ornament label is always the first child of the row
         this._ornamentLabel = {text: '', style_class: 'popup-menu-ornament', visible: false};
         this.children.push(this._ornamentLabel);
     }

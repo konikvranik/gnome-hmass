@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Stub imports.ui.slider - GObject s vlastností 'value' a signály
- * drag-begin/drag-end (skutečná mechanika notify::value funguje).
+ * Stub for imports.ui.slider - GObject with 'value' property and drag-begin/drag-end
+ * signals (real notify::value mechanics work).
  */
 
 const {GObject} = imports.gi;

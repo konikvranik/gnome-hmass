@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2026 konikvranik
 //
 /*
- * Home Assistant & Music Assistant pro GNOME Shell 42.
+ * Home Assistant & Music Assistant for GNOME Shell 42.
  *
- * - HA: hodnoty entit v horní liště + ovládání v menu (switche, slidery,
- *   tlačítka, senzory, výběry, texty - automaticky podle domény)
- * - MA: ovládání přehrávání v menu + MPRIS most pro multimediální klávesy
+ * - HA: entity values in top panel + control in menu (switches, sliders,
+ *   buttons, sensors, selects, text inputs - automatically by domain)
+ * - MA: playback control in menu + MPRIS bridge for multimedia keys
  */
 
 import Clutter from 'gi://Clutter';
@@ -68,7 +68,7 @@ const HMassIndicator = GObject.registerClass({
 
         this._ha = new HAClient();
         this._ma = new MAClient();
-        this._mprisBridges = [];   // pole MprisBridge (per-player nebo jeden pro aktivní)
+        this._mprisBridges = [];   // Array of MprisBridge instances (per-player or one for active)
 
         this._panelBox = new St.BoxLayout({style_class: 'hmass-panel-box'});
         this.add_child(this._panelBox);
@@ -95,7 +95,7 @@ const HMassIndicator = GObject.registerClass({
         this._haSeparator = null;
         this._haAssist = null;
         this._haRows = new Map();      // entityId -> {update}
-        this._haRowsHolder = null;     // sekce menu s HA řádky
+        this._haRowsHolder = null;     // Menu section containing HA rows
         this._haStatus = null;
         this._maStatus = null;
 
@@ -118,7 +118,7 @@ const HMassIndicator = GObject.registerClass({
         this._registerHotkey();
     }
 
-    /** Globální zkratka: otevřít menu a foucnout do pole Assist chatu. */
+    /** Global shortcut: open menu and focus the Assist chat entry. */
     _registerHotkey() {
         if (!Main.wm || !Main.wm.addKeybinding || !Meta.KeyBindingFlags)
             return;
@@ -130,7 +130,7 @@ const HMassIndicator = GObject.registerClass({
                 () => this._openMenuAndFocusAssist());
             this._hotkeyRegistered = true;
         } catch (e) {
-            logError(e, 'hmass: registrace zkratky selhala');
+            logError(e, 'hmass: hotkey registration failed');
         }
     }
 
@@ -149,7 +149,7 @@ const HMassIndicator = GObject.registerClass({
         this.menu.open();
         if (!this._haAssist)
             return;
-        // menu si po otevření vezme grab - fokus vstupu až poté
+        // Menu grabs focus upon opening - focus entry afterwards
         GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             if (this.menu.isOpen && this._haAssist && this._haAssist.entry)
                 this._haAssist.entry.grab_key_focus();
@@ -157,14 +157,14 @@ const HMassIndicator = GObject.registerClass({
         });
     }
 
-    // ---- klienti ----
+    // ---- clients ----
 
     _wireClients() {
         this._ha.onstate = (status, detail) => this._updateHaStatus(status, detail);
         this._ha.onstates = () => {
-            // rebuild synchronně ve websocket callbacku na začátku session
-            // občas nechá destroy handlery položek spadnout do GC sweep fáze
-            // a shell je zablokuje (prázdné menu, nealokovaný indikátor)
+            // Rebuilding synchronously in websocket callback at session start
+            // can cause destroyed item handlers to hit GC sweep phase
+            // and get blocked by the shell (empty menu, unallocated indicator)
             if (this._rebuildIdle)
                 GLib.source_remove(this._rebuildIdle);
             this._rebuildIdle = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
@@ -180,7 +180,7 @@ const HMassIndicator = GObject.registerClass({
 
         this._ma.onstate = (status, detail) => this._updateMaStatus(status, detail);
         this._ma.onplayers = () => {
-            this._setupMpris();  // přebudovat mosty s čitelnými jmény hráčů
+            this._setupMpris();  // Rebuild bridges with readable player names
             this._refreshMa();
         };
         this._ma.onactive = () => this._refreshMa();
@@ -219,7 +219,7 @@ const HMassIndicator = GObject.registerClass({
         this._setupMpris();
     }
 
-    // ---- MPRIS mosty (jeden na vybraný přehrávač, nebo jeden pro aktivní) ----
+    // ---- MPRIS bridges (one per chosen player, or one for active) ----
 
     _teardownMpris() {
         for (const b of this._mprisBridges)
@@ -250,8 +250,8 @@ const HMassIndicator = GObject.registerClass({
                 if (entry.startsWith('ma:')) {
                     const playerId = entry.slice(3);
                     if (playerId) {
-                        // Suffix odvozujeme z jména přehrávače – čitelné pro MPRIS indikátor.
-                        // Klíč zůstává stabilní (player_id).
+                        // Derive suffix from player name – human-readable for MPRIS indicator.
+                        // Key remains stable (player_id).
                         const knownPlayer = this._ma.players.find(p => p.player_id === playerId);
                         const playerName = (knownPlayer && knownPlayer.name) || playerId;
                         const nameSuffix = `ma_${playerName}`;
@@ -276,8 +276,8 @@ const HMassIndicator = GObject.registerClass({
             }
         }
 
-        // 1. Zastavit mosty mimo cílový výběr
-        //    Mosty mají _key uložený při vytvoření; fallback na _suffix nebo 'default_ma'.
+        // 1. Stop bridges outside target selection
+        //    Bridges have _key stored on creation; fallback to _suffix or 'default_ma'.
         this._mprisBridges = this._mprisBridges.filter(b => {
             const key = b._key || b._suffix || 'default_ma';
             const target = targetFactories.get(key);
@@ -285,7 +285,7 @@ const HMassIndicator = GObject.registerClass({
                 b.stop();
                 return false;
             }
-            // Pokud se D-Bus jméno změnilo (teď víme jméno hráče), přebuduj most.
+            // If D-Bus name changed (player name now known), rebuild bridge.
             if (target.nameSuffix !== b._suffix) {
                 b.stop();
                 return false;
@@ -293,12 +293,12 @@ const HMassIndicator = GObject.registerClass({
             return true;
         });
 
-        // 2. Přidat nové / přebudované mosty
+        // 2. Add new / rebuilt bridges
         const existingKeys = new Set(this._mprisBridges.map(b => b._key || b._suffix || 'default_ma'));
         for (const [key, {factory}] of targetFactories) {
             if (!existingKeys.has(key)) {
                 const b = factory();
-                b._key = key;   // uloží stabilní klíč odděleně od D-Bus suffixu
+                b._key = key;   // Stores stable key separately from D-Bus suffix
                 b.start();
                 this._mprisBridges.push(b);
             }
@@ -357,14 +357,14 @@ const HMassIndicator = GObject.registerClass({
                 const yTop = hasMa ? Math.round(h * 0.3) : Math.round(h * 0.5);
                 const yBottom = Math.round(h * 0.7);
 
-                // Horní tečka: Home Assistant
+                // Top dot: Home Assistant
                 if (haColor) {
                     Clutter.cairo_set_source_color(cr, haColor);
                     cr.arc(cx, yTop, r, 0, 2 * Math.PI);
                     cr.fill();
                 }
 
-                // Dolní tečka: Music Assistant
+                // Bottom dot: Music Assistant
                 if (maColor) {
                     Clutter.cairo_set_source_color(cr, maColor);
                     cr.arc(cx, yBottom, r, 0, 2 * Math.PI);
@@ -377,8 +377,8 @@ const HMassIndicator = GObject.registerClass({
             this._dotsArea = null;
         }
 
-        // ikona a tečky patří k sobě - společný box bez theme mezer,
-        // aby stavové tečky přiléhaly těsně k ikoně Home Assistant
+        // Icon and dots belong together - common box without theme gaps
+        // so status dots sit tightly next to Home Assistant icon
         if (this._panelIcon && this._dotsArea) {
             const iconBox = new St.BoxLayout({style_class: 'hmass-icon-box'});
             iconBox.add_child(this._panelIcon);
@@ -404,8 +404,8 @@ const HMassIndicator = GObject.registerClass({
     }
 
     /**
-     * Ikona v panelu: když je některý nastavený server nedostupný,
-     * přepne se na "offline" variantu - jediný viditelný zásah do systému.
+     * Panel icon: when any configured server is unavailable,
+     * switch to "offline" variant - the only visible intervention in the system.
      */
     _panelOffline() {
         const bad = st => st === 'error' || st === 'auth-error';
@@ -441,7 +441,7 @@ const HMassIndicator = GObject.registerClass({
         } catch (_e) { /* ignore */ }
         const cleanUrl = url.replace(/\/+$/, '').toLowerCase();
 
-        // Prohledáme ~/.local/share/applications/ (Chrome PWA) + /usr/share/applications/
+        // Search ~/.local/share/applications/ (Chrome PWA) + /usr/share/applications/
         const searchDirs = [
             GLib.get_user_data_dir() + '/applications',
             '/usr/share/applications',
@@ -477,7 +477,7 @@ const HMassIndicator = GObject.registerClass({
                 const cmd  = (info.get_commandline() || '');
                 const cmdL = cmd.toLowerCase();
 
-                // Shoda URL/host v Exec (pro non-PWA aplikace)
+                // URL/host match in Exec (for non-PWA apps)
                 if (cleanUrl && cmdL.includes(cleanUrl)) {
                     foundExec = cmd;
                     break outer;
@@ -487,7 +487,7 @@ const HMassIndicator = GObject.registerClass({
                     break outer;
                 }
 
-                // Shoda klíčového slova s Name= v .desktop souboru (Chrome PWA)
+                // Keyword match with Name= in .desktop file (Chrome PWA)
                 if (keywords && keywords.length > 0) {
                     for (const kw of keywords) {
                         if (name === kw.toLowerCase() || name.startsWith(kw.toLowerCase())) {
@@ -504,15 +504,15 @@ const HMassIndicator = GObject.registerClass({
                 GLib.spawn_command_line_async(foundExec);
                 return;
             } catch (e) {
-                logError(e, 'hmass: spuštění PWA selhalo, otvírám URL');
+                logError(e, 'hmass: PWA launch failed, opening URL');
             }
         }
 
-        // Fallback: otevřít URL v defaultním prohlížeči
+        // Fallback: open URL in default browser
         try {
             Gio.AppInfo.launch_default_for_uri(url, null);
         } catch (e) {
-            logError(e, `hmass: nelze otevřít URL ${url}`);
+            logError(e, `hmass: failed to open URL ${url}`);
         }
     }
 
@@ -534,8 +534,7 @@ const HMassIndicator = GObject.registerClass({
     // ---- menu ----
 
     _rebuildMenu() {
-        // nejdřív zrušit assist chat - jeho položky pak removeAll nebude
-        // rušit podruhé (disposed objekty)
+        // First destroy assist chat - removeAll won't destroy it a second time (disposed objects)
         if (this._haAssist) {
             this._haAssist.destroy();
             this._haAssist = null;
@@ -576,7 +575,7 @@ const HMassIndicator = GObject.registerClass({
         }
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-        // stav připojení signalizují tečky v panelu - žádné stavové řádky v menu
+        // Connection status signaled by panel dots - no status rows in menu
         this._haStatus = null;
         this._maStatus = null;
 
@@ -609,7 +608,7 @@ const HMassIndicator = GObject.registerClass({
                 const uuid = (this._extension && this._extension.uuid) || 'hmass@konikvranik';
                 Util.spawn(['gnome-extensions', 'prefs', uuid]);
             } catch (e) {
-                logError(e, 'hmass: Nelze spustit gnome-extensions prefs');
+                logError(e, 'hmass: failed to launch gnome-extensions prefs');
             }
         });
         this.menu.addMenuItem(prefsItem);
@@ -627,8 +626,8 @@ const HMassIndicator = GObject.registerClass({
     }
 
     /**
-     * Sloučená konfigurace jedné entity: globální nastavení + přepis
-     * z klíče entity-configs (JSON). Chybný JSON se tiše ignoruje.
+     * Merged configuration for single entity: global settings + overrides
+     * from entity-configs key (JSON). Invalid JSON is silently ignored.
      */
     _entityConfig(entityId) {
         let overrides = null;
@@ -647,11 +646,11 @@ const HMassIndicator = GObject.registerClass({
     }
 
     _rebuildHaRows() {
-        // znovupostaví HA část menu (po načtení kompletních stavů)
+        // Rebuild HA portion of menu (after full states loaded)
         this._rebuildMenu();
     }
 
-    // ---- události ----
+    // ---- events ----
 
     _onHaEntity(entityId, st) {
         const panelEntity = this._panelEntities.get(entityId);
@@ -660,7 +659,7 @@ const HMassIndicator = GObject.registerClass({
         const built = this._haRows.get(entityId);
         if (built)
             built.update(st);
-        // přehrávač v MPRIS (media_player.*) - aktualizovat jeho most
+        // MPRIS player (media_player.*) - update its bridge
         if (entityId.startsWith('media_player.')) {
             for (const b of this._mprisBridges) {
                 if (b._client instanceof HaPlayerAdapter && b._client.entityId === entityId)
@@ -745,7 +744,7 @@ const HMassIndicator = GObject.registerClass({
         }
     }
 
-    // ---- nastavení ----
+    // ---- settings ----
 
     _onSettingsChanged(key) {
         if (CONNECTION_KEYS.has(key)) {
@@ -778,14 +777,14 @@ const HMassIndicator = GObject.registerClass({
     _rebuildAll() {
         this._rebuildPanel();
         this._rebuildMenu();
-        // obnovit stavové texty po přestavění menu
+        // Restore status texts after menu rebuild
         this._updateHaStatus(this._ha.status, '');
         this._updateMaStatus(this._ma.status, '');
     }
 
     destroy() {
-        // nejdřív odpojit obsluhy klientů - po disable nesmí žádná
-        // (např. z naplánovaného reconnektu) sahat na už zničené UI
+        // First disconnect client handlers - after disable nothing
+        // (e.g. from scheduled reconnect) should touch destroyed UI
         this._ha.onstate = null;
         this._ha.onstates = null;
         this._ha.onentity = null;

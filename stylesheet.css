@@ -4,13 +4,13 @@
     padding: 0 4px;
 }
 
-/* Ikona + stavové tečky těsně u sebe (bez theme mezer) */
+/* Icon + status dots close together (no theme gaps) */
 .hmass-icon-box {
     spacing: 0;
 }
 
-/* theme dává .system-status-icon padding 5px a margin 0 4px;
-   u nás tečky přiléhají k ikoně, pravý padding a margin rušíme */
+/* theme gives .system-status-icon 5px padding and 0 4px margin;
+   dots are adjacent to icon, so right padding and margin are removed */
 #panel .panel-button .system-status-icon.hmass-panel-icon {
     padding: 5px 0 5px 5px;
     margin: 0;
@@ -24,14 +24,14 @@
     font-feature-settings: "tnum";
 }
 
-/* Hodnota mimo nastavené prahy entity (přebíjí barvu hodnoty) */
+/* Value outside entity thresholds (overrides value color) */
 .hmass-value-alert,
 .hmass-ha-value.hmass-value-alert {
     color: #ff6b6b;
     font-weight: bold;
 }
 
-/* Interaktivní prvky entit v liště */
+/* Interactive entity elements in the bar */
 .hmass-panel-btn {
     padding: 0 2px;
     border-radius: 4px;
@@ -141,7 +141,7 @@
     padding: 2px 12px;
 }
 
-/* Kombinovaný řádek: tlačítka + průběh vedle sebe */
+/* Combined row: buttons + progress bar side by side */
 .hmass-ctrl-box {
     spacing: 2px;
 }
@@ -171,10 +171,10 @@
     spacing: 8px;
 }
 
-/* Jednotný styl entit v menu: neaktivní řádky (senzory, text) přidává
-   PopupBaseMenuItem do třídy popup-inactive-menu-item a St k tomu dává
-   pseudo-class :insensitive, kterou je theme zašedívá (#8a8a8a). Entity
-   musí vypadat stejně jako ovládací řádky (switche) - přebijeme barvu. */
+/* Uniform styling of menu entities: inactive rows (sensors, text) are added
+   by PopupBaseMenuItem to popup-inactive-menu-item and St adds the pseudo-class
+   :insensitive, which the theme grays out (#8a8a8a). Entities must match control
+   rows (switches) - override color. */
 .hmass-ha-row.popup-inactive-menu-item {
     color: #F7F7F7;
 }
@@ -187,8 +187,8 @@
     /* let the value float to the right */
 }
 
-/* Hodnota entity: stejná barva jako název (jednotné řádky ovládání);
-   nedostupná entita ztlumená, alert červený (viz nahoře) */
+/* Entity value: same color as name (uniform control rows);
+   unavailable entity dimmed, alert red (see above) */
 .hmass-ha-value {
     color: #ffffff;
 }
@@ -197,8 +197,8 @@
     color: rgba(255, 255, 255, 0.45);
 }
 
-/* Sekundární akce menu (Nastavení, Připojit znovu) - vizuálně oddělené
-   od ovládání entit */
+/* Secondary menu actions (Settings, Reconnect) - visually separated
+   from entity controls */
 .hmass-menu-secondary {
     color: rgba(255, 255, 255, 0.55);
 }

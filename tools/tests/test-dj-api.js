@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
  * Read-only probe AI Radio DJ API (hosts/list, queue_dj/status).
- * Spouštět: GSETTINGS_SCHEMA_DIR=schemas DISPLAY=:1 gjs -I . tools/tests/test-dj-api.js
+ * Run: GSETTINGS_SCHEMA_DIR=schemas DISPLAY=:1 gjs -I . tools/tests/test-dj-api.js
  */
 
 imports.gi.versions.Soup = '2.4';
@@ -31,9 +31,9 @@ ma._onMessage = msg => {
     origOnMsg(msg);
     if (msg && msg.message_id === 'hmass-dj-hosts') {
         if (msg.error_code !== undefined) {
-            print('hosts/list CHYBA:', JSON.stringify(msg).slice(0, 300));
+            print('hosts/list ERROR:', JSON.stringify(msg).slice(0, 300));
         } else {
-            print('hosts/list OK — počet hostů:', msg.result.length);
+            print('hosts/list OK — hosts count:', msg.result.length);
             for (const h of msg.result)
                 print(`   host_id=${h.id}  name="${h.name}"`);
         }
@@ -41,7 +41,7 @@ ma._onMessage = msg => {
     }
     if (msg && msg.message_id === 'hmass-dj-status') {
         if (msg.error_code !== undefined) {
-            print('queue_dj/status CHYBA:', JSON.stringify(msg).slice(0, 300));
+            print('queue_dj/status ERROR:', JSON.stringify(msg).slice(0, 300));
         } else {
             print('queue_dj/status OK:', JSON.stringify(msg.result));
         }
@@ -60,11 +60,11 @@ function finishPart() {
 }
 
 ma.onplayers = () => {
-    print('MA připojeno, hráčů:', ma.players.length);
-    print('fronty (queue_id → display_name):');
+    print('MA connected, players count:', ma.players.length);
+    print('queues (queue_id → display_name):');
     for (const q of Object.values(ma.queues))
         print(`   ${q.queue_id} → ${q.display_name} (active=${q.active})`);
-    // ruční probe příkazy s pevnými message_id
+    // manual probe commands with fixed message_ids
     ma._ws.send({message_id: 'hmass-dj-hosts', command: 'ai_radio/hosts/list', args: {}});
     ma._ws.send({message_id: 'hmass-dj-status', command: 'ai_radio/queue_dj/status', args: {}});
 };

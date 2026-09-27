@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 konikvranik
 //
 /*
- * Nastavení rozšíření (GTK4 + Libadwaita). GNOME 42+.
+ * Extension preferences (GTK4 + Libadwaita). GNOME 42+.
  */
 
 import Adw from 'gi://Adw';
@@ -18,13 +18,13 @@ import {MAClient} from './lib/ma.js';
 import * as I18n from './lib/i18n.js';
 
 const _ = I18n._;
-// %s/%d nahrazování - String.format z GNOME Shell prostředí tady
-// není (čistý gjs / prefs proces)
+// %s/%d replacement - String.format from GNOME Shell environment is not
+// available here (clean gjs / prefs process)
 const _f = (str, ...args) => str.replace(/%[sd]/g, () => args.shift());
 
 const _decoder = new TextDecoder();
 
-// ---- čištění a normalizace URL ----
+// ---- URL cleanup and normalization ----
 
 function _cleanHaUrl(url) {
     let s = (url || '').trim().replace(/\/+$/, '');
@@ -42,7 +42,7 @@ function _cleanMaUrl(url) {
     return s;
 }
 
-// ---- pomocné funkce pro řádky Libadwaita ----
+// ---- Helper functions for Libadwaita rows ----
 
 function _switchRow(title, subtitle, settings, key) {
     const row = new Adw.ActionRow({
@@ -59,8 +59,8 @@ function _switchRow(title, subtitle, settings, key) {
 }
 
 /**
- * Řádek s polem přes celou šířku: název a popis nad sebou, pole pod nimi.
- * (Adw.ActionRow by pole stiskl na šířku popisku — suffix-box se neroztahuje.)
+ * Full-width field row: title and subtitle above, field below.
+ * (Adw.ActionRow would squeeze field to label width — suffix-box does not expand.)
  */
 function _fieldRow(title, subtitle, entry) {
     const row = new Adw.PreferencesRow({activatable: false});
@@ -69,7 +69,7 @@ function _fieldRow(title, subtitle, entry) {
         spacing: 3,
         valign: Gtk.Align.CENTER,
     });
-    // class 'header' = stejné okraje (12px) a min-výška jako u ActionRow
+    // class 'header' = same padding (12px) and min-height as ActionRow
     box.add_css_class('header');
     if (title) {
         const titleLabel = new Gtk.Label({
@@ -81,7 +81,7 @@ function _fieldRow(title, subtitle, entry) {
         const subLabel = new Gtk.Label({
             label: subtitle, xalign: 0, wrap: true, wrap_mode: Pango.WrapMode.WORD_CHAR,
         });
-        // class 'subtitle' = stejný styl popisku jako u ActionRow (menší, tlumený)
+        // class 'subtitle' = same subtitle style as ActionRow (smaller, dimmed)
         subLabel.add_css_class('subtitle');
         box.append(subLabel);
     }
@@ -111,9 +111,9 @@ function _passwordRow(title, subtitle, settings, key) {
 }
 
 /**
- * Adw.ActionRow roztahuje interní blok titulku (hexpand=True z template),
- * takže pole v prefixes nezabere volné místo až k suffixům. Titulkový blok
- * tady sbalíme, aby se roztáhlo pole s hexpand=true (např. entry entity).
+ * Adw.ActionRow expands internal title block (hexpand=True from template),
+ * so field in prefixes does not take available space up to suffixes.
+ * We collapse the title box here so the field with hexpand=true expands.
  */
 function _collapseTitleBox(row) {
     let header = row.get_first_child();
@@ -127,10 +127,10 @@ function _collapseTitleBox(row) {
 }
 
 /**
- * Porovnání pro našeptávač entit. key je zadaný text (lowercase).
- *  - dotaz s tečkou („sensor.pro“) → filtr na začátek entity_id,
- *  - jinak podřetězec v entity_id, názvu entity (bez diakritiky)
- *    nebo názvu zařízení.
+ * Matching for entity completer. key is entered text (lowercase).
+ *  - query with dot ("sensor.pro") -> filter prefix of entity_id,
+ *  - otherwise substring in entity_id, entity name (without diacritics)
+ *    or device name.
  */
 function _entityMatch(key, id, name, device) {
     const k = String(key || '').toLowerCase();
@@ -139,7 +139,7 @@ function _entityMatch(key, id, name, device) {
     return _entityMatchItem(k, _normName(k), _makeEntityItem(id, name, device));
 }
 
-/** Položka našeptávače s předpočítanými poli pro rychlé filtrování. */
+/** Completer item with precomputed fields for fast filtering. */
 function _makeEntityItem(id, name, device) {
     return {
         id,
@@ -151,7 +151,7 @@ function _makeEntityItem(id, name, device) {
     };
 }
 
-/** Rychlé porovnání s předpočítanými poli (stejná sémantika jako _entityMatch). */
+/** Fast match with precomputed fields (same semantics as _entityMatch). */
 function _entityMatchItem(k, kn, it) {
     if (k.includes('.'))
         return it.lcId.startsWith(k);
@@ -161,7 +161,7 @@ function _entityMatchItem(k, kn, it) {
                      (it.nDev && it.nDev.includes(kn))));
 }
 
-/** Markup řádku našeptávače: název + zařízení + entity_id. */
+/** Completer row markup: name + device + entity_id. */
 function _entityDisplayMarkup(it) {
     const esc = s => GLib.markup_escape_text(String(s || ''), -1);
     if (it.name && it.name !== it.id && it.device)
@@ -173,22 +173,22 @@ function _entityDisplayMarkup(it) {
     return `<b>${esc(it.id)}</b>`;
 }
 
-// limit počtu nabízených položek a výška řádku (pro scroll a fixní šířku)
+// Limit of offered items and row height (for scroll and fixed width)
 const ENTITY_MAX_MATCHES = 30;
 const ENTITY_ROW_HEIGHT = 34;
-const ENTITY_MIN_CHARS = 3;        // napovídat od 3 znaků (dotaz bez domény)
-const ENTITY_MIN_CHARS_DOT = 2;    // dotaz s doménou („li“) od 2 znaků
-const ENTITY_DEBOUNCE_MS = 300;    // prodleva po stisku klávesy
-const ENTITY_CACHE_SIZE = 32;      // zapamatované dotazy → shody
+const ENTITY_MIN_CHARS = 3;        // Suggest from 3 characters (query without domain)
+const ENTITY_MIN_CHARS_DOT = 2;    // Query with domain ("li") from 2 characters
+const ENTITY_DEBOUNCE_MS = 300;    // Delay after keystroke
+const ENTITY_CACHE_SIZE = 32;      // Cached queries -> matches
 
 /**
- * Vlastní našeptávač entit — VLOŽENÝ SEZNAM pod polem (Gtk.Revealer,
- * vzor Adw.EntryRow). Gtk.EntryCompletion ani popup (Gtk.Popover) se s
- * desítkami tisíc položek na GTK 4.6 chovají nestabilně: popup mění
- * nativní okna a bere klávesový grab, takže psaní zasekává a přeblikává.
- * Tady seznam žije přímo v řádku: žádný grab (psaní běží dál), žádné
- * přesouvání oken, obsah se přepoužívá z cache dotazů.
- * Vrací holder (Gtk.Box k vložení do řádku) a API pro testy.
+ * Custom entity completer — EMBEDDED LIST below entry (Gtk.Revealer,
+ * Adw.EntryRow pattern). Gtk.EntryCompletion and popup (Gtk.Popover) behave
+ * unstably with tens of thousands of items on GTK 4.6: popups change
+ * native windows and grab keyboard, causing stuttering and flickering while typing.
+ * Here the list lives directly inside the row: no grab (typing continues smoothly),
+ * no moving windows, content reused from query cache.
+ * Returns holder (Gtk.Box for row insertion) and API for tests.
  */
 function _attachEntityCompletion(entry, getItems) {
     const holder = new Gtk.Box({
@@ -249,8 +249,8 @@ function _attachEntityCompletion(entry, getItems) {
                 margin_end: 10,
             });
             row.set_child(lbl);
-            // tooltip při hoveru: celý název, zařízení i přesné entity_id
-            // (label je ořezávaný, takže tooltip i plný text)
+            // Tooltip on hover: full name, device and exact entity_id
+            // (label is ellipsized, so tooltip provides full text)
             const tip = [];
             if (it.name)
                 tip.push(`<b>${GLib.markup_escape_text(it.name, -1)}</b>`);
@@ -288,9 +288,9 @@ function _attachEntityCompletion(entry, getItems) {
         const text = String(entry.get_text() || '');
         const minLen = text.includes('.') ? ENTITY_MIN_CHARS_DOT : ENTITY_MIN_CHARS;
         if (text.length < minLen) {
-            // bez brány fokusu — vlastnost has_focus je v GTK 4.6 nespolehlivá
-            // (hlásila false i při psaní); seznam se otevírá jen na změnu
-            // textu a pick() si to potlačí přes accepting
+            // Without focus gate — has_focus property is unreliable in GTK 4.6
+            // (reported false even while typing); list opens only on text
+            // change and pick() suppresses it via accepting flag
             state.lastQuery = null;
             state.matches = [];
             state.idx = -1;
@@ -298,7 +298,7 @@ function _attachEntityCompletion(entry, getItems) {
             return;
         }
         if (state.lastQuery === text)
-            return;             // stejné zadání — nic nepřekreslovat
+            return;             // Same query — nothing to redraw
         let matches = queryCache.get(text);
         if (!matches) {
             matches = computeMatches(text);
@@ -316,8 +316,8 @@ function _attachEntityCompletion(entry, getItems) {
             return;
         }
         rebuildRows();
-        // Gtk.ScrolledWindow bez min-content má přirozený rozměr 0 — seznam
-        // by se odhalil nulové šířky/výšky (neviditelný)
+        // Gtk.ScrolledWindow without min-content has natural size 0 — list
+        // would reveal with 0 width/height (invisible)
         scroller.min_content_width =
             Math.max(entry.get_allocated_width() || 300, 240);
         scroller.min_content_height =
@@ -341,9 +341,9 @@ function _attachEntityCompletion(entry, getItems) {
     });
 
     const keyCtl = new Gtk.EventControllerKey();
-    // CAPTURE: jinak vnitřní Gtk.Text Enter sám zkousne (aktivace entry)
-    // a náš bubble-phase controller se na něj nedostane (šipky ano — ty
-    // Gtk.Text nehandluje, proto pohyb v seznamu fungoval)
+    // CAPTURE: otherwise internal Gtk.Text Enter will consume it (entry activation)
+    // and our bubble-phase controller won't receive it (arrows yes —
+    // Gtk.Text does not handle them, so list navigation worked)
     keyCtl.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
     entry.add_controller(keyCtl);
     keyCtl.connect('key-pressed', (c, keyval) => {
@@ -395,7 +395,7 @@ function _attachEntityCompletion(entry, getItems) {
             state.rendered = null;
             collapse();
         },
-        /** Stav pro testy: revealed + počet řádků + tooltip prvního řádku. */
+        /** State for tests: revealed + row count + first row tooltip. */
         _debug() {
             let rowCount = 0;
             let firstTooltip = '';
@@ -410,9 +410,9 @@ function _attachEntityCompletion(entry, getItems) {
 }
 
 /**
- * Přesune řádek seznamu entit před/za cílový (drag&drop). rows a entries
- * jsou paralelní pole — přeskupí oba a přemístí widget v listu.
- * Vrací cílovou pozici v polích, nebo -1 když přesun nemá smysl.
+ * Moves entity list row before/after target (drag & drop). rows and entries
+ * are parallel arrays — reorders both and moves widget in list.
+ * Returns target position in arrays, or -1 when move is invalid.
  */
 function _reorderEntities(list, rows, entries, srcRow, dstRow, after) {
     const srcIdx = rows.indexOf(srcRow);
@@ -424,7 +424,7 @@ function _reorderEntities(list, rows, entries, srcRow, dstRow, after) {
     const target = rows.indexOf(dstRow) + (after ? 1 : 0);
     rows.splice(target, 0, movedRow);
     entries.splice(target, 0, movedEntry);
-    // widget: index cíle v listu se po odstranění zdroje sám posune
+    // Widget: target index in list shifts automatically after removing source
     const insertIdx = dstRow.get_index() + (after ? 1 : 0);
     list.remove(srcRow);
     list.insert(srcRow, insertIdx);
@@ -432,8 +432,8 @@ function _reorderEntities(list, rows, entries, srcRow, dstRow, after) {
 }
 
 /**
- * Řádek s rozbalovacím výběrem celočíselné hodnoty.
- * values: pole {value, label}; první položka s value === current je předvybraná.
+ * Row with dropdown select for integer value.
+ * values: array {value, label}; first item with value === current is preselected.
  */
 function _comboRow(title, subtitle, settings, key, values) {
     const row = new Adw.ActionRow({
@@ -463,7 +463,7 @@ function _comboRow(title, subtitle, settings, key, values) {
     return row;
 }
 
-/** Jako _comboRow, ale pro textový klíč (např. entity-icon). */
+/** Like _comboRow, but for string key (e.g. entity-icon). */
 function _comboRowStr(title, subtitle, settings, key, values) {
     const row = new Adw.ActionRow({
         title: title,
@@ -492,9 +492,9 @@ function _comboRowStr(title, subtitle, settings, key, values) {
     return row;
 }
 
-// ---- individuální nastavení entit (klíč entity-configs) ----
+// ---- Per-entity settings (entity-configs key) ----
 
-/** Přečte přepis jedné entity z entity-configs (JSON), nebo null. */
+/** Reads overrides for single entity from entity-configs (JSON), or null. */
 function _entityOverrides(settings, entityId) {
     try {
         const dict = settings.get_value('entity-configs').deep_unpack();
@@ -506,7 +506,7 @@ function _entityOverrides(settings, entityId) {
 }
 
 /**
- * Uloží přepis entity (objekt) nebo ho smaže (null) v entity-configs.
+ * Saves entity override (object) or deletes it (null) in entity-configs.
  */
 function _setEntityOverrides(settings, entityId, obj) {
     let dict = {};
@@ -522,8 +522,8 @@ function _setEntityOverrides(settings, entityId, obj) {
 }
 
 /**
- * Dialog individuálního nastavení entity: vlastní název, ikona, režim
- * zobrazení v liště, desetinná místa a prahové hodnoty pro zvýraznění.
+ * Entity settings dialog: custom name, icon, panel display
+ * mode, decimal places and threshold values for highlighting.
  */
 function _entityConfigDialog(settings, entityId, root) {
     const ov = _entityOverrides(settings, entityId) || {};
@@ -655,8 +655,8 @@ function _entityConfigDialog(settings, entityId, root) {
 }
 
 /**
- * Řádek pro zachycení globální klávesové zkratky: klikni na tlačítko
- * a stiskni kombinaci kláves (Esc/Backspace zkratku smaže).
+ * Row for capturing global keybinding: click button
+ * and press key combination (Esc/Backspace clears shortcut).
  */
 function _keybindingRow(title, subtitle, settings, key) {
     const row = new Adw.ActionRow({
@@ -685,7 +685,7 @@ function _keybindingRow(title, subtitle, settings, key) {
             settings.set_strv(key, []);
             return Gdk.EVENT_STOP;
         }
-        // samotné klávesy bez modifikátoru (a ne F1-F12) nejsou platná zkratka
+        // Bare keys without modifiers (except F1-F12) are not valid shortcuts
         const isFn = keyval >= Gdk.KEY_F1 && keyval <= Gdk.KEY_F12;
         if (mods === 0 && !isFn)
             return Gdk.EVENT_STOP;
@@ -703,7 +703,7 @@ function _keybindingRow(title, subtitle, settings, key) {
 }
 
 /**
- * Editor seznamu entity_id: čisté řádky v Adw.PreferencesGroup.
+ * Editor for entity_id list: clean rows in Adw.PreferencesGroup.
  */
 function _createEntityGroup(settings, key, title, description, placeholder) {
     const group = new Adw.PreferencesGroup({
@@ -716,7 +716,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
     const completions = [];
     let persistId = 0;
     let rowSeq = 0;
-    let sharedItems = [];   // položky našeptávače {id, name, device, lcId, nName, nDev}
+    let sharedItems = [];   // Completer items {id, name, device, lcId, nName, nDev}
 
     const persist = () => {
         if (persistId)
@@ -778,7 +778,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
             icon_name: 'user-trash-symbolic',
             valign: Gtk.Align.START,
             has_frame: false,
-            tooltip_text: 'Odebrat entitu',
+            tooltip_text: _('Remove entity'),
         });
         removeBtn.add_css_class('flat');
 
@@ -793,13 +793,13 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
             persist();
         });
 
-        // přetahování za úchyt změní pořadí entit
+        // Dragging handle reorders entities
         const uid = `row${++rowSeq}`;
         row._hmassUid = uid;
         const handle = new Gtk.Image({
             icon_name: 'list-drag-handle-symbolic',
             valign: Gtk.Align.START,
-            margin_top: 9,          // střed 16px ikony proti ~34px poli
+            margin_top: 9,          // Center of 16px icon against ~34px entry
             tooltip_text: _('Drag to reorder'),
         });
         handle.add_css_class('dim-label');
@@ -844,8 +844,8 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
         _collapseTitleBox(row);
         rows.push(row);
 
-        // vložit těsně před addBtnRow — na její přesnou pozici, i když
-        // jsou ve skupině za ní další řádky (globální nastavení na HA stránce)
+        // Insert right before addBtnRow — at its exact position, even if
+        // subsequent rows exist in group (global settings on HA page)
         const list = addBtnRow.get_parent();
         const idx = addBtnRow.get_index();
         if (list && idx >= 0) {
@@ -861,7 +861,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
 
     addBtnRow.connect('activated', () => {
         addRow('');
-        // nové pole hned pro psaní — fokusem a kurzorem na začátek
+        // Focus and position cursor at start for immediate typing in new entry
         const last = entries[entries.length - 1];
         if (last) {
             last.grab_focus();
@@ -878,15 +878,15 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
 
     return {
         group,
-        // API našeptávače posledního řádku (pro testy)
+        // Completer API for the last row (for tests)
         get completionApi() {
             return completions[completions.length - 1] || null;
         },
         /**
-         * Našeptávač entit. items: pole entity_id (string) nebo objekty
-         * {id, name, device}. Popup ukazuje název + zařízení + entity_id,
-         * výběr vloží do pole entity_id. Převod na položky probíhá po
-         * dávkách v idle (desítky tisíc entit nezamrznou UI).
+         * Entity completer. items: array of entity_id (string) or objects
+         * {id, name, device}. Popup displays name + device + entity_id,
+         * selection inserts entity_id into entry. Conversion to items runs
+         * in batches during idle (tens of thousands of entities don't freeze UI).
          */
         setCompletion(items) {
             const list = [];
@@ -898,7 +898,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
                 list.push(_makeEntityItem(id, String(it.name || ''), String(it.device || '')));
             }
             sharedItems = [];
-            // staré cacheované shody ukazují na předchozí položky
+            // Old cached matches point to previous items
             for (const c of completions)
                 c.reset();
             let pos = 0;
@@ -912,7 +912,7 @@ function _createEntityGroup(settings, key, title, description, placeholder) {
     };
 }
 
-// ---- test spojení ----
+// ---- Connection testing ----
 
 function _createSoupMessage(method, url) {
     let httpUrl = url;
@@ -1010,7 +1010,7 @@ function _handleHaStatesResponse(status, body, callback) {
     return entities;
 }
 
-/** HTTP request přes Soup 2.4/3.0; payload = objekt pro POST JSON. Při chybě cb(null). */
+/** HTTP request via Soup 2.4/3.0; payload = object for POST JSON. On error cb(null). */
 function _soupRequest(session, method, url, token, payload, cb) {
     const msg = _createSoupMessage(method, url);
     if (!msg) {
@@ -1053,14 +1053,14 @@ function _soupRequest(session, method, url, token, payload, cb) {
     }
 }
 
-// počet entit na jeden template požadavek (výstup šablony má limit 256 kB)
+// Number of entities per single template request (template output limited to 256 kB)
 const HA_DEVICE_CHUNK = 2500;
-const HA_DEVICE_PARALLEL = 4;   // souběžné dávky (19+ požadavků × sekvenčně = dlouho)
+const HA_DEVICE_PARALLEL = 4;   // Concurrent batches (19+ requests sequentially takes too long)
 
 /**
- * Doplní k entitám název zařízení přes POST /api/template po dávkách
- * (registry endpointy mívá reverzní proxy zakázané; /api/states zařízení
- * neobsahuje). Když se dávkám nedaří, zařízení zůstane ''.
+ * Enriches entities with device name via POST /api/template in batches
+ * (registry endpoints are often blocked by reverse proxies; /api/states does
+ * not contain device). On batch failure, device remains ''.
  */
 function _haEnrichDevices(session, base, token, entities, done) {
     const tmplChunk = (a, b) =>
@@ -1109,7 +1109,7 @@ function _haEnrichDevices(session, base, token, entities, done) {
 function testHa(url, token, allowInsecure, callback) {
     const base = _cleanHaUrl(url);
     if (!base) {
-        callback(false, 'Zadejte URL Home Assistant.');
+        callback(false, _('Enter the Home Assistant URL.'));
         return;
     }
     const session = new Soup.Session();
@@ -1130,14 +1130,14 @@ function testHa(url, token, allowInsecure, callback) {
     const targetUrl = `${base}/api/states`;
     const msg = _createSoupMessage('GET', targetUrl);
     if (!msg) {
-        callback(false, 'Neplatná URL (např. http://192.168.1.10:8123).');
+        callback(false, _('Invalid URL (e.g. http://192.168.1.10:8123).'));
         return;
     }
     const cleanToken = (token || '').trim();
     if (cleanToken)
         msg.request_headers.append('Authorization', `Bearer ${cleanToken}`);
 
-    // zpracování odpovědi: callback hned, pak doplnění zařízení do našeptávače
+    // Response processing: callback immediately, then enrich devices into completer
     const onStates = (status, body) => {
         const entities = _handleHaStatesResponse(status, body, callback);
         if (entities && entities.length > 0)
@@ -1211,13 +1211,13 @@ function testMa(url, token, allowInsecure, callback) {
     client.connect();
 }
 
-// ---- seznam přehrávačů pro MPRIS (MA + HA, při duplicitě preferovat MA) ----
+// ---- Player list for MPRIS (MA + HA, preferring MA on duplicate) ----
 
 var _maPlayers = [];   // [{player_id, name}]
 var _haPlayers = [];   // [{id, name}] (pouze media_player.*)
 var _playersBox = null;
-var _syncPlayerCombo = null;  // doplní combo „Výchozí přehrávač" (MA stránka)
-var _applyHaCompletion = null; // napojí našeptávač na načtené entity (HA stránka)
+var _syncPlayerCombo = null;  // Updates "Default player" combo (MA page)
+var _applyHaCompletion = null; // Connects completer to loaded entities (HA page)
 
 function _normName(name) {
     return String(name || '')
@@ -1261,7 +1261,7 @@ function _refreshPlayerList(settings) {
         });
     }
     for (const h of _haPlayers) {
-        // stejný přehrávač v MA i HA: preferujeme MA
+        // Same player in MA and HA: prefer MA
         if (maNames.has(_normName(h.name)))
             continue;
         rows.push({ref: `ha:${h.id}`, label: `${h.name || h.id} — Home Assistant`});
@@ -1307,7 +1307,7 @@ function _autoLoadPlayers(settings) {
         testHa(settings.get_string('ha-url'), settings.get_string('ha-token'),
             settings.get_boolean('allow-insecure-tls'),
             (ok, msg, ids, mediaPlayers, entities) => {
-                // napovědět hned z /api/states (názvy); zařízení doplní enrich
+                // Suggest immediately from /api/states (names); enrich adds devices
                 if (ok && entities && entities.length > 0 && _applyHaCompletion)
                     _applyHaCompletion(entities);
                 if (ok && mediaPlayers)
@@ -1328,7 +1328,7 @@ function _autoLoadPlayers(settings) {
     }
 }
 
-// ---- stránky nastavení ----
+// ---- Preference pages ----
 
 function buildHaPage(settings) {
     const page = new Adw.PreferencesPage({
@@ -1336,7 +1336,7 @@ function buildHaPage(settings) {
         icon_name: 'user-home-symbolic',
     });
 
-    // Skupina připojení
+    // Connection group
     const connGroup = new Adw.PreferencesGroup({
         title: _('Connection'),
         description: _('Home Assistant server connection settings'),
@@ -1351,18 +1351,18 @@ function buildHaPage(settings) {
     connGroup.add(tokenField.row);
 
     const tlsRow = _switchRow(
-        'Allow unverified TLS certificates',
+        _('Allow unverified TLS certificates'),
         _('For servers with custom or self-signed certificates (libsoup 3.2+)'),
         settings, 'allow-insecure-tls');
     connGroup.add(tlsRow);
 
-    // Test spojení
+    // Test connection
     const testRow = new Adw.ActionRow({
         title: _('Test connection'),
         subtitle: _('Checks the server and loads the entity list'),
     });
     const testBtn = new Gtk.Button({
-        label: 'Otestovat',
+        label: _('Test'),
         icon_name: 'network-transmit-receive-symbolic',
         valign: Gtk.Align.CENTER,
     });
@@ -1371,7 +1371,7 @@ function buildHaPage(settings) {
 
     page.add(connGroup);
 
-    // Entity v horní liště
+    // Panel entities
     const panelEditor = _createEntityGroup(
         settings,
         'ha-panel-entities',
@@ -1410,7 +1410,7 @@ function buildHaPage(settings) {
     ));
     page.add(panelEditor.group);
 
-    // Zkratky
+    // Shortcuts
     const keysGroup = new Adw.PreferencesGroup({
         title: _('Shortcuts'),
         description: _('Extension global keyboard shortcuts'),
@@ -1423,7 +1423,7 @@ function buildHaPage(settings) {
     ));
     page.add(keysGroup);
 
-    // Entity v menu
+    // Menu entities
     const menuEditor = _createEntityGroup(
         settings,
         'ha-menu-entities',
@@ -1436,7 +1436,7 @@ function buildHaPage(settings) {
     );
     page.add(menuEditor.group);
 
-    // společné napojení našeptávače obou skupin entit na načtené entity
+    // Shared completer binding for both entity groups to loaded entities
     _applyHaCompletion = entities => {
         panelEditor.setCompletion(entities);
         menuEditor.setCompletion(entities);
@@ -1449,7 +1449,7 @@ function buildHaPage(settings) {
         const token = tokenField.entry.get_text().trim() || settings.get_string('ha-token').trim();
         const allowInsecure = settings.get_boolean('allow-insecure-tls');
 
-        // Okamžitě explicitně uložit do GSettings
+        // Save explicitly and immediately to GSettings
         if (url)
             settings.set_string('ha-url', url);
         if (token)
@@ -1476,14 +1476,14 @@ function buildMaPage(settings) {
         icon_name: 'audio-x-generic-symbolic',
     });
 
-    // Skupina připojení
+    // Connection group
     const connGroup = new Adw.PreferencesGroup({
         title: _('Connection'),
         description: _('Music Assistant server connection settings'),
     });
 
     const enableRow = _switchRow(
-        'Zapnout integraci Music Assistant',
+        _('Enable Music Assistant integration'),
         _('Shows the player section in the menu and enables MPRIS control'),
         settings, 'ma-enabled');
     connGroup.add(enableRow);
@@ -1496,13 +1496,13 @@ function buildMaPage(settings) {
         settings, 'ma-token');
     connGroup.add(tokenField.row);
 
-    // Test spojení
+    // Test connection
     const testRow = new Adw.ActionRow({
         title: _('Test connection'),
         subtitle: _('Checks the server and loads the players'),
     });
     const testBtn = new Gtk.Button({
-        label: 'Otestovat',
+        label: _('Test'),
         icon_name: 'network-transmit-receive-symbolic',
         valign: Gtk.Align.CENTER,
     });
@@ -1511,7 +1511,7 @@ function buildMaPage(settings) {
 
     page.add(connGroup);
 
-    // Výchozí přehrávač
+    // Default player
     const playerGroup = new Adw.PreferencesGroup({
         title: _('Default player'),
         description: _('Which player gets selected in the menu at startup'),
@@ -1548,7 +1548,7 @@ function buildMaPage(settings) {
         const token = tokenField.entry.get_text().trim() || settings.get_string('ma-token').trim();
         const allowInsecure = settings.get_boolean('allow-insecure-tls');
 
-        // Okamžitě explicitně uložit do GSettings
+        // Save explicitly and immediately to GSettings
         if (url)
             settings.set_string('ma-url', url);
         if (token)
@@ -1580,7 +1580,7 @@ function buildMaPage(settings) {
         settings, 'ma-mpris'));
     page.add(mprisGroup);
 
-    // Přehrávače pro MPRIS
+    // Players for MPRIS
     const playersGroup = new Adw.PreferencesGroup({
         title: _('Players in MPRIS'),
         description: _('Check the players from Music Assistant and Home Assistant. On name clash Music Assistant wins.'),
@@ -1595,7 +1595,7 @@ function buildMaPage(settings) {
     _refreshPlayerList(settings);
     page.add(playersGroup);
 
-    // Prvky přehrávače v menu
+    // Player controls in menu
     const menuGroup = new Adw.PreferencesGroup({
         title: _('Menu controls'),
         description: _('Choose the player widgets shown in the popup menu'),
@@ -1646,8 +1646,8 @@ function buildPanelPage(settings) {
 
 
 /**
- * Uložení/obnova velikosti okna nastavení (GSettings prefs-width/height).
- * Hodnoty se clampují na rozumné minimum i maximum.
+ * Save/restore preferences window size (GSettings prefs-width/height).
+ * Values clamped to reasonable minimum and maximum.
  */
 var PREFS_MIN_W = 480;
 var PREFS_MIN_H = 400;
@@ -1668,12 +1668,12 @@ function _rememberWindowSize(settings, window) {
             settings.set_int('prefs-width', w);
             settings.set_int('prefs-height', h);
         }
-        return Gdk.EVENT_PROPAGATE;   // okno se zavře jako obvykle
+        return Gdk.EVENT_PROPAGATE;   // Window closes as usual
     });
 }
 
 /**
- * Moderní vstupní bod pro GNOME 42+ (Libadwaita).
+ * Modern entry point for GNOME 42+ (Libadwaita).
  */
 export default class HMassPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {

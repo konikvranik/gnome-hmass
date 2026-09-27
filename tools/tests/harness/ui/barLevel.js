@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Stub imports.ui.barLevel - GObject s vlastností 'value' pro testy.
+ * Stub for imports.ui.barLevel - GObject with 'value' property for tests.
  */
 
 const {GObject} = imports.gi;

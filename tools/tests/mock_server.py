@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Mock servery pro E2E test rozšíření (Home Assistant + Music Assistant protokoly).
+"""Mock servers for extension E2E tests (Home Assistant + Music Assistant protocols).
 
-Použití: python3 mock_server.py <ha|ma> <port> <log_soubor>
+Usage: python3 mock_server.py <ha|ma> <port> <log_file>
 """
 import base64
 import hashlib
@@ -153,7 +153,7 @@ def serve(mode, port, logfile):
                 continue
             m = json.loads(data)
             if scenario == "reject" and m.get("type") == "auth":
-                # neautentizovaný klient dostane event i odmítnutí, pak close
+                # Unauthenticated client gets event and rejection, then close
                 send_frame(sock, json.dumps({
                     "type": "event",
                     "event": {"event_type": "state_changed",
@@ -196,18 +196,18 @@ def serve(mode, port, logfile):
 
     def ma_flow(sock):
         if scenario == "garbage":
-            # zlobivý server: nevalidní JSON, události bez dat, abrupt close
+            # Faulty server: invalid JSON, events without data, abrupt close
             for _ in range(4):
-                send_frame(sock, "{ toto neni json ")
+                send_frame(sock, "{ this is not json ")
                 send_frame(sock, json.dumps({"event": "player_updated", "data": None}))
                 send_frame(sock, json.dumps({"event": "queue_updated",
                                              "data": {"queue_id": None}}))
-                send_frame(sock, json.dumps({"message_id": "neznamy",
+                send_frame(sock, json.dumps({"message_id": "unknown",
                                              "result": [{"player_id": "p1"}, None]}))
             sock.close()
             return
         if scenario == "die" and not die_armed:
-            # normální chování, ale proces (i listen socket) za 2.5 s skončí
+            # Normal behavior, but process (and listen socket) exits in 2.5 s
             die_armed.append(True)
             threading.Timer(2.5, os._exit, args=(0,)).start()
         send_frame(sock, json.dumps({

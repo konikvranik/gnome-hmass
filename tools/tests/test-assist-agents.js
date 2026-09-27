@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Probe Assist pipeline/agentů na živém HA:
- * 1) seznam pipeline (assist_pipeline/pipeline/list) + agentů (conversation/agent/list)
- * 2) conversation/process "nastav relaxaci" bez agent_id vs. s agent_id z preferované pipeline
- * Pozor: funkční varianta opravdu aktivuje scénu (jako ruční test uživatele).
+ * Probe Assist pipelines/agents on live HA:
+ * 1) list pipelines (assist_pipeline/pipeline/list) + agents (conversation/agent/list)
+ * 2) conversation/process "set relaxation" without agent_id vs. with agent_id from preferred pipeline
+ * Note: working variant actually activates the scene (like user manual test).
  */
 
 imports.gi.versions.Soup = '2.4';
@@ -21,7 +21,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const settings = ExtensionUtils.getSettings();
 const {HAClient} = imports.lib.ha;
 
-const PHRASE = 'nastav relaxaci';
+const PHRASE = 'set relaxation';
 
 const ha = new HAClient();
 ha.configure(settings.get_string('ha-url'), settings.get_string('ha-token'), false);
@@ -38,10 +38,10 @@ ha._onMessage = msg => {
     if (!msg || msg.event !== undefined || msg.success === undefined)
         return;
     if (msg.id === results._pipeId) {
-        results.pipelines = msg.success ? msg.result : {CHYBA: msg.error && msg.error.message};
+        results.pipelines = msg.success ? msg.result : {ERROR: msg.error && msg.error.message};
         next();
     } else if (msg.id === results._agentId) {
-        results.agents = msg.success ? msg.result : {CHYBA: msg.error && msg.error.message};
+        results.agents = msg.success ? msg.result : {ERROR: msg.error && msg.error.message};
         next();
     }
 };
@@ -50,8 +50,8 @@ ha.onstates = () => {
     if (statesArrived)
         return;
     statesArrived = true;
-    print('HA připojeno, sonduji pipeline a agenty...');
-    results._pipeId = ha._nextId();   // HA vyžaduje celočíselná id zpráv
+    print('HA connected, probing pipelines and agents...');
+    results._pipeId = ha._nextId();   // HA requires integer message IDs
     results._agentId = ha._nextId();
     ha._ws.send({id: results._pipeId, type: 'assist_pipeline/pipeline/list'});
     ha._ws.send({id: results._agentId, type: 'conversation/agent/list'});
@@ -72,21 +72,21 @@ function next() {
         ? (list.find(x => x.id === (p.preferred_item || p.preferred)) || list[0])
         : null;
 
-    print('\n=== TEST: "' + PHRASE + '" bez agent_id (současné chování) ===');
+    print('\n=== TEST: "' + PHRASE + '" without agent_id ===');
     ha.processConversation(PHRASE).then(res => {
         print('speech:', JSON.stringify(res.speech), 'type:', res.responseType);
         return new Promise(r => GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 1, () => r()));
     }).then(() => {
         if (preferred) {
-            print(`\n=== TEST: přes pipeline "${preferred.name}" (agent_id=${preferred.conversation_engine}, lang=${preferred.conversation_language}) ===`);
+            print(`\n=== TEST: via pipeline "${preferred.name}" (agent_id=${preferred.conversation_engine}, lang=${preferred.conversation_language}) ===`);
             return ha.processConversation(PHRASE, null, preferred.conversation_language, preferred.conversation_engine)
                 .then(res => {
                     print('speech:', JSON.stringify(res.speech), 'type:', res.responseType);
                 });
         }
-        print('žádná pipeline k dispozici - test agenta vynechán');
+        print('No pipeline available - agent test skipped');
     }).then(done).catch(e => {
-        print('CHYBA testu:', e.message);
+        print('Test ERROR:', e.message);
         done();
     });
 }

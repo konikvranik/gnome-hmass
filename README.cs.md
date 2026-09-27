@@ -225,7 +225,7 @@ jak `.mo` soubory, tak JSON mapy pro vynucenou volbu „Jazyk rozhraní".
 ## Vývoj s AI asistenty (agentic coding)
 
 Repozitář je připravený pro AI asistenty a agentní nástroje. **Jediný zdroj
-pravidel je [`AGENTS.md`](AGENTS.md)** (česky) — konvence, příkazy, tvrdá
+pravidel je [`AGENTS.md`](AGENTS.md)** (anglicky) — konvence, příkazy, tvrdá
 pravidla (včetně pádových pastí jako mmap `gschemas.compiled`), známá selhání
 testů i ladění naživo. README a CONTRIBUTING jsou anglická dokumentace;
 vstupní soubory agentů jen importují `AGENTS.md`.

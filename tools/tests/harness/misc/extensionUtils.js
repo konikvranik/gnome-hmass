@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Stub imports.misc.extensionUtils pro běh knihoven mimo GNOME Shell.
- * Knihovny v lib/ používají Me.imports.lib.xxx - tenhle stub je namapuje
- * na skutečný imports.lib (adresář rozšíření je na imports.searchPath).
+ * Stub for imports.misc.extensionUtils to run libraries outside GNOME Shell.
+ * Libraries in lib/ use Me.imports.lib.xxx - this stub maps them to actual
+ * imports.lib (extension directory is in imports.searchPath).
  */
 
 const Gio = imports.gi.Gio;
@@ -11,7 +11,7 @@ const Gio = imports.gi.Gio;
 let _testSettings = null;
 
 function getCurrentExtension() {
-    // metadata + dir nutné pro import extension.js (gettext doména) i ikony
+    // metadata + dir necessary for extension.js import (gettext domain) and icons
     if (!_ext) {
         _ext = {
             uuid: 'hmass@konikvranik',
@@ -27,8 +27,12 @@ let _ext = null;
 
 function getSettings() {
     if (!_testSettings) {
-        const backend = Gio.MemorySettingsBackend.new();
-        _testSettings = Gio.Settings.new_with_backend('org.gnome.shell.extensions.hmass', backend);
+        if (Gio.MemorySettingsBackend && typeof Gio.MemorySettingsBackend.new === 'function') {
+            const backend = Gio.MemorySettingsBackend.new();
+            _testSettings = Gio.Settings.new_with_backend('org.gnome.shell.extensions.hmass', backend);
+        } else {
+            _testSettings = new Gio.Settings({schema_id: 'org.gnome.shell.extensions.hmass'});
+        }
     }
     return _testSettings;
 }

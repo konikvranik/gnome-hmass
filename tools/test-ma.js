@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Test připojení k Music Assistant z terminálu:
- *   gjs tools/test-ma.js http://mass:8095 [API_KLIC]
+ * Terminal connection test to Music Assistant:
+ *   gjs tools/test-ma.js http://mass:8095 [API_KEY]
  */
 
 imports.gi.versions.Soup = '3.0';
@@ -16,7 +16,7 @@ const url = ARGV[0];
 const token = ARGV[1] || '';
 
 if (!url) {
-    print('Použití: gjs tools/test-ma.js <url> [api_klic]');
+    print('Usage: gjs tools/test-ma.js <url> [api_key]');
     System.exit(1);
 }
 
@@ -47,7 +47,7 @@ function send(command, args) {
 }
 
 const timeoutId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 15, () => {
-    print('TIMEOUT: server neodpověděl do 15 s');
+    print('TIMEOUT: server did not respond within 15 s');
     loop.quit();
     return GLib.SOURCE_REMOVE;
 });
@@ -56,8 +56,8 @@ session.websocket_connect_async(msg, null, null, GLib.PRIORITY_DEFAULT, null, (s
     try {
         ws = sess.websocket_connect_finish(res);
     } catch (e) {
-        print(`SPOJENÍ SELHALO: ${e.message}`);
-        print(`Zkouším starší endpoint /websocketapi …`);
+        print(`CONNECTION FAILED: ${e.message}`);
+        print(`Trying older endpoint /websocketapi …`);
         System.exit(2);
     }
     ws.connect('message', (self, type, data) => {
@@ -70,12 +70,12 @@ session.websocket_connect_async(msg, null, null, GLib.PRIORITY_DEFAULT, null, (s
         }
         if (m.event) {
             if (m.event === 'queue_updated' || m.event === 'queue_time_updated')
-                return; // běžící eventy ignorujeme
+                return; // ignore continuous events
             print(`event: ${m.event}`);
             return;
         }
         if (m.error_code !== undefined) {
-            print(`CHYBA (${m.error_code}): ${m.details}`);
+            print(`ERROR (${m.error_code}): ${m.details}`);
             loop.quit();
             return;
         }
@@ -87,7 +87,7 @@ session.websocket_connect_async(msg, null, null, GLib.PRIORITY_DEFAULT, null, (s
             return;
         }
         if (Array.isArray(m.result) && m.result.length > 0 && m.result[0].player_id !== undefined) {
-            print(`Přehrávače (${m.result.length}):`);
+            print(`Players (${m.result.length}):`);
             for (const p of m.result) {
                 print(`  - ${p.player_id}  |  ${p.name}  |  ${p.playback_state}  |  vol ${p.volume_level}${p.volume_muted ? ' (mute)' : ''}`);
             }
@@ -100,14 +100,14 @@ session.websocket_connect_async(msg, null, null, GLib.PRIORITY_DEFAULT, null, (s
             const q = m.result;
             const item = q.current_item || {};
             const media = item.media_item || {};
-            print(`Fronta '${q.display_name}': stav=${q.state}, elapsed=${q.elapsed_time}s, položek=${q.items}`);
-            print(`  skladba: ${media.name || item.name || '-'} | ${item.duration || '?'} s`);
+            print(`Queue '${q.display_name}': state=${q.state}, elapsed=${q.elapsed_time}s, items=${q.items}`);
+            print(`  track: ${media.name || item.name || '-'} | ${item.duration || '?'} s`);
             GLib.source_remove(timeoutId);
             loop.quit();
         }
     });
     ws.connect('closed', () => {
-        print('Spojení zavřeno.');
+        print('Connection closed.');
         loop.quit();
     });
 });

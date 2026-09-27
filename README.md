@@ -238,7 +238,7 @@ The build produces both the `.mo` files and the JSON maps used by the forced
 ## Developing with AI assistants (agentic coding)
 
 The repository is prepared for AI assistants and agentic tools. **The single
-source of rules is [`AGENTS.md`](AGENTS.md)** (Czech) — conventions, commands,
+source of rules is [`AGENTS.md`](AGENTS.md)** (English) — conventions, commands,
 hard rules (including pitfalls like the `gschemas.compiled` mmap), known test
 failures and live debugging. The README and CONTRIBUTING files are the
 English-facing docs; agent entry files simply import `AGENTS.md`.

@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # SPDX-FileCopyrightText: 2026 konikvranik
 """
-Generuje JSON překladové mapy z .po souborů pro vynucený jazyk rozhraní
-(nastavení interface-language). Gettext totiž neumí přepnout jazyk jen pro
-jedno rozšíření (setlocale je procesové), proto v tomto režimu mapujeme
-msgid -> msgstr rovnou z JSON.
+Generates JSON translation maps from .po files for forced interface language
+(interface-language setting). Gettext cannot switch the language for just
+one extension (setlocale is process-wide), so in this mode we map
+msgid -> msgstr directly from JSON.
 
     python3 tools/gen-l10n.py po/cs.po locale/l10n/cs.json
 """
@@ -70,7 +70,7 @@ def main():
     with open(dst, 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=0, sort_keys=True)
         f.write('\n')
-    print(f'{dst}: {len(result)} překladů')
+    print(f'{dst}: {len(result)} translations')
 
 
 if __name__ == '__main__':

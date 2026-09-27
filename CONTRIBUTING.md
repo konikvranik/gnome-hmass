@@ -2,19 +2,17 @@
 
 Thanks for your interest in contributing!
 
-*Read this in: **English** | [Čeština](CONTRIBUTING.cs.md)*
-
 **All coding guidelines — conventions, commands, hard rules, tests, debugging
-and the git workflow — live in [AGENTS.md](AGENTS.md) (Czech).** They apply
+and the git workflow — live in [AGENTS.md](AGENTS.md).** They apply
 exactly the same to human contributors and AI assistants (Claude Code,
 opencode, Antigravity, ZCode, Junie…); the agent entry files (`CLAUDE.md`,
 `GEMINI.md`) just import it, so the rules exist exactly once.
 
 In short:
 
-- **Czech** for code comments; **English** for identifiers, logs, user-facing
-  strings (gettext msgids) and documentation (Czech alternatives in
-  `*.cs.md` files); **Czech** for commit messages
+- **English** for all code, comments, explanations, commit messages, agent instructions,
+  identifiers, logs, user-facing strings (gettext msgids) and documentation;
+  only localizations (`po/`, `mo/`) and `README.cs.md` are exceptions
 - `make check` and `make test` must pass (a new feature means a new test too)
 - one logical change = one commit, format `area: what` in the imperative
 - describe the PR's what and why; attach the test output

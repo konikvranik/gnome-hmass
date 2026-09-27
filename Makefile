@@ -18,12 +18,12 @@ all: schemas/gschemas.compiled $(MOFILES) $(L10NFILES)
 schemas/gschemas.compiled: schemas/org.gnome.shell.extensions.hmass.gschema.xml
 	glib-compile-schemas schemas/
 
-# překlady: msgid v kódu jsou anglicky, cs.po nese českou lokalizaci
+# translations: msgids in code are English, po/*.po files contain localizations
 locale/%/LC_MESSAGES/hmass.mo: po/%.po
 	mkdir -p $(dir $@)
 	msgfmt $< -o $@
 
-# JSON mapy pro vynucený jazyk rozhraní (interface-language != auto)
+# JSON maps for forced interface language (interface-language != auto)
 locale/l10n/%.json: po/%.po tools/gen-l10n.py
 	mkdir -p $(dir $@)
 	python3 tools/gen-l10n.py $< $@
@@ -34,7 +34,7 @@ po/hmass.pot: po/POTFILES.in extension.js prefs.js lib/*.js
 		--msgid-bugs-address=https://github.com/konikvranik/gnome-hmass/issues \
 		-F -o $@ $$(cat po/POTFILES.in)
 
-# aktualizace cs.po po změně msgid (uchová přeložené)
+# update po files after msgid changes (preserves existing translations)
 update-po: po/hmass.pot
 	@for po in $(LANGUAGES:%=po/%.po); do \
 		msgmerge -U --backup=none $$po po/hmass.pot; \
@@ -45,21 +45,21 @@ build-legacy: all
 	glib-compile-schemas build/v42/schemas/
 
 check: all build-legacy
-	@echo "=== Kontrola ESM syntaxe (GNOME 45+) ==="
+	@echo "=== Checking ESM syntax (GNOME 45+) ==="
 	for f in extension.js prefs.js lib/*.js tools/*.js; do node --check $$f && echo "OK $$f"; done
-	@echo "=== Kontrola CJS syntaxe (GNOME 42-44) ==="
+	@echo "=== Checking CJS syntax (GNOME 42-44) ==="
 	for f in build/v42/extension.js build/v42/prefs.js build/v42/lib/*.js; do node --check $$f && echo "OK $$f"; done
 
 test: all build-legacy
 	bash tools/tests/run-all.sh
 
-# Automatická atomická instalace podle zjištěné verze GNOME Shellu
+# Automatic atomic installation based on detected GNOME Shell version
 install: all
 ifeq ($(IS_V45_PLUS),1)
-	@echo "Detekován GNOME Shell $(SHELL_MAJOR) (>= 45) -> instaluji nativní ESM verzi"
+	@echo "Detected GNOME Shell $(SHELL_MAJOR) (>= 45) -> installing native ESM version"
 	$(MAKE) install-46
 else
-	@echo "Detekován GNOME Shell $(SHELL_MAJOR) (< 45) -> generuji a instaluji GNOME 42 verzi"
+	@echo "Detected GNOME Shell $(SHELL_MAJOR) (< 45) -> generating and installing GNOME 42 version"
 	$(MAKE) install-42
 endif
 
@@ -70,8 +70,8 @@ install-46: all
 	if [ -d $(EXTDIR) ]; then mv $(EXTDIR) $(EXTDIR).old; fi
 	mv $(EXTDIR).staging $(EXTDIR)
 	rm -rf $(EXTDIR).old
-	@echo "Nainstalována ESM verze (GNOME 45+) do $(EXTDIR) (atomicky)"
-	@echo "Restartujte GNOME Shell (odhlášení na Wayland; Alt+F2 -> r na X11)"
+	@echo "Installed ESM version (GNOME 45+) to $(EXTDIR) (atomically)"
+	@echo "Restart GNOME Shell (log out on Wayland; Alt+F2 -> r on X11)"
 
 install-42: build-legacy
 	rm -rf $(EXTDIR).staging $(EXTDIR).old
@@ -81,17 +81,17 @@ install-42: build-legacy
 	if [ -d $(EXTDIR) ]; then mv $(EXTDIR) $(EXTDIR).old; fi
 	mv $(EXTDIR).staging $(EXTDIR)
 	rm -rf $(EXTDIR).old
-	@echo "Nainstalována CJS verze (GNOME 42-44) do $(EXTDIR) (atomicky)"
-	@echo "Restartujte GNOME Shell (Alt+F2 -> r na X11; kill -QUIT na Ubuntu 22.04)"
+	@echo "Installed CJS version (GNOME 42-44) to $(EXTDIR) (atomically)"
+	@echo "Restart GNOME Shell (Alt+F2 -> r on X11; kill -QUIT on Ubuntu 22.04)"
 
-# Balíčky pro EGO (extensions.gnome.org): verze pro 45+ i pro 42-44
+# Packages for EGO (extensions.gnome.org): versions for 45+ and 42-44
 zip: all build-legacy
 	rm -f $(UUID)-v46.zip $(UUID)-v42.zip $(UUID).zip
 	zip -r $(UUID)-v46.zip $(ZIPFILES) -x 'schemas/gschemas.compiled'
 	cd build/v42 && zip -r ../../$(UUID)-v42.zip $(ZIPFILES) -x 'schemas/gschemas.compiled'
 	cp $(UUID)-v46.zip $(UUID).zip
-	@echo "Vytvořen $(UUID)-v46.zip (pro GNOME 45-48)"
-	@echo "Vytvořen $(UUID)-v42.zip (pro GNOME 42-44)"
+	@echo "Created $(UUID)-v46.zip (for GNOME 45-48)"
+	@echo "Created $(UUID)-v42.zip (for GNOME 42-44)"
 
 clean:
 	rm -rf build $(UUID)*.zip schemas/gschemas.compiled /tmp/mock-*.log
@@ -99,4 +99,4 @@ clean:
 uninstall:
 	rm -rf $(EXTDIR)
 	gnome-extensions disable $(UUID) 2>/dev/null || true
-	@echo "Odinstalováno."
+	@echo "Uninstalled."

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2026 konikvranik
 /*
- * Stub imports.ui.panelMenu - Button s fake menu.
+ * Stub for imports.ui.panelMenu - Button with fake menu.
  */
 
 const {GObject} = imports.gi;
