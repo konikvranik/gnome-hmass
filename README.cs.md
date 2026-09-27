@@ -1,6 +1,6 @@
 # gnome-hmass
 
-Rozšíření GNOME Shell (42) integrující **Home Assistant** a **Music Assistant**
+Rozšíření GNOME Shell (GNOME 42–48) integrující **Home Assistant** a **Music Assistant**
 do horní lišty.
 
 Repozitář: <https://github.com/konikvranik/gnome-hmass>
@@ -95,17 +95,30 @@ Když je HA nebo MA nedostupný, rozšíření se chová zdrženlivě:
 make install
 ```
 
-Poté restartujte GNOME Shell (**Alt+F2** → `r` na X11; na Waylandu odhlášení
-a přihlášení) a povolte rozšíření:
+`make install` automaticky detekuje běžící verzi GNOME Shell a provede
+atomickou instalaci:
+- **GNOME 45–48**: nainstaluje nativní ESM verzi.
+- **GNOME 42–44**: transpiluje a nainstaluje CJS verzi z `build/v42`.
+
+Poté restartujte GNOME Shell:
+- Na **Waylandu**: odhlásit se a znovu přihlásit.
+- Na **X11**: **Alt+F2** → `r` (na Ubuntu 22.04, kde chybí restartovací helper: `kill -QUIT $(pgrep -n gnome-shell)`).
+
+Pak povolte rozšíření:
 
 ```bash
 gnome-extensions enable hmass@konikvranik
 ```
 
-Ručně: zkopírujte `metadata.json extension.js prefs.js stylesheet.css lib
-schemas locale` do `~/.local/share/gnome-shell/extensions/hmass@konikvranik/`
-(adresář `schemas` musí obsahovat zkompilované `gschemas.compiled`, vytvoří
-`make`).
+Znovunačtení bez restartu GNOME Shellu (bezpečné — instalace probíhá atomicky):
+
+```bash
+B=/org/gnome/Shell/Extensions
+gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
+  --method org.gnome.Shell.Extensions.DisableExtension hmass@konikvranik
+gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
+  --method org.gnome.Shell.Extensions.EnableExtension hmass@konikvranik
+```
 
 ## Nastavení
 
@@ -161,10 +174,11 @@ gjs tools/test-ma.js http://mass:8095 <API_KLIC>
 
 ## Vývoj a testy
 
-Kompletní testovací sada se spouští jedním příkazem:
+Příkazy:
 
 ```bash
-make test
+make check          # kontrola syntaxe ESM i generovaného CJS (rychlé)
+make test           # kompletní testovací sada (E2E + UI + prefs + Soup kompatibilita)
 ```
 
 | Fáze | Co pokrývá |
@@ -183,9 +197,9 @@ UI testy běží mimo GNOME Shell díky stubům shell API (`tools/tests/harness/
 a nahraditelným třídám widgetů St. Mock servery simulují oba protokoly lokálně,
 takže testy nepotřebují reálné HA/MA.
 
-Ověřeno proti: GNOME Shell 42 (Ubuntu 22.04, libsoup 3.0, GJS 1.72) a
-Music Assistant server 2.5–2.10 (WebSocket `/ws`, se fallbackem na starší
-`/websocketapi`).
+Ověřeno proti: GNOME Shell 42.9 (Ubuntu 22.04 X11, libsoup 2.4 / 3.0, GJS 1.72)
+a GNOME Shell 46+ (nativní ESM, libsoup 3.0), a Music Assistant server
+2.5–2.10 (WebSocket `/ws`, s fallbackem na starší `/websocketapi`).
 
 ## Řešení problémů
 
@@ -240,22 +254,14 @@ Pravidla se tedy drží právě jednou — upravujte jen `AGENTS.md`.
 
 ## Publikování na extensions.gnome.org
 
-1. Vytvořte balíček: `make zip` → `hmass@konikvranik.zip` (obsahuje jen potřebné
-   soubory včetně XML schématu, licence a překladů, bez zkompilovaných
-   schémat a vývojových nástrojů).
-2. Přihlaste se GNOME účtem na <https://extensions.gnome.org/upload/>, balíček
-   nahrajte a vyplňte metadata (licence: GPL-2.0+).
-3. `metadata.json` obsahuje `version` (celé číslo — EGO jej vyžaduje) a `url`
-   odkazující na veřejný repozitář
-   (<https://github.com/konikvranik/gnome-hmass> - recenzent ji používá
-   pro hlášení chyb).
-4. Recenze řídí [pravidla EGO](https://gjs.guide/extensions/review-guidelines/review-guidelines.html) -
-   kód jim odpovídá: čistý životní cyklus `enable()`/`disable()`, bez
-   zastaralých modulů (`ByteArray`, `Lang`, `Mainloop`), bez telemetrie,
-   subprocessů a binárek; schéma i cesta odpovídají předpisu; licence je
-   GPL-2.0-or-later.
-
-Poznámka: GNOME 42 je již mimo aktivní podporu GNOME; při přidání podpory
-novějších verzí (45+ vyžaduje přechod na ESM importy) přidejte příslušné
-položky do `shell-version` a vždy uvádějte jen vydání, která jste skutečně
-otestovali.
+1. Vytvořte balíčky:
+   ```bash
+   make zip
+   ```
+   Tento příkaz vytvoří archivy připravené k nahrání:
+   - `hmass@konikvranik-v46.zip` pro **GNOME 45–48** (nativní ESM).
+   - `hmass@konikvranik-v42.zip` pro **GNOME 42–44** (transpilované CJS).
+   Oba obsahují jen potřebné soubory (XML schémata, metadata, licence, překlady, ikony), bez zkompilovaných schémat a vývojových nástrojů.
+2. Přihlaste se GNOME účtem na <https://extensions.gnome.org/upload/>, balíček nahrajte a vyplňte metadata (licence: GPL-2.0+).
+3. `metadata.json` obsahuje `version` (celé číslo — EGO jej vyžaduje) a `url` odkazující na veřejný repozitář (<https://github.com/konikvranik/gnome-hmass> - recenzent ji používá pro hlášení chyb).
+4. Recenze řídí [pravidla EGO](https://gjs.guide/extensions/review-guidelines/review-guidelines.html) - kód jim odpovídá: čistý životní cyklus `enable()`/`disable()`, bez zastaralých modulů (`ByteArray`, `Lang`, `Mainloop`), bez telemetrie, subprocessů a binárek; schéma i cesta odpovídají předpisu; licence je GPL-2.0-or-later.

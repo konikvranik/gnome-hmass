@@ -63,7 +63,7 @@ gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
 | `lib/ma.js` | MA client (players/queues, commands, AI Radio DJ via `ai_radio/queue_dj`) |
 | `lib/mpris.js` | MPRIS D-Bus bridge (org.mpris.MediaPlayer2.hmass.*) |
 | `lib/ui.js` | widgets: MaSection (MA menu), createHaRows/createPanelEntity (controls per HA domain), mergeEntityConfig (per-entity config), tooltips |
-| `lib/icons.js` | resolver `mdi:…` → `Gio.FileIcon` from `icons/mdi/` (~500 SVGs, Apache-2.0, regenerated via `tools/fetch-mdi.py`) |
+| `lib/icons.js` | resolver `mdi:…` → `Gio.FileIcon` from `icons/mdi/` (~7.4k SVGs, Apache-2.0, regenerated via `tools/fetch-mdi.py`) |
 | `prefs.js` | GTK4 + libadwaita preferences window |
 | `schemas/` | GSettings schema (compiled by make) |
 | `tools/tests/` | tests + harness (`harness/` stubs shell API, `mock_server.py` simulates HA/MA) |

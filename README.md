@@ -1,6 +1,6 @@
 # gnome-hmass
 
-GNOME Shell extension (42) integrating **Home Assistant** and
+GNOME Shell extension (GNOME 42–48) integrating **Home Assistant** and
 **Music Assistant** into the top bar.
 
 Repository: <https://github.com/konikvranik/gnome-hmass>
@@ -102,17 +102,30 @@ When HA or MA is unavailable the extension stays reserved:
 make install
 ```
 
-Then restart GNOME Shell (**Alt+F2** → `r` on X11; on Wayland log out and
-back in) and enable the extension:
+`make install` automatically detects the running GNOME Shell version and
+performs an atomic installation:
+- **GNOME 45–48**: installs native ESM sources.
+- **GNOME 42–44**: transpiles and installs the CJS build from `build/v42`.
+
+Then restart GNOME Shell:
+- On **Wayland**: log out and log back in.
+- On **X11**: **Alt+F2** → `r` (or on Ubuntu 22.04 where Mutter restart helper is missing: `kill -QUIT $(pgrep -n gnome-shell)`).
+
+Then enable the extension:
 
 ```bash
 gnome-extensions enable hmass@konikvranik
 ```
 
-Manually: copy `metadata.json extension.js prefs.js stylesheet.css lib schemas
-locale` into `~/.local/share/gnome-shell/extensions/hmass@konikvranik/` (the
-`schemas` directory must contain the compiled `gschemas.compiled`, created by
-`make`).
+Reloading without restarting GNOME Shell (safe — installation is atomic):
+
+```bash
+B=/org/gnome/Shell/Extensions
+gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
+  --method org.gnome.Shell.Extensions.DisableExtension hmass@konikvranik
+gdbus call --session --dest org.gnome.Shell.Extensions --object-path $B \
+  --method org.gnome.Shell.Extensions.EnableExtension hmass@konikvranik
+```
 
 ## Configuration
 
@@ -172,10 +185,11 @@ gjs tools/test-ma.js http://mass:8095 <API_KEY>
 
 ## Development and tests
 
-The complete test suite runs with a single command:
+Commands:
 
 ```bash
-make test
+make check          # syntax check for both ESM and generated CJS (fast)
+make test           # full test suite (E2E + UI + prefs + Soup compatibility)
 ```
 
 | Phase | Coverage |
@@ -194,9 +208,9 @@ The UI tests run outside GNOME Shell thanks to stubs for the shell API
 (`tools/tests/harness/`) and replaceable St widget classes. Mock servers
 simulate both protocols locally, so the tests need no real HA/MA.
 
-Verified against: GNOME Shell 42 (Ubuntu 22.04, libsoup 3.0, GJS 1.72) and
-Music Assistant server 2.5–2.10 (WebSocket `/ws`, with a fallback to the
-older `/websocketapi`).
+Verified against: GNOME Shell 42.9 (Ubuntu 22.04 X11, libsoup 2.4 / 3.0, GJS 1.72)
+and GNOME Shell 46+ (native ESM, libsoup 3.0), and Music Assistant server
+2.5–2.10 (WebSocket `/ws`, with a fallback to the older `/websocketapi`).
 
 ## Troubleshooting
 
@@ -253,23 +267,14 @@ The rules are therefore kept exactly once — edit `AGENTS.md` only.
 
 ## Publishing to extensions.gnome.org
 
-1. Build the package: `make zip` → `hmass@konikvranik.zip` (contains only the
-   needed files incl. the XML schema, license and translations; no compiled
-   schemas, no development tools).
-2. Sign in with your GNOME account at
-   <https://extensions.gnome.org/upload/>, upload the package and fill in the
-   metadata (license: GPL-2.0+).
-3. `metadata.json` contains `version` (integer — required by EGO) and `url`
-   pointing to the public repository
-   (<https://github.com/konikvranik/gnome-hmass> — reviewers use it for bug
-   reports).
-4. Reviews follow the [EGO review guidelines](https://gjs.guide/extensions/review-guidelines/review-guidelines.html)
-   — the code complies: a clean `enable()`/`disable()` lifecycle, no
-   deprecated modules (`ByteArray`, `Lang`, `Mainloop`), no telemetry,
-   subprocesses or binaries; the schema and path follow the rules; the
-   license is GPL-2.0-or-later.
-
-Note: GNOME 42 is outside GNOME's active support already; when adding support
-for newer releases (45+ requires moving to ESM imports) add the respective
-entries to `shell-version` and always list only releases you have actually
-tested.
+1. Build the packages:
+   ```bash
+   make zip
+   ```
+   This generates ready-to-upload zip archives:
+   - `hmass@konikvranik-v46.zip` for **GNOME 45–48** (native ESM).
+   - `hmass@konikvranik-v42.zip` for **GNOME 42–44** (transpiled CJS).
+   Both contain only the required files (XML schemas, metadata, license, translations, icons), with no compiled schemas and no development tools.
+2. Sign in with your GNOME account at <https://extensions.gnome.org/upload/>, upload the appropriate package and fill in metadata (license: GPL-2.0+).
+3. `metadata.json` contains `version` (integer — required by EGO) and `url` pointing to the public repository (<https://github.com/konikvranik/gnome-hmass> — reviewers use it for bug reports).
+4. Reviews follow the [EGO review guidelines](https://gjs.guide/extensions/review-guidelines/review-guidelines.html) — the code complies: a clean `enable()`/`disable()` lifecycle, no deprecated modules (`ByteArray`, `Lang`, `Mainloop`), no telemetry, subprocesses or binaries; schemas follow conventions, and the license is GPL-2.0-or-later.
