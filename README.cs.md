@@ -11,6 +11,8 @@ němu přítomní v issue a diskuzích zdvořile a vstřícně.
 
 *Přečtěte si v: [English](README.md) | **Čeština***
 
+![Snímek obrazovky gnome-hmass](screenshot.png)
+
 ## Co umí
 
 ### Home Assistant

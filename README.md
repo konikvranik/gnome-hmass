@@ -11,6 +11,8 @@ considerate in issues and discussions.
 
 *Read this in: **English** | [Čeština](README.cs.md)*
 
+![gnome-hmass screenshot](screenshot.png)
+
 ## Features
 
 ### Home Assistant
